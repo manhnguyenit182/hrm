@@ -3,6 +3,53 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /*
+    Shared color variables for the whole project.
+    Use in CSS: var(--color-primary-500)
+    Use in JSX inline style: style={{ background: 'var(--color-surface)' }}
+    Use in Tailwind (arbitrary): className="text-[color:var(--color-text)]"
+  */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #7152f3;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  --color-accent: #06b6d4;
+
+  --color-surface: #0f172a;
+  /* sidebar, cards */
+  --color-bg: #071120;
+  /* page background */
+  --color-text: #e6eef8;
+  /* default text */
+  --color-muted: #94a3b8;
+
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+}
+
+/* Dark theme overrides (runtime switchable via `data-theme="dark"` on <html> or <body>) */
+[data-theme="dark"] {
+  --color-surface: #081024;
+  --color-bg: #030712;
+  --color-text: #dbeafe;
+  --color-muted: #94a3b8;
+}
+
+/* Light theme (optional) */
+[data-theme="light"] {
+  --color-surface: #ffffff;
+  --color-bg: #f8fafc;
+  --color-text: #0f172a;
+  --color-muted: #6b7280;
 }
 
 @theme inline {
@@ -23,4 +70,21 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Small helper utilities (you can remove if you prefer pure Tailwind) */
+.bg-surface {
+  background-color: var(--color-surface);
+}
+
+.text-primary {
+  color: var(--color-primary-500);
+}
+
+.text-muted {
+  color: var(--color-muted);
+}
+
+.border-muted {
+  border-color: var(--color-muted);
 }

@@ -120,10 +120,74 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.EmployeesScalarFieldEnum = {
+  id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  departmentId: 'departmentId',
+  positionId: 'positionId',
+  type: 'type',
+  status: 'status',
+  phone: 'phone',
+  email: 'email',
+  address: 'address',
+  city: 'city',
+  state: 'state',
+  gender: 'gender',
+  birthday: 'birthday',
+  maritalStatus: 'maritalStatus',
+  nationality: 'nationality',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DepartmentsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  location: 'location',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PositionsScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AttendanceScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  date: 'date',
+  clockIn: 'clockIn',
+  clockOut: 'clockOut',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PayrollScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  salary: 'salary',
+  bonus: 'bonus',
+  deductions: 'deductions',
+  netPay: 'netPay',
+  payDate: 'payDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
-  name: 'name',
+  password: 'password',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  employeeId: 'employeeId',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -145,6 +209,11 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
+  Employees: 'Employees',
+  Departments: 'Departments',
+  Positions: 'Positions',
+  Attendance: 'Attendance',
+  Payroll: 'Payroll',
   User: 'User'
 };
 
