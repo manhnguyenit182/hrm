@@ -53,7 +53,7 @@ const menuItems: MenuItem[] = [
 
 export default function Sidebar(): React.JSX.Element {
   return (
-    <div className={`w-64 h-screen text-black shadow-xl`}>
+    <div className={`w-64 h-[95%] text-black shadow-xl border m-5 mr-0`}>
       <div className="p-6">
         <Link href="/" className="block mb-8">
           <Image

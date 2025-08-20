@@ -228,6 +228,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -238,7 +239,7 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/db/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Employees {\n  id            String       @id @default(cuid()) // pk\n  firstName     String?\n  lastName      String?\n  departmentId  String?\n  department    Departments? @relation(fields: [departmentId], references: [id]) // fk\n  positionId    String?\n  position      Positions?   @relation(fields: [positionId], references: [id])\n  type          String?\n  status        String?\n  phone         String?\n  email         String       @unique\n  address       String?\n  city          String?\n  state         String?\n  gender        String?\n  birthday      DateTime?\n  maritalStatus String?\n  nationality   String?\n  createdAt     DateTime     @default(now())\n  updatedAt     DateTime     @updatedAt\n\n  Attendance Attendance[]\n\n  Payroll Payroll[]\n\n  User User[]\n}\n\nmodel Departments {\n  id        String   @id @default(cuid())\n  name      String?\n  location  String?\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  Employees Employees[]\n}\n\nmodel Positions {\n  id          String   @id @default(cuid())\n  title       String?\n  description String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  Employees Employees[]\n}\n\nmodel Attendance {\n  id         String    @id @default(cuid())\n  employeeId String?\n  date       DateTime  @default(now())\n  clockIn    DateTime?\n  clockOut   DateTime?\n  status     String?\n  createdAt  DateTime  @default(now())\n  updatedAt  DateTime  @updatedAt\n\n  employee Employees? @relation(fields: [employeeId], references: [id])\n}\n\nmodel Payroll {\n  id         String   @id @default(cuid())\n  employeeId String?\n  salary     Float?\n  bonus      Float?\n  deductions Float?\n  netPay     Float?\n  payDate    DateTime @default(now())\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  employee Employees? @relation(fields: [employeeId], references: [id])\n}\n\nmodel User {\n  id        String  @id @default(cuid())\n  email     String  @unique\n  password  String\n  firstName String?\n  lastName  String?\n\n  employeeId String?\n  employee   Employees? @relation(fields: [employeeId], references: [id])\n  role       String? // e.g., 'admin', 'user'\n  createdAt  DateTime   @default(now())\n  updatedAt  DateTime   @updatedAt\n\n  @@map(\"users\") // Map to the \"users\" table in the database\n}\n",
   "inlineSchemaHash": "edca32a0396c7fce6a52499e9561fe4bc8bef95b055d38d6068e160291a9ec78",
-  "copyEngine": false
+  "copyEngine": true
 }
 
 const fs = require('fs')
@@ -275,3 +276,9 @@ const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
+// file annotations for bundling tools to include these files
+path.join(__dirname, "query_engine-windows.dll.node");
+path.join(process.cwd(), "src/db/prisma/query_engine-windows.dll.node")
+// file annotations for bundling tools to include these files
+path.join(__dirname, "schema.prisma");
+path.join(process.cwd(), "src/db/prisma/schema.prisma")

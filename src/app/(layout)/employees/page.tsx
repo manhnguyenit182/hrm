@@ -4,8 +4,8 @@
 import React, { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { getEmployees } from "./actions";
-import { EmployeeWithRelations } from "@/types/types"; // Adjust the import path as necessary
+import { getEmployees, EmployeeWithRelations } from "./actions";
+// import { EmployeeWithRelations } from "@/types/types"; // Adjust the import path as necessary
 
 const EmployeesTable: React.FC = () => {
   const [employees, setEmployees] = useState<EmployeeWithRelations[]>([]);

@@ -1,5 +1,4 @@
-import Link from "next/link";
-import Image from "next/image";
+
 import { UserRound } from "lucide-react";
 import { Button } from 'primereact/button';
 import React from "react";
@@ -11,7 +10,7 @@ interface TopbarProps {
 
 const Topbar: React.FC<TopbarProps> = ({ className = "" }) => {
   return (
-    <div className={`bg-white shadow-md flex justify-end px-4 py-2 ${className}`}>
+    <div className={`bg-white shadow-md flex border m-5 justify-end px-4 py-2 ${className}`}>
       <Button className="p-2">
         <UserRound className="w-5 h-5" />
       </Button>
