@@ -10,24 +10,15 @@
     Use in JSX inline style: style={{ background: 'var(--color-surface)' }}
     Use in Tailwind (arbitrary): className="text-[color:var(--color-text)]"
   */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #7152f3;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
 
+  --color-primary-500: #7152f3;
+
+  --color-text: #ffffff;
   --color-accent: #06b6d4;
 
   --color-surface: #0f172a;
   /* sidebar, cards */
-  --color-bg: #071120;
-  /* page background */
-  --color-text: #e6eef8;
+
   /* default text */
   --color-muted: #94a3b8;
 
@@ -87,4 +78,15 @@ body {
 
 .border-muted {
   border-color: var(--color-muted);
+}
+
+.p-button {
+  background: var(--color-primary-500) !important;
+  border: 1px solid var(--color-primary-500) !important;
+  color: var(--color-text) !important;
+}
+
+.p-button:hover {
+  background: #5e41e0 !important;
+  border-color: #5e41e0 !important;
 }

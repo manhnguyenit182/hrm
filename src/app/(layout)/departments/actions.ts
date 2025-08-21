@@ -1,13 +1,28 @@
 "use server";
-import { PrismaClient, Departments } from "@/db/prisma";
-
+import { PrismaClient } from "@/db/prisma";
+import { Departments, CreateDepartment, DepartmentWithEmployees } from "./type";
 const prisma = new PrismaClient();
 
-export type DepartmentType = Departments;
-
-const getDepartments = async (): Promise<DepartmentType[]> => {
+export const getDepartments = async (): Promise<DepartmentWithEmployees[]> => {
   try {
-    const departments = await prisma.departments.findMany();
+    const departments = await prisma.departments.findMany({
+      include: {
+        Employees: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            createdAt: true,
+          },
+          orderBy: {
+            createdAt: "asc", // Sắp xếp employees theo createdAt từ mới nhất
+          },
+        },
+      },
+      orderBy: {
+        name: "asc", // Sắp xếp departments theo tên A-Z
+      },
+    });
     return departments;
   } catch (error) {
     console.error("Error fetching departments:", error);
@@ -15,9 +30,9 @@ const getDepartments = async (): Promise<DepartmentType[]> => {
   }
 };
 
-const createDepartment = async (
-  data: Omit<DepartmentType, "id" | "createdAt" | "updatedAt">
-): Promise<DepartmentType> => {
+export const createDepartment = async (
+  data: CreateDepartment
+): Promise<Departments> => {
   try {
     const department = await prisma.departments.create({
       data,
@@ -28,5 +43,3 @@ const createDepartment = async (
     throw error;
   }
 };
-
-export { getDepartments, createDepartment };

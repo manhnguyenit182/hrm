@@ -15,36 +15,39 @@ datasource db {
 }
 
 model Employees {
-  id         String   @id @default(cuid()) // pk
-  firstName  String?
-  lastName   String?
-  departmentId String?
-  department Departments? @relation(fields: [departmentId], references: [id]) // fk
-  positionId String?
-  position   Positions? @relation(fields: [positionId], references: [id])
-  type      String?
-  status    String?
-  phone     String?
-  email     String   @unique
-  address   String?
-  city      String?
-  state     String?
-  gender    String?
-  birthday  DateTime?
+  id            String       @id @default(cuid()) // pk
+  firstName     String?
+  lastName      String?
+  departmentId  String?
+  department    Departments? @relation(fields: [departmentId], references: [id]) // fk
+  positionId    String?
+  position      Positions?   @relation(fields: [positionId], references: [id])
+  jobId           String?
+  job          Jobs?       @relation(fields: [jobId], references: [id])
+  type          String?
+  status        String?
+  phone         String?
+  email         String       @unique
+  address       String?
+  city          String?
+  image         String?  
+  state         String?
+  gender        String?
+  birthday      DateTime?
   maritalStatus String?
-  nationality String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  nationality   String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
   Attendance Attendance[]
 
-  Payroll Payroll[]
+
 
   User User[]
 }
 
 model Departments {
-  id         String   @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String?
   location  String?
   createdAt DateTime @default(now())
@@ -52,55 +55,55 @@ model Departments {
 
   Employees Employees[]
 }
+
 model Positions {
-  id         String   @id @default(cuid())
-  title     String?
+  id          String   @id @default(cuid())
+  title       String?
   description String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   Employees Employees[]
 }
 
 model Attendance {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   employeeId String?
-  date      DateTime @default(now())
-  clockIn   DateTime?
-  clockOut  DateTime?
-  status    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  date       DateTime  @default(now())
+  clockIn    DateTime?
+  clockOut   DateTime?
+  status     String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   employee Employees? @relation(fields: [employeeId], references: [id])
 }
 
-model Payroll {
+model Jobs {
   id         String   @id @default(cuid())
-  employeeId String?
-  salary    Float?
-  bonus     Float?
+  job       String?
+  salary     Float?
+  netPay     Float?
   deductions Float?
-  netPay    Float?
-  payDate   DateTime @default(now())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  payDate    DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  employee Employees? @relation(fields: [employeeId], references: [id])
+  Employees Employees[]
 }
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String  @id @default(cuid())
+  email     String  @unique
   password  String
   firstName String?
   lastName  String?
 
   employeeId String?
   employee   Employees? @relation(fields: [employeeId], references: [id])
-  role      String?  // e.g., 'admin', 'user'
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role       String? // e.g., 'admin', 'user'
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 
   @@map("users") // Map to the "users" table in the database
 }
-

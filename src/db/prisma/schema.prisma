@@ -22,12 +22,15 @@ model Employees {
   department    Departments? @relation(fields: [departmentId], references: [id]) // fk
   positionId    String?
   position      Positions?   @relation(fields: [positionId], references: [id])
+  jobId         String?
+  job           Jobs?        @relation(fields: [jobId], references: [id])
   type          String?
   status        String?
   phone         String?
   email         String       @unique
   address       String?
   city          String?
+  image         String?
   state         String?
   gender        String?
   birthday      DateTime?
@@ -37,8 +40,6 @@ model Employees {
   updatedAt     DateTime     @updatedAt
 
   Attendance Attendance[]
-
-  Payroll Payroll[]
 
   User User[]
 }
@@ -76,18 +77,17 @@ model Attendance {
   employee Employees? @relation(fields: [employeeId], references: [id])
 }
 
-model Payroll {
+model Jobs {
   id         String   @id @default(cuid())
-  employeeId String?
+  job        String?
   salary     Float?
-  bonus      Float?
-  deductions Float?
   netPay     Float?
+  deductions Float?
   payDate    DateTime @default(now())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  employee Employees? @relation(fields: [employeeId], references: [id])
+  Employees Employees[]
 }
 
 model User {

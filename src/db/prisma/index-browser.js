@@ -126,12 +126,14 @@ exports.Prisma.EmployeesScalarFieldEnum = {
   lastName: 'lastName',
   departmentId: 'departmentId',
   positionId: 'positionId',
+  jobId: 'jobId',
   type: 'type',
   status: 'status',
   phone: 'phone',
   email: 'email',
   address: 'address',
   city: 'city',
+  image: 'image',
   state: 'state',
   gender: 'gender',
   birthday: 'birthday',
@@ -168,13 +170,12 @@ exports.Prisma.AttendanceScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.PayrollScalarFieldEnum = {
+exports.Prisma.JobsScalarFieldEnum = {
   id: 'id',
-  employeeId: 'employeeId',
+  job: 'job',
   salary: 'salary',
-  bonus: 'bonus',
-  deductions: 'deductions',
   netPay: 'netPay',
+  deductions: 'deductions',
   payDate: 'payDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -213,7 +214,7 @@ exports.Prisma.ModelName = {
   Departments: 'Departments',
   Positions: 'Positions',
   Attendance: 'Attendance',
-  Payroll: 'Payroll',
+  Jobs: 'Jobs',
   User: 'User'
 };
 

@@ -4,16 +4,16 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { getDepartments, DepartmentType } from "./actions";
-
-
-
+import { getDepartments } from "./actions";
+import { DepartmentWithEmployees } from "./type";
 export default function DepartmentsPage(): React.JSX.Element {
-  const [departments, setDepartments] = React.useState<DepartmentType[]>([]);
+  const [departments, setDepartments] = React.useState<DepartmentWithEmployees[]>([]);
 
   useEffect(() => {
     const fetchDepartments = async () => {
       const data = await getDepartments();
+
+
       setDepartments(data);
       console.log(data);
     };
@@ -59,9 +59,13 @@ export default function DepartmentsPage(): React.JSX.Element {
                 <hr className="border-gray-300" />
                 <div>
                   {/* ra danh sach nhan vien */}
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque molestias perferendis veniam vel asperiores blanditiis, inventore dolore fuga sed! Fugiat nemo omnis perspiciatis, vitae veniam inventore nam sint adipisci explicabo.</p>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque molestias perferendis veniam vel asperiores blanditiis, inventore dolore fuga sed! Fugiat nemo omnis perspiciatis, vitae veniam inventore nam sint adipisci explicabo.</p>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque molestias perferendis veniam vel asperiores blanditiis, inventore dolore fuga sed! Fugiat nemo omnis perspiciatis, vitae veniam inventore nam sint adipisci explicabo.</p>
+                  <ul>
+                    {department.Employees?.map((employee) => (
+                      <li key={employee.id}>
+                        {employee.firstName} {employee.lastName}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             ))}

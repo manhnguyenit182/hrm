@@ -1,11 +1,7 @@
 "use server";
 // import { PrismaClient, Employees } from "@/db/prisma";
-import { PrismaClient, Employees, Departments, Positions } from "@/db/prisma";
-
-export type EmployeeWithRelations = Employees & {
-  department: Departments | null;
-  position: Positions | null;
-};
+import { PrismaClient } from "@/db/prisma";
+import { EmployeeWithRelations, Employees } from "./types";
 
 const prisma = new PrismaClient();
 

@@ -1,7 +1,9 @@
+"use client"
 import Link from "next/link";
 import { LayoutDashboard, Users, Building2, CalendarCheck, CircleDollarSign, BriefcaseBusiness, CalendarDays } from "lucide-react";
-import React from "react";
+import React, { use } from "react";
 import Image from "next/image";
+import { useAppContext } from "@/app/(layout)/AppContext";
 // Interface cho menu item
 interface MenuItem {
   href: string;
@@ -52,6 +54,7 @@ const menuItems: MenuItem[] = [
 ];
 
 export default function Sidebar(): React.JSX.Element {
+  const { toggleSelected, } = useAppContext();
   return (
     <div className={`w-64 h-[95%] text-black shadow-xl border m-5 mr-0`}>
       <div className="p-6">
@@ -70,6 +73,7 @@ export default function Sidebar(): React.JSX.Element {
             {menuItems.map((item: MenuItem) => (
               <li key={item.href}>
                 <Link
+                  onClick={() => toggleSelected(item.label)}
                   href={item.href}
                   className="flex px-4 py-3 text-sm font-medium rounded-lg hover:bg-[var(--color-primary-500)] transition-all duration-200 group hover:text-blue-300"
                 >
@@ -77,6 +81,7 @@ export default function Sidebar(): React.JSX.Element {
                     {item.icon}
                   </span>
                   {item.label}
+
                 </Link>
               </li>
             ))}
