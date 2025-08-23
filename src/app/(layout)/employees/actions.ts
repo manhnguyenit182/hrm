@@ -20,10 +20,16 @@ const getEmployees = async (): Promise<EmployeeWithRelations[]> => {
   }
 };
 
-const createEmployee = async (data: Employees): Promise<Employees> => {
+const createEmployee = async (
+  data: Employees
+): Promise<EmployeeWithRelations> => {
   try {
     const employee = await prisma.employees.create({
       data,
+      include: {
+        department: true,
+        position: true,
+      },
     });
     return employee;
   } catch (error) {

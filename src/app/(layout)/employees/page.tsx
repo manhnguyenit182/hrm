@@ -1,19 +1,69 @@
 
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { getEmployees } from "./actions";
+import { createEmployee, getEmployees } from "./actions";
 import { EmployeeWithRelations } from "./types";
 import { employeesTableMapping } from './helpers'
 import { InputIcon } from 'primereact/inputicon';
+import { InputText } from 'primereact/inputtext';
+import { IconField } from 'primereact/iconfield';
+import Link from 'next/link';
+import { Toast } from 'primereact/toast';
 
 
 const EmployeesTable: React.FC = () => {
   const [employees, setEmployees] = useState<EmployeeWithRelations[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const toast = useRef<Toast>(null)
+
+  // Calculate rows per page based on screen size
+  const calculateRowsPerPage = () => {
+    const screenHeight = window.innerHeight;
+    const screenWidth = window.innerWidth;
+
+    // Estimate available height for table (subtract header, padding, pagination)
+    const availableHeight = screenHeight - 300; // Reserve space for header, pagination, etc.
+    const rowHeight = 50; // Approximate row height in px
+
+    // Base calculation on screen height
+    let calculatedRows = Math.floor(availableHeight / rowHeight - 1);
+
+    // Adjust based on screen size breakpoints
+    if (screenWidth >= 1920) { // 24+ inch monitors
+      calculatedRows = Math.min(calculatedRows, 15);
+    } else if (screenWidth >= 1440) { // Laptop/desktop
+      calculatedRows = Math.min(calculatedRows, 10);
+    } else if (screenWidth >= 1024) { // Tablets in landscape
+      calculatedRows = Math.min(calculatedRows, 8);
+    } else { // Mobile/small screens
+      calculatedRows = Math.min(calculatedRows, 5);
+    }
+
+    // Ensure minimum rows
+    return Math.max(calculatedRows, 5);
+  };
+
+  // Update rows per page on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setRowsPerPage(calculateRowsPerPage());
+    };
+
+    // Set initial value
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   // Handle edit action
   const handleEdit = (employee: EmployeeWithRelations) => {
@@ -68,23 +118,36 @@ const EmployeesTable: React.FC = () => {
   console.log(employees);
   return (
     <div className="p-5 h-full shadow-md rounded-lg">
-      <InputIcon />
-      <DataTable
-        value={employeesTableMapping(employees)}
-        loading={loading}
-        paginator
-        rows={10}
-        className="p-datatable-sm"
-        emptyMessage="No employees found"
-      >
-        <Column field="fullName" header="Họ và tên" />
-        <Column field="phone" header="Điện thoại" />
-        <Column field="department.name" header="Phòng ban" />
-        <Column field="position.title" header="Chức vụ" />
-        <Column field="type" header="Loại" />
-        <Column field="status" header="Trạng thái" />
-        <Column header="Hành động" body={actionBodyTemplate} style={{ width: '120px' }} />
-      </DataTable>
+      <header className='flex gap-4'>
+        <IconField iconPosition="left" className="flex-1">
+          <InputIcon className="pi pi-search" />
+          <InputText placeholder="Tìm kiếm phòng ban" className="w-[35%]" />
+        </IconField>
+        <Link href="/employees/addNewEmployee" >
+          <Button label="Thêm nhân viên" icon="pi pi-plus" />
+        </Link>
+        <Button label='Lọc' icon="pi pi-filter" />
+      </header>
+
+      <main className=''>
+        <DataTable
+          value={employeesTableMapping(employees)}
+          loading={loading}
+          paginator
+          rows={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 15, 20]}
+          className="p-datatable-sm"
+          emptyMessage="No employees found"
+        >
+          <Column field="fullName" header="Họ và tên" />
+          <Column field="phone" header="Điện thoại" />
+          <Column field="department.name" header="Phòng ban" />
+          <Column field="position.title" header="Chức vụ" />
+          <Column field="type" header="Loại" />
+          <Column field="status" header="Trạng thái" />
+          <Column header="Hành động" body={actionBodyTemplate} style={{ width: '120px' }} />
+        </DataTable></main>
+
     </div>
   );
 };

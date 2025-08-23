@@ -1,4 +1,4 @@
-import { Employees, Departments, Positions } from "@/db/prisma";
+import { Employees, Departments, Positions, Jobs } from "@/db/prisma";
 
 export type { Employees };
 export type EmployeeWithRelations = Employees & {
@@ -7,3 +7,7 @@ export type EmployeeWithRelations = Employees & {
 };
 
 export type DataTableEmployee = EmployeeWithRelations & { fullName: string };
+
+export type EmployeesFormValues = EmployeeWithRelations & {
+  job: Jobs | null;
+};
