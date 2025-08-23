@@ -173,12 +173,12 @@ exports.Prisma.AttendanceScalarFieldEnum = {
 exports.Prisma.JobsScalarFieldEnum = {
   id: 'id',
   job: 'job',
+  departmentId: 'departmentId',
+  type: 'type',
   salary: 'salary',
-  netPay: 'netPay',
-  deductions: 'deductions',
-  payDate: 'payDate',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  status: 'status'
 };
 
 exports.Prisma.UserScalarFieldEnum = {

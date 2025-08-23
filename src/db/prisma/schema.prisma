@@ -40,8 +40,7 @@ model Employees {
   updatedAt     DateTime     @updatedAt
 
   Attendance Attendance[]
-
-  User User[]
+  User       User?
 }
 
 model Departments {
@@ -52,6 +51,8 @@ model Departments {
   updatedAt DateTime @updatedAt
 
   Employees Employees[]
+
+  Jobs Jobs[]
 }
 
 model Positions {
@@ -78,16 +79,16 @@ model Attendance {
 }
 
 model Jobs {
-  id         String   @id @default(cuid())
-  job        String?
-  salary     Float?
-  netPay     Float?
-  deductions Float?
-  payDate    DateTime @default(now())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  Employees Employees[]
+  id           String       @id @default(cuid())
+  job          String?
+  departmentId String?
+  department   Departments? @relation(fields: [departmentId], references: [id])
+  type         String?
+  salary       Float?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  status       String?
+  Employees    Employees[]
 }
 
 model User {
@@ -97,7 +98,7 @@ model User {
   firstName String?
   lastName  String?
 
-  employeeId String?
+  employeeId String?    @unique
   employee   Employees? @relation(fields: [employeeId], references: [id])
   role       String? // e.g., 'admin', 'user'
   createdAt  DateTime   @default(now())
