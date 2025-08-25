@@ -127,6 +127,8 @@ exports.Prisma.EmployeesScalarFieldEnum = {
   departmentId: 'departmentId',
   positionId: 'positionId',
   jobId: 'jobId',
+  startDate: 'startDate',
+  endDate: 'endDate',
   type: 'type',
   status: 'status',
   phone: 'phone',

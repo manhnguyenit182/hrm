@@ -5,6 +5,6 @@ export const employeesTableMapping = (
 ): DataTableEmployee[] => {
   return data.map((employee) => ({
     ...employee,
-    fullName: employee.firstName + " " + employee.lastName,
+    fullName: employee.lastName + " " + employee.firstName,
   }));
 };

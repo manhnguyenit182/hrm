@@ -24,6 +24,8 @@ model Employees {
   position      Positions?   @relation(fields: [positionId], references: [id])
   jobId         String?
   job           Jobs?        @relation(fields: [jobId], references: [id])
+  startDate     DateTime?
+  endDate       DateTime?
   type          String?
   status        String?
   phone         String?

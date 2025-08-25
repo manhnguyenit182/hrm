@@ -1460,6 +1460,8 @@ export namespace Prisma {
     departmentId: string | null
     positionId: string | null
     jobId: string | null
+    startDate: Date | null
+    endDate: Date | null
     type: string | null
     status: string | null
     phone: string | null
@@ -1483,6 +1485,8 @@ export namespace Prisma {
     departmentId: string | null
     positionId: string | null
     jobId: string | null
+    startDate: Date | null
+    endDate: Date | null
     type: string | null
     status: string | null
     phone: string | null
@@ -1506,6 +1510,8 @@ export namespace Prisma {
     departmentId: number
     positionId: number
     jobId: number
+    startDate: number
+    endDate: number
     type: number
     status: number
     phone: number
@@ -1531,6 +1537,8 @@ export namespace Prisma {
     departmentId?: true
     positionId?: true
     jobId?: true
+    startDate?: true
+    endDate?: true
     type?: true
     status?: true
     phone?: true
@@ -1554,6 +1562,8 @@ export namespace Prisma {
     departmentId?: true
     positionId?: true
     jobId?: true
+    startDate?: true
+    endDate?: true
     type?: true
     status?: true
     phone?: true
@@ -1577,6 +1587,8 @@ export namespace Prisma {
     departmentId?: true
     positionId?: true
     jobId?: true
+    startDate?: true
+    endDate?: true
     type?: true
     status?: true
     phone?: true
@@ -1673,6 +1685,8 @@ export namespace Prisma {
     departmentId: string | null
     positionId: string | null
     jobId: string | null
+    startDate: Date | null
+    endDate: Date | null
     type: string | null
     status: string | null
     phone: string | null
@@ -1713,6 +1727,8 @@ export namespace Prisma {
     departmentId?: boolean
     positionId?: boolean
     jobId?: boolean
+    startDate?: boolean
+    endDate?: boolean
     type?: boolean
     status?: boolean
     phone?: boolean
@@ -1742,6 +1758,8 @@ export namespace Prisma {
     departmentId?: boolean
     positionId?: boolean
     jobId?: boolean
+    startDate?: boolean
+    endDate?: boolean
     type?: boolean
     status?: boolean
     phone?: boolean
@@ -1768,6 +1786,8 @@ export namespace Prisma {
     departmentId?: boolean
     positionId?: boolean
     jobId?: boolean
+    startDate?: boolean
+    endDate?: boolean
     type?: boolean
     status?: boolean
     phone?: boolean
@@ -1794,6 +1814,8 @@ export namespace Prisma {
     departmentId?: boolean
     positionId?: boolean
     jobId?: boolean
+    startDate?: boolean
+    endDate?: boolean
     type?: boolean
     status?: boolean
     phone?: boolean
@@ -1810,7 +1832,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type EmployeesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "departmentId" | "positionId" | "jobId" | "type" | "status" | "phone" | "email" | "address" | "city" | "image" | "state" | "gender" | "birthday" | "maritalStatus" | "nationality" | "createdAt" | "updatedAt", ExtArgs["result"]["employees"]>
+  export type EmployeesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "departmentId" | "positionId" | "jobId" | "startDate" | "endDate" | "type" | "status" | "phone" | "email" | "address" | "city" | "image" | "state" | "gender" | "birthday" | "maritalStatus" | "nationality" | "createdAt" | "updatedAt", ExtArgs["result"]["employees"]>
   export type EmployeesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     department?: boolean | Employees$departmentArgs<ExtArgs>
     position?: boolean | Employees$positionArgs<ExtArgs>
@@ -1846,6 +1868,8 @@ export namespace Prisma {
       departmentId: string | null
       positionId: string | null
       jobId: string | null
+      startDate: Date | null
+      endDate: Date | null
       type: string | null
       status: string | null
       phone: string | null
@@ -2294,6 +2318,8 @@ export namespace Prisma {
     readonly departmentId: FieldRef<"Employees", 'String'>
     readonly positionId: FieldRef<"Employees", 'String'>
     readonly jobId: FieldRef<"Employees", 'String'>
+    readonly startDate: FieldRef<"Employees", 'DateTime'>
+    readonly endDate: FieldRef<"Employees", 'DateTime'>
     readonly type: FieldRef<"Employees", 'String'>
     readonly status: FieldRef<"Employees", 'String'>
     readonly phone: FieldRef<"Employees", 'String'>
@@ -8436,6 +8462,8 @@ export namespace Prisma {
     departmentId: 'departmentId',
     positionId: 'positionId',
     jobId: 'jobId',
+    startDate: 'startDate',
+    endDate: 'endDate',
     type: 'type',
     status: 'status',
     phone: 'phone',
@@ -8618,6 +8646,8 @@ export namespace Prisma {
     departmentId?: StringNullableFilter<"Employees"> | string | null
     positionId?: StringNullableFilter<"Employees"> | string | null
     jobId?: StringNullableFilter<"Employees"> | string | null
+    startDate?: DateTimeNullableFilter<"Employees"> | Date | string | null
+    endDate?: DateTimeNullableFilter<"Employees"> | Date | string | null
     type?: StringNullableFilter<"Employees"> | string | null
     status?: StringNullableFilter<"Employees"> | string | null
     phone?: StringNullableFilter<"Employees"> | string | null
@@ -8646,6 +8676,8 @@ export namespace Prisma {
     departmentId?: SortOrderInput | SortOrder
     positionId?: SortOrderInput | SortOrder
     jobId?: SortOrderInput | SortOrder
+    startDate?: SortOrderInput | SortOrder
+    endDate?: SortOrderInput | SortOrder
     type?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
@@ -8678,6 +8710,8 @@ export namespace Prisma {
     departmentId?: StringNullableFilter<"Employees"> | string | null
     positionId?: StringNullableFilter<"Employees"> | string | null
     jobId?: StringNullableFilter<"Employees"> | string | null
+    startDate?: DateTimeNullableFilter<"Employees"> | Date | string | null
+    endDate?: DateTimeNullableFilter<"Employees"> | Date | string | null
     type?: StringNullableFilter<"Employees"> | string | null
     status?: StringNullableFilter<"Employees"> | string | null
     phone?: StringNullableFilter<"Employees"> | string | null
@@ -8705,6 +8739,8 @@ export namespace Prisma {
     departmentId?: SortOrderInput | SortOrder
     positionId?: SortOrderInput | SortOrder
     jobId?: SortOrderInput | SortOrder
+    startDate?: SortOrderInput | SortOrder
+    endDate?: SortOrderInput | SortOrder
     type?: SortOrderInput | SortOrder
     status?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
@@ -8734,6 +8770,8 @@ export namespace Prisma {
     departmentId?: StringNullableWithAggregatesFilter<"Employees"> | string | null
     positionId?: StringNullableWithAggregatesFilter<"Employees"> | string | null
     jobId?: StringNullableWithAggregatesFilter<"Employees"> | string | null
+    startDate?: DateTimeNullableWithAggregatesFilter<"Employees"> | Date | string | null
+    endDate?: DateTimeNullableWithAggregatesFilter<"Employees"> | Date | string | null
     type?: StringNullableWithAggregatesFilter<"Employees"> | string | null
     status?: StringNullableWithAggregatesFilter<"Employees"> | string | null
     phone?: StringNullableWithAggregatesFilter<"Employees"> | string | null
@@ -9087,6 +9125,8 @@ export namespace Prisma {
     id?: string
     firstName?: string | null
     lastName?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -9115,6 +9155,8 @@ export namespace Prisma {
     departmentId?: string | null
     positionId?: string | null
     jobId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -9137,6 +9179,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9165,6 +9209,8 @@ export namespace Prisma {
     departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     positionId?: NullableStringFieldUpdateOperationsInput | string | null
     jobId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9190,6 +9236,8 @@ export namespace Prisma {
     departmentId?: string | null
     positionId?: string | null
     jobId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -9210,6 +9258,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9233,6 +9283,8 @@ export namespace Prisma {
     departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     positionId?: NullableStringFieldUpdateOperationsInput | string | null
     jobId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9706,6 +9758,8 @@ export namespace Prisma {
     departmentId?: SortOrder
     positionId?: SortOrder
     jobId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
     type?: SortOrder
     status?: SortOrder
     phone?: SortOrder
@@ -9729,6 +9783,8 @@ export namespace Prisma {
     departmentId?: SortOrder
     positionId?: SortOrder
     jobId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
     type?: SortOrder
     status?: SortOrder
     phone?: SortOrder
@@ -9752,6 +9808,8 @@ export namespace Prisma {
     departmentId?: SortOrder
     positionId?: SortOrder
     jobId?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
     type?: SortOrder
     status?: SortOrder
     phone?: SortOrder
@@ -10849,6 +10907,8 @@ export namespace Prisma {
     id?: string
     firstName?: string | null
     lastName?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -10875,6 +10935,8 @@ export namespace Prisma {
     lastName?: string | null
     positionId?: string | null
     jobId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -10961,6 +11023,8 @@ export namespace Prisma {
     departmentId?: StringNullableFilter<"Employees"> | string | null
     positionId?: StringNullableFilter<"Employees"> | string | null
     jobId?: StringNullableFilter<"Employees"> | string | null
+    startDate?: DateTimeNullableFilter<"Employees"> | Date | string | null
+    endDate?: DateTimeNullableFilter<"Employees"> | Date | string | null
     type?: StringNullableFilter<"Employees"> | string | null
     status?: StringNullableFilter<"Employees"> | string | null
     phone?: StringNullableFilter<"Employees"> | string | null
@@ -11011,6 +11075,8 @@ export namespace Prisma {
     id?: string
     firstName?: string | null
     lastName?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11037,6 +11103,8 @@ export namespace Prisma {
     lastName?: string | null
     departmentId?: string | null
     jobId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11085,6 +11153,8 @@ export namespace Prisma {
     id?: string
     firstName?: string | null
     lastName?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11112,6 +11182,8 @@ export namespace Prisma {
     departmentId?: string | null
     positionId?: string | null
     jobId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11149,6 +11221,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11176,6 +11250,8 @@ export namespace Prisma {
     departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     positionId?: NullableStringFieldUpdateOperationsInput | string | null
     jobId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11220,6 +11296,8 @@ export namespace Prisma {
     id?: string
     firstName?: string | null
     lastName?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11246,6 +11324,8 @@ export namespace Prisma {
     lastName?: string | null
     departmentId?: string | null
     positionId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11323,6 +11403,8 @@ export namespace Prisma {
     id?: string
     firstName?: string | null
     lastName?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11350,6 +11432,8 @@ export namespace Prisma {
     departmentId?: string | null
     positionId?: string | null
     jobId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11387,6 +11471,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11414,6 +11500,8 @@ export namespace Prisma {
     departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     positionId?: NullableStringFieldUpdateOperationsInput | string | null
     jobId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11477,6 +11565,8 @@ export namespace Prisma {
     lastName?: string | null
     positionId?: string | null
     jobId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11507,6 +11597,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11533,6 +11625,8 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     positionId?: NullableStringFieldUpdateOperationsInput | string | null
     jobId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11557,6 +11651,8 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     positionId?: NullableStringFieldUpdateOperationsInput | string | null
     jobId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11611,6 +11707,8 @@ export namespace Prisma {
     lastName?: string | null
     departmentId?: string | null
     jobId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11631,6 +11729,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11657,6 +11757,8 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     jobId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11681,6 +11783,8 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     jobId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11703,6 +11807,8 @@ export namespace Prisma {
     lastName?: string | null
     departmentId?: string | null
     positionId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
     type?: string | null
     status?: string | null
     phone?: string | null
@@ -11723,6 +11829,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11749,6 +11857,8 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     positionId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11773,6 +11883,8 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     departmentId?: NullableStringFieldUpdateOperationsInput | string | null
     positionId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     type?: NullableStringFieldUpdateOperationsInput | string | null
     status?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null

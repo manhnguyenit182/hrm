@@ -52,3 +52,27 @@ const main = async () => {
 };
 
 main();
+// giờ đến phòng "Phát triển sản phẩm"
+
+// {
+//       firstName: "Duy Hùng", //  Tên trước
+//       lastName: "Nguyễn", //  Họ sau
+//       phone: "0901234567", // số điện thoại ngẫu nhiên
+//       email: "duy.hung.nguyen@company.com", // theo ten.ho
+//       birthday: new Date("1985-03-15"),
+//       maritalStatus: "married", // married hoặc single
+//       gender: "male", // male hoặc female ứng với firstName
+//       nationality: "Việt Nam", // luôn là Việt Nam
+//       image: "https://randomuser.me/api/portraits/men/6.jpg", // ứng với gender , nếu male thì lấy ảnh nam, female thì lấy ảnh nữ (random từ 1 đến 90)
+//       address: "147 Cách Mạng Tháng 8, P.10",// ngẫu nhiên
+//       city: "Hồ Chí Minh",// ngẫu nhiên
+//       state: "Hồ Chí Minh",// ngẫu nhiên
+//       status: "Active",
+//       departmentId: createdDepartments.find(
+//         (d) => d.name === "Phát triển sản phẩm"
+//       )?.id,
+//       positionId: createdPositions.find((p) => p.title === "Trưởng Phòng")?.id, // 1 "Trưởng Phòng" và 20 "Nhân Viên" và (1 đến 2 "Thực Tập")
+//       jobId: createdJobs.find((j) => j.job === "Trưởng Marketing")?.id, // 1 "Trưởng Phòng"  ứng với "Team lead" còn lại "Node JS" và "React JS"
+//       startDate: new Date("2024-05-20T17:00:00"),
+//       type: "full-time", // full-time, part-time
+//     }

@@ -1,26 +1,27 @@
-
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
-import { createEmployee, getEmployees } from "./actions";
+import React, { useEffect, useRef, useState } from "react";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Button } from "primereact/button";
+import { getEmployees } from "./actions";
 import { EmployeeWithRelations } from "./types";
-import { employeesTableMapping } from './helpers'
-import { InputIcon } from 'primereact/inputicon';
-import { InputText } from 'primereact/inputtext';
-import { IconField } from 'primereact/iconfield';
-import Link from 'next/link';
-import { Toast } from 'primereact/toast';
-
+import { employeesTableMapping } from "./helpers";
+import { InputIcon } from "primereact/inputicon";
+import { InputText } from "primereact/inputtext";
+import { IconField } from "primereact/iconfield";
+import { Toast } from "primereact/toast";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { Avatar } from "primereact/avatar";
 
 const EmployeesTable: React.FC = () => {
   const [employees, setEmployees] = useState<EmployeeWithRelations[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-  const toast = useRef<Toast>(null)
-
+  const toast = useRef<Toast>(null);
+  const router = useRouter();
   // Calculate rows per page based on screen size
   const calculateRowsPerPage = () => {
     const screenHeight = window.innerHeight;
@@ -34,13 +35,17 @@ const EmployeesTable: React.FC = () => {
     let calculatedRows = Math.floor(availableHeight / rowHeight - 1);
 
     // Adjust based on screen size breakpoints
-    if (screenWidth >= 1920) { // 24+ inch monitors
+    if (screenWidth >= 1920) {
+      // 24+ inch monitors
       calculatedRows = Math.min(calculatedRows, 15);
-    } else if (screenWidth >= 1440) { // Laptop/desktop
+    } else if (screenWidth >= 1440) {
+      // Laptop/desktop
       calculatedRows = Math.min(calculatedRows, 10);
-    } else if (screenWidth >= 1024) { // Tablets in landscape
+    } else if (screenWidth >= 1024) {
+      // Tablets in landscape
       calculatedRows = Math.min(calculatedRows, 8);
-    } else { // Mobile/small screens
+    } else {
+      // Mobile/small screens
       calculatedRows = Math.min(calculatedRows, 5);
     }
 
@@ -58,23 +63,22 @@ const EmployeesTable: React.FC = () => {
     handleResize();
 
     // Add event listener
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
-
 
   // Handle edit action
   const handleEdit = (employee: EmployeeWithRelations) => {
-    console.log('Edit employee:', employee);
+    console.log("Edit employee:", employee);
     // TODO: Implement edit functionality
-    // You can navigate to edit page or open a dialog
+    router.push(`/employees/editEmployee/${employee.id}`);
   };
 
   // Handle delete action
   const handleDelete = (employee: EmployeeWithRelations) => {
-    console.log('Delete employee:', employee);
+    console.log("Delete employee:", employee);
     // TODO: Implement delete functionality
     // You might want to show a confirmation dialog first
   };
@@ -108,7 +112,7 @@ const EmployeesTable: React.FC = () => {
 
         setEmployees(data);
       } catch (error) {
-        console.error('Error fetching employees:', error);
+        console.error("Error fetching employees:", error);
       } finally {
         setLoading(false);
       }
@@ -118,18 +122,17 @@ const EmployeesTable: React.FC = () => {
   console.log(employees);
   return (
     <div className="p-5 h-full shadow-md rounded-lg">
-      <header className='flex gap-4'>
+      <header className="flex gap-4">
         <IconField iconPosition="left" className="flex-1">
           <InputIcon className="pi pi-search" />
           <InputText placeholder="Tìm kiếm phòng ban" className="w-[35%]" />
         </IconField>
-        <Link href="/employees/addNewEmployee" >
+        <Link href="/employees/addNewEmployee">
           <Button label="Thêm nhân viên" icon="pi pi-plus" />
         </Link>
-        <Button label='Lọc' icon="pi pi-filter" />
       </header>
 
-      <main className=''>
+      <main className="">
         <DataTable
           value={employeesTableMapping(employees)}
           loading={loading}
@@ -139,15 +142,32 @@ const EmployeesTable: React.FC = () => {
           className="p-datatable-sm"
           emptyMessage="No employees found"
         >
-          <Column field="fullName" header="Họ và tên" />
+          <Column
+            header="Họ và tên"
+            body={(rowData) => (
+              <div className="flex items-center gap-2">
+                {rowData.image && (
+                  <Avatar image={rowData.image} shape="circle" />
+                )}
+                <span>{rowData.fullName}</span>
+              </div>
+            )}
+          />
           <Column field="phone" header="Điện thoại" />
           <Column field="department.name" header="Phòng ban" />
-          <Column field="position.title" header="Chức vụ" />
-          <Column field="type" header="Loại" />
-          <Column field="status" header="Trạng thái" />
-          <Column header="Hành động" body={actionBodyTemplate} style={{ width: '120px' }} />
-        </DataTable></main>
-
+          <Column field="job.job" header="Công việc" />
+          <Column field="job.type" header="Loại" />
+          <Column
+            body={(rowData) => <span>{rowData.status}</span>}
+            header="Trạng thái"
+          />
+          <Column
+            header="Hành động"
+            body={actionBodyTemplate}
+            style={{ width: "120px" }}
+          />
+        </DataTable>
+      </main>
     </div>
   );
 };

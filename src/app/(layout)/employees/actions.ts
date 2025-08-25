@@ -11,6 +11,7 @@ const getEmployees = async (): Promise<EmployeeWithRelations[]> => {
       include: {
         department: true,
         position: true,
+        job: true,
       },
     });
     return employees;
@@ -20,21 +21,35 @@ const getEmployees = async (): Promise<EmployeeWithRelations[]> => {
   }
 };
 
+const getPosition = async () => {
+  try {
+    const positions = await prisma.positions.findMany();
+    return positions;
+  } catch (error) {
+    console.error("Error fetching positions:", error);
+    throw new Error("Failed to fetch positions");
+  }
+};
+
 const createEmployee = async (
   data: Employees
-): Promise<EmployeeWithRelations> => {
+): Promise<{ employee: Employees; success: boolean; error?: string }> => {
   try {
-    const employee = await prisma.employees.create({
+    const newEmployee = await prisma.employees.create({
       data,
-      include: {
-        department: true,
-        position: true,
-      },
     });
-    return employee;
-  } catch (error) {
+    return {
+      employee: newEmployee,
+      success: true,
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     console.error("Error creating employee:", error);
-    throw new Error("Failed to create employee");
+    return {
+      employee: {} as Employees,
+      success: false,
+      error: error.message || "Failed to create employee",
+    };
   }
 };
 
@@ -66,4 +81,30 @@ const deleteEmployee = async (id: string): Promise<Employees> => {
   }
 };
 
-export { getEmployees, createEmployee, updateEmployee, deleteEmployee };
+const getEmployeeById = async (
+  id: string
+): Promise<EmployeeWithRelations | null> => {
+  try {
+    const employee = await prisma.employees.findUnique({
+      where: { id },
+      include: {
+        department: true,
+        position: true,
+        job: true,
+      },
+    });
+    return employee;
+  } catch (error) {
+    console.error("Error fetching employee by ID:", error);
+    throw new Error("Failed to fetch employee");
+  }
+};
+
+export {
+  getEmployees,
+  getEmployeeById,
+  createEmployee,
+  updateEmployee,
+  deleteEmployee,
+  getPosition,
+};
