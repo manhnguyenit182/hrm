@@ -1,23 +1,23 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
-import { getEmployees } from "./actions";
-import { EmployeeWithRelations } from "./types";
+import { deleteEmployee, getEmployees } from "./actions";
+import { DataTableEmployee, EmployeeWithRelations } from "./types";
 import { employeesTableMapping } from "./helpers";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { Toast } from "primereact/toast";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { Avatar } from "primereact/avatar";
 
 const EmployeesTable: React.FC = () => {
-  const [employees, setEmployees] = useState<EmployeeWithRelations[]>([]);
+  const [employees, setEmployees] = useState<DataTableEmployee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const toast = useRef<Toast>(null);
@@ -69,20 +69,76 @@ const EmployeesTable: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Handle edit action
-  const handleEdit = (employee: EmployeeWithRelations) => {
-    console.log("Edit employee:", employee);
-    // TODO: Implement edit functionality
-    router.push(`/employees/editEmployee/${employee.id}`);
+  // Handle view action
+  const handleView = (employee: EmployeeWithRelations) => {
+    console.log("View employee:", employee);
+    router.push(`/employees/viewEmployee/${employee.id}`);
   };
 
-  // Handle delete action
+  // Handle delete action with confirmation
   const handleDelete = (employee: EmployeeWithRelations) => {
-    console.log("Delete employee:", employee);
-    // TODO: Implement delete functionality
-    // You might want to show a confirmation dialog first
-  };
+    confirmDialog({
+      message: `Bạn có chắc chắn muốn xóa nhân viên "${employee.firstName} ${employee.lastName}"?`,
+      header: "Xác nhận xóa",
+      icon: "pi pi-exclamation-triangle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+      accept: async () => {
+        try {
+          const previousEmployees = [...employees];
+          setEmployees((prev) => prev.filter((emp) => emp.id !== employee.id));
+          const result = await deleteEmployee(employee.id);
+          if (result.success) {
+            toast.current?.show({
+              severity: "success",
+              summary: "Xóa thành công",
+              detail: `Nhân viên ${employee.firstName} ${employee.lastName} đã được xóa.`,
+              life: 3000,
+            });
+          } else {
+            setEmployees(previousEmployees);
+            toast.current?.show({
+              severity: "error",
+              summary: "Lỗi",
+              detail: "Không thể xóa nhân viên. Vui lòng thử lại.",
+              life: 5000,
+            });
+          }
+        } catch (error) {
+          try {
+            const refreshedData = await getEmployees();
+            setEmployees(employeesTableMapping(refreshedData));
+          } catch (refreshError) {
+            console.error("Error refreshing data:", refreshError);
+          }
 
+          console.error("Error deleting employee:", error);
+          toast.current?.show({
+            severity: "error",
+            summary: "Lỗi",
+            detail: "Có lỗi xảy ra khi xóa nhân viên.",
+            life: 5000,
+          });
+        }
+      },
+      reject: () => {},
+    });
+  };
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const searchTerm = e.target.value.toLowerCase();
+      if (debounceRef.current) {
+        console.log("haha");
+        clearTimeout(debounceRef.current);
+      }
+      debounceRef.current = setTimeout(async () => {
+        const data = await getEmployees(searchTerm);
+        setEmployees(employeesTableMapping(data));
+      }, 400); // 400ms debounce
+    },
+    []
+  );
   // Action buttons template
   const actionBodyTemplate = (rowData: EmployeeWithRelations) => {
     return (
@@ -90,7 +146,7 @@ const EmployeesTable: React.FC = () => {
         <Button
           icon="pi pi-pencil"
           className="p-button-rounded p-button-success p-button-sm"
-          onClick={() => handleEdit(rowData)}
+          onClick={() => handleView(rowData)}
           tooltip="Chỉnh sửa"
         />
         <Button
@@ -110,7 +166,7 @@ const EmployeesTable: React.FC = () => {
         setLoading(true);
         const data = await getEmployees();
 
-        setEmployees(data);
+        setEmployees(employeesTableMapping(data));
       } catch (error) {
         console.error("Error fetching employees:", error);
       } finally {
@@ -119,13 +175,16 @@ const EmployeesTable: React.FC = () => {
     };
     fetchEmployees();
   }, []);
-  console.log(employees);
   return (
     <div className="p-5 h-full shadow-md rounded-lg">
       <header className="flex gap-4">
         <IconField iconPosition="left" className="flex-1">
           <InputIcon className="pi pi-search" />
-          <InputText placeholder="Tìm kiếm phòng ban" className="w-[35%]" />
+          <InputText
+            placeholder="Tìm kiếm nhân viên..."
+            onChange={handleSearchChange}
+            className="w-[35%]"
+          />
         </IconField>
         <Link href="/employees/addNewEmployee">
           <Button label="Thêm nhân viên" icon="pi pi-plus" />
@@ -134,11 +193,11 @@ const EmployeesTable: React.FC = () => {
 
       <main className="">
         <DataTable
-          value={employeesTableMapping(employees)}
+          value={employees}
           loading={loading}
           paginator
           rows={rowsPerPage}
-          rowsPerPageOptions={[5, 10, 15, 20]}
+          // rowsPerPageOptions={[5, 10, 15, 20]}
           className="p-datatable-sm"
           emptyMessage="No employees found"
         >
@@ -168,6 +227,9 @@ const EmployeesTable: React.FC = () => {
           />
         </DataTable>
       </main>
+
+      <Toast ref={toast} />
+      <ConfirmDialog />
     </div>
   );
 };

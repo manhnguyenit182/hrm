@@ -7,4 +7,6 @@ export type EmployeeWithRelations = Employees & {
   job: Jobs | null;
 };
 
-export type DataTableEmployee = EmployeeWithRelations & { fullName: string };
+export type DataTableEmployee = EmployeeWithRelations & {
+  fullName: string | null;
+};

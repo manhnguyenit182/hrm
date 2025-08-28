@@ -206,7 +206,42 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
                     </div>
                   )}
                   {activeIndex === 1 && (
-                    <div>Thông tin nghề nghiệp Content</div>
+                    <div>
+                      <div className="flex flex-col">
+                        <div className="flex ">
+                          <div className="flex-1/3">
+                            <span className="text-gray-400">Phòng ban</span>
+                            <p>{employee.department?.name}</p>
+                          </div>
+                          <div className="flex-1/3">
+                            <span className="text-gray-400">Chức vụ</span>
+                            <p>{employee.position?.title}</p>
+                          </div>
+                          <div className="flex-1/3">
+                            <span className="text-gray-400">Công việc</span>
+                            <p>{employee.job?.job}</p>
+                          </div>
+                        </div>
+
+                        <hr className="mt-4 mb-4 border-gray-400" />
+
+                        <div className="flex ">
+                          <div className="flex-1/3">
+                            <span className="text-gray-400">Loại hợp đồng</span>
+                            <p>{employee.job?.type}</p>
+                          </div>
+                          <div className="flex-1/3">
+                            <span className="text-gray-400">Ngày bắt đầu</span>
+                            {employee.startDate && (
+                              <p>{employee.startDate.toLocaleDateString()}</p>
+                            )}
+                          </div>
+                          <div className="flex-1/3"></div>
+
+                          <hr className="mt-4 mb-4 border-gray-400" />
+                        </div>
+                      </div>
+                    </div>
                   )}
                   {activeIndex === 2 && <div>Tài liệu Content</div>}
                   {activeIndex === 3 && (

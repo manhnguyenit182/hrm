@@ -5,13 +5,66 @@ import { EmployeeWithRelations, Employees } from "./types";
 
 const prisma = new PrismaClient();
 
-const getEmployees = async (): Promise<EmployeeWithRelations[]> => {
+const getEmployees = async (
+  query?: string
+): Promise<EmployeeWithRelations[]> => {
   try {
+    const whereCondition = query
+      ? {
+          OR: [
+            {
+              firstName: {
+                contains: query,
+                mode: "insensitive" as const,
+              },
+            },
+            {
+              lastName: {
+                contains: query,
+                mode: "insensitive" as const,
+              },
+            },
+            {
+              email: {
+                contains: query,
+                mode: "insensitive" as const,
+              },
+            },
+            {
+              phone: {
+                contains: query,
+                mode: "insensitive" as const,
+              },
+            },
+            {
+              department: {
+                name: {
+                  contains: query,
+                  mode: "insensitive" as const,
+                },
+              },
+            },
+            {
+              position: {
+                title: {
+                  contains: query,
+                  mode: "insensitive" as const,
+                },
+              },
+            },
+          ],
+        }
+      : {};
+
     const employees = await prisma.employees.findMany({
+      where: whereCondition,
       include: {
         department: true,
         position: true,
         job: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
     return employees;
@@ -69,15 +122,17 @@ const updateEmployee = async (
   }
 };
 
-const deleteEmployee = async (id: string): Promise<Employees> => {
+const deleteEmployee = async (
+  id: string
+): Promise<{ success: boolean; employee: Employees | null }> => {
   try {
     const employee = await prisma.employees.delete({
       where: { id },
     });
-    return employee;
+    return { success: true, employee: employee };
   } catch (error) {
     console.error("Error deleting employee:", error);
-    throw new Error("Failed to delete employee");
+    return { success: false, employee: null };
   }
 };
 

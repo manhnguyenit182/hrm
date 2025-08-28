@@ -124,7 +124,13 @@ export default function AddNewEmployeePage(): React.JSX.Element {
       ];
     } else if (activeIndex === 1) {
       // Thêm fields của tab 2 nếu có
-      fieldsToValidate = ["departmentId", "positionId", "jobId", "startDate"];
+      fieldsToValidate = [
+        "departmentId",
+        "positionId",
+        "jobId",
+        "startDate",
+        "type",
+      ];
     } else if (activeIndex === 2) {
       // Thêm fields của tab 3 nếu có
       fieldsToValidate = [];
@@ -449,134 +455,140 @@ export default function AddNewEmployeePage(): React.JSX.Element {
           )}
           {activeIndex === 1 && (
             <div>
-              <div className="flex gap-4 my-4">
-                <div className="field flex flex-col">
-                  <Controller
-                    name="departmentId"
-                    control={control}
-                    rules={{
-                      required: "Department is required",
-                    }}
-                    render={({ field, fieldState }) => (
-                      <>
-                        <Dropdown
-                          {...field}
-                          options={departmentOptions}
-                          onBlur={() => {
-                            console.log(field.value);
-                            return setDepartmentSelected(field.value);
-                          }}
-                          placeholder="Department"
-                          className={fieldState.error ? "p-invalid" : ""}
-                        />
-                        {fieldState.error && (
-                          <small className="p-error">
-                            {fieldState.error.message}
-                          </small>
-                        )}
-                      </>
-                    )}
-                  />
-                </div>
-                <div className="field flex flex-col">
-                  <Controller
-                    name="positionId"
-                    control={control}
-                    rules={{
-                      required: "Position is required",
-                    }}
-                    render={({ field, fieldState }) => (
-                      <>
-                        <Dropdown
-                          {...field}
-                          options={positionOptions}
-                          placeholder="Position"
-                          className={fieldState.error ? "p-invalid" : ""}
-                        />
-                        {fieldState.error && (
-                          <small className="p-error">
-                            {fieldState.error.message}
-                          </small>
-                        )}
-                      </>
-                    )}
-                  />
-                </div>
-                <div className="field flex flex-col">
-                  <Controller
-                    name="jobId"
-                    control={control}
-                    rules={{
-                      required: "Job is required",
-                    }}
-                    render={({ field, fieldState }) => (
-                      <>
-                        <Dropdown
-                          {...field}
-                          options={jobOptions.filter(
-                            (job) => job.departmentId === departmentSelected
+              <div className="flex gap-4 my-4 flex-col">
+                <div className="flex gap-2">
+                  <div className="field flex flex-col flex-1/3 ">
+                    <Controller
+                      name="departmentId"
+                      control={control}
+                      rules={{
+                        required: "Department is required",
+                      }}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <Dropdown
+                            {...field}
+                            options={departmentOptions}
+                            onBlur={() => {
+                              console.log(field.value);
+                              return setDepartmentSelected(field.value);
+                            }}
+                            placeholder="Department"
+                            className={fieldState.error ? "p-invalid" : ""}
+                          />
+                          {fieldState.error && (
+                            <small className="p-error">
+                              {fieldState.error.message}
+                            </small>
                           )}
-                          placeholder="Job"
-                          className={fieldState.error ? "p-invalid" : ""}
-                        />
-                        {fieldState.error && (
-                          <small className="p-error">
-                            {fieldState.error.message}
-                          </small>
-                        )}
-                      </>
-                    )}
-                  />
+                        </>
+                      )}
+                    />
+                  </div>
+                  <div className="field flex flex-col flex-1/3">
+                    <Controller
+                      name="positionId"
+                      control={control}
+                      rules={{
+                        required: "Position is required",
+                      }}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <Dropdown
+                            {...field}
+                            options={positionOptions}
+                            placeholder="Position"
+                            className={fieldState.error ? "p-invalid" : ""}
+                          />
+                          {fieldState.error && (
+                            <small className="p-error">
+                              {fieldState.error.message}
+                            </small>
+                          )}
+                        </>
+                      )}
+                    />
+                  </div>
+                  <div className="field flex flex-col flex-1/3">
+                    <Controller
+                      name="jobId"
+                      control={control}
+                      rules={{
+                        required: "Job is required",
+                      }}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <Dropdown
+                            {...field}
+                            options={jobOptions.filter(
+                              (job) => job.departmentId === departmentSelected
+                            )}
+                            placeholder="Job"
+                            className={fieldState.error ? "p-invalid" : ""}
+                          />
+                          {fieldState.error && (
+                            <small className="p-error">
+                              {fieldState.error.message}
+                            </small>
+                          )}
+                        </>
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="field flex flex-col">
-                  <Controller
-                    name="type"
-                    control={control}
-                    rules={{
-                      required: "Job is required",
-                    }}
-                    render={({ field, fieldState }) => (
-                      <>
-                        <Dropdown
-                          {...field}
-                          options={typeOptions}
-                          placeholder="Type"
-                          className={fieldState.error ? "p-invalid" : ""}
-                        />
-                        {fieldState.error && (
-                          <small className="p-error">
-                            {fieldState.error.message}
-                          </small>
-                        )}
-                      </>
-                    )}
-                  />
-                </div>
-                <div className="field flex flex-col">
-                  <Controller
-                    name="startDate"
-                    control={control}
-                    rules={{
-                      required: "Start Date is required",
-                    }}
-                    render={({ field, fieldState }) => (
-                      <>
-                        <Calendar
-                          {...field}
-                          value={field.value}
-                          placeholder="Start Date"
-                          dateFormat="dd/mm/yy"
-                          className={fieldState.error ? "p-invalid" : ""}
-                          showIcon
-                        />
-                        {fieldState.error && (
-                          <small className="p-error">
-                            {fieldState.error.message}
-                          </small>
-                        )}
-                      </>
-                    )}
-                  />
+                <div className="flex gap-2">
+                  {" "}
+                  <div className="field flex flex-col flex-1/3">
+                    <Controller
+                      name="type"
+                      control={control}
+                      rules={{
+                        required: "type is required",
+                      }}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <Dropdown
+                            {...field}
+                            options={typeOptions}
+                            placeholder="Type"
+                            className={fieldState.error ? "p-invalid" : ""}
+                          />
+                          {fieldState.error && (
+                            <small className="p-error">
+                              {fieldState.error.message}
+                            </small>
+                          )}
+                        </>
+                      )}
+                    />
+                  </div>
+                  <div className="field flex flex-col flex-1/3">
+                    <Controller
+                      name="startDate"
+                      control={control}
+                      rules={{
+                        required: "Start Date is required",
+                      }}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <Calendar
+                            {...field}
+                            value={field.value}
+                            placeholder="Start Date"
+                            dateFormat="dd/mm/yy"
+                            className={fieldState.error ? "p-invalid" : ""}
+                            showIcon
+                          />
+                          {fieldState.error && (
+                            <small className="p-error">
+                              {fieldState.error.message}
+                            </small>
+                          )}
+                        </>
+                      )}
+                    />
+                  </div>
+                  <div className="field flex flex-col flex-1/3"></div>
                 </div>
               </div>
             </div>
