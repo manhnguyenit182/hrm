@@ -1,68 +1,165 @@
 "use client";
-import React, { useEffect } from "react";
-import { IconField } from "primereact/iconfield";
-import { InputIcon } from "primereact/inputicon";
-import { InputText } from "primereact/inputtext";
+import React, { useEffect, useState, useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Button } from "primereact/button";
-import { getDepartments } from "./actions";
+import { createDepartment, getDepartments } from "./actions";
 import { DepartmentWithEmployees } from "./type";
+import { Avatar } from "primereact/avatar";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
+import { Toast } from "primereact/toast";
+import { useRouter } from "next/navigation";
 export default function DepartmentsPage(): React.JSX.Element {
-  const [departments, setDepartments] = React.useState<DepartmentWithEmployees[]>([]);
+  const router = useRouter();
+  const [departments, setDepartments] = React.useState<
+    DepartmentWithEmployees[]
+  >([]);
+  const [visible, setVisible] = useState(false);
+  const toast = useRef<Toast>(null);
+  const { control, handleSubmit, reset } = useForm({
+    defaultValues: { name: "", location: "" },
+  });
 
   useEffect(() => {
     const fetchDepartments = async () => {
       const data = await getDepartments();
 
-
       setDepartments(data);
-      console.log(data);
     };
     fetchDepartments();
   }, []);
 
+  const handleAdd = () => {
+    setVisible(true);
+  };
+  const handleViewAll = (departmentId: string) => {
+    router.push(`departments/viewDepartment/${departmentId}`);
+  };
+  const onSubmit = async (data: { name: string; location: string }) => {
+    try {
+      const result = await createDepartment(data);
+      console.log("Created department:", result);
+      // Show success toast
+      toast.current?.show({
+        severity: "success",
+        summary: "Thành công",
+        detail: "Phòng ban đã được tạo thành công",
+        life: 3000,
+      });
+
+      // Close dialog
+      setVisible(false);
+
+      // Reset form
+      reset();
+
+      // Refresh departments list
+      const updatedDepartments = await getDepartments();
+      setDepartments(updatedDepartments);
+    } catch (error) {
+      console.error("Error creating department:", error);
+
+      // Show error toast
+      toast.current?.show({
+        severity: "error",
+        summary: "Lỗi",
+        detail: "Không thể tạo phòng ban. Vui lòng thử lại.",
+        life: 5000,
+      });
+    }
+  };
   return (
     <div className="flex flex-col h-full border">
       {/* Header  */}
       <div className=" p-5 pb-0">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <IconField iconPosition="left" className="flex-1">
-            <InputIcon className="pi pi-search" />
-            <InputText placeholder="Tìm kiếm phòng ban" className="w-[35%]" />
-          </IconField>
+        <div className="flex justify-end sm:flex-row gap-3">
           <Button
             label="Thêm phòng ban"
             icon="pi pi-plus"
             className="px-4 py-2"
+            onClick={handleAdd}
           />
+          <Dialog
+            header="Thêm phòng ban"
+            visible={visible}
+            style={{ width: "50vw" }}
+            onHide={() => {
+              if (!visible) return;
+              setVisible(false);
+            }}
+          >
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="field flex flex-col mb-3">
+                <label htmlFor="name">Tên phòng ban</label>
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field }) => <InputText id="name" {...field} />}
+                />
+              </div>
+              <div className="field flex flex-col mb-3">
+                <label htmlFor="location">Địa điểm</label>
+                <Controller
+                  name="location"
+                  control={control}
+                  render={({ field }) => <InputText id="location" {...field} />}
+                />
+              </div>
+              <div className="flex justify-end">
+                <Button type="submit" label="Thêm" />
+              </div>
+            </form>
+          </Dialog>
         </div>
       </div>
-
-      {/* phan scroll và data */}
+      ;{/* phan scroll và data */}
       <div className="flex-1 p-5 min-h-0 ">
         {/* noi dung scroll */}
         <div className="h-full overflow-y-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 grid-rows-1 md:grid-rows-2 gap-4 ">
-            {departments.map(department => (
+            {departments.map((department) => (
               <div
                 key={department.id}
-                className=" h-full border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow duration-200"
+                className="h-[50vh] border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow duration-200 overflow-hidden"
               >
                 {/* thẻ tiêu đề */}
                 <header className="flex justify-between items-center ">
                   <div className="flex flex-col">
-                    <h3 className="font-bold text-lg text-gray-800 mb-2">{department.name}</h3>
-                    <p>20 người</p>
+                    <h3 className="font-bold text-lg text-gray-800 mb-2">
+                      {department.name}
+                    </h3>
+                    <p>{department.Employees?.length} thành viên</p>
                     <p className="text-gray-600 text-sm mb-3"></p>
                   </div>
-                  <Button label="Xem tất cả" text />
+                  <Button
+                    label="Xem tất cả"
+                    onClick={() => handleViewAll(department.id)}
+                  />
                 </header>
                 <hr className="border-gray-300" />
                 <div>
                   {/* ra danh sach nhan vien */}
                   <ul>
                     {department.Employees?.map((employee) => (
-                      <li key={employee.id}>
-                        {employee.firstName} {employee.lastName}
+                      <li
+                        key={employee.id}
+                        className="flex items-center gap-2 my-2"
+                      >
+                        {employee.image && (
+                          <Avatar
+                            image={employee.image}
+                            shape="circle"
+                            className="mr-2"
+                          />
+                        )}
+                        <div className="flex flex-col">
+                          <p>
+                            {employee.lastName} {employee.firstName}
+                          </p>
+                          <small className="text-gray-400">
+                            {employee.job?.job}
+                          </small>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -72,6 +169,7 @@ export default function DepartmentsPage(): React.JSX.Element {
           </div>
         </div>
       </div>
+      <Toast ref={toast} />
     </div>
   );
 }

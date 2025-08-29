@@ -28,6 +28,28 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     Array<Option & { departmentId: string }>
   >([]);
   const toast = useRef<Toast>(null);
+  const { control, handleSubmit, trigger } = useForm<EmployeeWithRelations>({
+    defaultValues: {
+      // field cho thong tin ca nhan
+      firstName: "",
+      lastName: "",
+      phone: "",
+      email: "",
+      birthday: null,
+      maritalStatus: null,
+      gender: null,
+      nationality: "",
+      address: "",
+      city: "",
+      state: "",
+      status: "",
+      // field cho thong tin nghe nghiep
+      departmentId: null,
+      positionId: null,
+      jobId: null,
+      startDate: null,
+    },
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,28 +86,6 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     { label: "Khác", value: "other" },
   ];
 
-  const { control, handleSubmit, trigger } = useForm<EmployeeWithRelations>({
-    defaultValues: {
-      // field cho thong tin ca nhan
-      firstName: "",
-      lastName: "",
-      phone: "",
-      email: "",
-      birthday: null,
-      maritalStatus: null,
-      gender: null,
-      nationality: "",
-      address: "",
-      city: "",
-      state: "",
-      status: "",
-      // field cho thong tin nghe nghiep
-      departmentId: null,
-      positionId: null,
-      jobId: null,
-      startDate: null,
-    },
-  });
   const onSubmit = async (data: EmployeeWithRelations) => {
     data.status = "Active";
     const result = await createEmployee(data);
@@ -132,7 +132,9 @@ export default function AddNewEmployeePage(): React.JSX.Element {
         "type",
       ];
     } else if (activeIndex === 2) {
-      // Thêm fields của tab 3 nếu có
+      // Không có fields để validate cho tab 3
+      fieldsToValidate = [];
+    } else if (activeIndex === 3) {
       fieldsToValidate = [];
     }
 

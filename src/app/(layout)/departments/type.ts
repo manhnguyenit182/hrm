@@ -1,4 +1,4 @@
-import { Departments } from "@/db/prisma";
+import { Departments, Jobs } from "@/db/prisma";
 
 export type { Departments };
 export type CreateDepartment = Omit<
@@ -14,5 +14,9 @@ export type DepartmentWithEmployees = Departments & {
     firstName: string | null;
     lastName: string | null;
     createdAt: Date;
+    phone: string | null;
+    status: string | null;
+    image: string | null;
+    job: Jobs | null;
   }>;
 };
