@@ -1,7 +1,7 @@
 "use server";
 import { getDepartments } from "../../departments/actions";
 import { getJobs } from "../../jobs/actions";
-import { getEmployees, getPosition } from "../actions";
+import { getPosition } from "../actions";
 import { Option } from "./types";
 
 export const getDepartmentOptions = async (): Promise<Option[]> => {

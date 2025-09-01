@@ -14,7 +14,7 @@ import {
   getDepartmentOptions,
   getPositionOptions,
   getJobOptions,
-} from "./healper";
+} from "./helper";
 import { Option } from "./types";
 import { Toast } from "primereact/toast";
 export default function AddNewEmployeePage(): React.JSX.Element {

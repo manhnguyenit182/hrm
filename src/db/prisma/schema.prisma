@@ -24,6 +24,8 @@ model Employees {
   position      Positions?   @relation(fields: [positionId], references: [id])
   jobId         String?
   job           Jobs?        @relation(fields: [jobId], references: [id])
+  holidaysId    String?
+  holidays      Holidays?    @relation(fields: [holidaysId], references: [id])
   startDate     DateTime?
   endDate       DateTime?
   type          String?
@@ -94,12 +96,11 @@ model Jobs {
 }
 
 model User {
-  id        String  @id @default(cuid())
-  email     String  @unique
-  password  String
-  firstName String?
-  lastName  String?
-
+  id         String     @id @default(cuid())
+  email      String     @unique
+  password   String
+  firstName  String?
+  lastName   String?
   employeeId String?    @unique
   employee   Employees? @relation(fields: [employeeId], references: [id])
   role       String? // e.g., 'admin', 'user'
@@ -107,4 +108,13 @@ model User {
   updatedAt  DateTime   @updatedAt
 
   @@map("users") // Map to the "users" table in the database
+}
+
+model Holidays {
+  id        String      @id @default(cuid())
+  title     String?
+  date      DateTime?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Employees Employees[]
 }

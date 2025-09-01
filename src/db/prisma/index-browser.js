@@ -127,6 +127,7 @@ exports.Prisma.EmployeesScalarFieldEnum = {
   departmentId: 'departmentId',
   positionId: 'positionId',
   jobId: 'jobId',
+  holidaysId: 'holidaysId',
   startDate: 'startDate',
   endDate: 'endDate',
   type: 'type',
@@ -195,6 +196,14 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.HolidaysScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  date: 'date',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -217,7 +226,8 @@ exports.Prisma.ModelName = {
   Positions: 'Positions',
   Attendance: 'Attendance',
   Jobs: 'Jobs',
-  User: 'User'
+  User: 'User',
+  Holidays: 'Holidays'
 };
 
 /**

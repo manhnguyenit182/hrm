@@ -24,6 +24,8 @@ model Employees {
   position      Positions?   @relation(fields: [positionId], references: [id])
   jobId           String?
   job          Jobs?       @relation(fields: [jobId], references: [id])
+  holidaysId     String?
+  holidays      Holidays?  @relation(fields: [holidaysId], references: [id])
   startDate     DateTime?
   endDate       DateTime?
   type          String?
@@ -43,6 +45,7 @@ model Employees {
 
   Attendance Attendance[]
   User User?
+
 }
 
 model Departments {
@@ -106,4 +109,12 @@ model User {
   updatedAt  DateTime   @updatedAt
 
   @@map("users") // Map to the "users" table in the database
+}
+model Holidays {
+  id          String   @id @default(cuid())
+  title       String?
+  date        DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Employees  Employees[]
 }
