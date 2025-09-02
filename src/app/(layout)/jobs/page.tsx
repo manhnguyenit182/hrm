@@ -1,61 +1,61 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Button } from "primereact/button"
-import { IconField } from "primereact/iconfield"
-import { InputIcon } from "primereact/inputicon"
-import { InputText } from "primereact/inputtext"
-import { Toast } from "primereact/toast"
-import { useRef } from "react"
-import JobFormModal from "./component/JobFormModal"
-import { createJob } from "./actions"
-import { JobFormData } from "./types"
-import JobCard from "./component/JobCard"
-import { getJobData } from "./component/helper"
-import { JobData } from "./component/type"
-
-
+import { useEffect, useState } from "react";
+import { Button } from "primereact/button";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { InputText } from "primereact/inputtext";
+import { Toast } from "primereact/toast";
+import { useRef } from "react";
+import JobFormModal from "./component/JobFormModal";
+import { createJob } from "./actions";
+import { JobFormData } from "./types";
+import JobCard from "./component/JobCard";
+import { getJobData } from "./component/helper";
+import { JobData } from "./component/type";
 
 export default function JobsPage(): React.JSX.Element {
-  const [showForm, setShowForm] = useState(false)
-  const [jobData, setJobData] = useState<JobData[]>([])
-  const toast = useRef<Toast>(null)
+  const [showForm, setShowForm] = useState(false);
+  const [jobData, setJobData] = useState<JobData[]>([]);
+  const toast = useRef<Toast>(null);
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getJobData()
-      setJobData(data)
-    }
-    fetchData()
-  }, [])
+      const data = await getJobData();
+      setJobData(data);
+    };
+    fetchData();
+  }, []);
+  console.log("jobdata", jobData);
+
   const handleCreateJob = async (data: JobFormData) => {
     try {
-      const result = await createJob(data)
+      const result = await createJob(data);
 
       if (result.success) {
         toast.current?.show({
-          severity: 'success',
-          summary: 'Thành công',
-          detail: 'Tạo công việc thành công!',
-          life: 3000
-        })
+          severity: "success",
+          summary: "Thành công",
+          detail: "Tạo công việc thành công!",
+          life: 3000,
+        });
       } else {
         toast.current?.show({
-          severity: 'error',
-          summary: 'Lỗi',
-          detail: result.error || 'Có lỗi xảy ra khi tạo công việc',
-          life: 3000
-        })
+          severity: "error",
+          summary: "Lỗi",
+          detail: result.error || "Có lỗi xảy ra khi tạo công việc",
+          life: 3000,
+        });
       }
     } catch (error) {
-      console.error("Error:", error)
+      console.error("Error:", error);
       toast.current?.show({
-        severity: 'error',
-        summary: 'Lỗi',
-        detail: 'Có lỗi xảy ra khi tạo công việc',
-        life: 3000
-      })
+        severity: "error",
+        summary: "Lỗi",
+        detail: "Có lỗi xảy ra khi tạo công việc",
+        life: 3000,
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -79,9 +79,17 @@ export default function JobsPage(): React.JSX.Element {
         {/* body */}
         <div className="flex-1  ">
           <div className=" flex justify-around  items-center">
-            <JobCard jobData={jobData.filter(job => job.status === "active")}>Đang hoạt động</JobCard>
-            <JobCard jobData={jobData.filter(job => job.status === "ended")}>Đã kết thúc</JobCard>
-            <JobCard jobData={jobData.filter(job => job.status === "completed")}>Đã hoàn thành</JobCard>
+            <JobCard jobData={jobData.filter((job) => job.status === "Active")}>
+              Đang hoạt động
+            </JobCard>
+            <JobCard jobData={jobData.filter((job) => job.status === "Ended")}>
+              Đã kết thúc
+            </JobCard>
+            <JobCard
+              jobData={jobData.filter((job) => job.status === "Completed")}
+            >
+              Đã hoàn thành
+            </JobCard>
           </div>
         </div>
       </div>
@@ -92,5 +100,5 @@ export default function JobsPage(): React.JSX.Element {
         onSubmit={handleCreateJob}
       />
     </>
-  )
+  );
 }

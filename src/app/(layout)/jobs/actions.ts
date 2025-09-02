@@ -11,6 +11,7 @@ export async function createJob(data: JobFormData) {
         job: data.job,
         salary: data.salary,
         type: data.type,
+        status: data.status,
         departmentId: data.departmentId,
       },
     });

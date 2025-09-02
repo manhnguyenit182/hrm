@@ -11,5 +11,5 @@ export type JobData = {
   type: string;
   typeWork: "Full-time";
   salary: number;
-  status: "active" | "ended" | "completed";
+  status: "Active" | "Ended" | "Completed";
 };

@@ -1,65 +1,68 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useForm, Controller } from "react-hook-form"
-import { Button } from "primereact/button"
-import { Dialog } from "primereact/dialog"
-import { InputNumber } from "primereact/inputnumber"
-import { RadioButton } from 'primereact/radiobutton';
-import { JobFormData } from "../types"
-import { Dropdown } from "primereact/dropdown"
+import { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
+import { InputNumber } from "primereact/inputnumber";
+import { RadioButton } from "primereact/radiobutton";
+import { JobFormData } from "../types";
+import { Dropdown } from "primereact/dropdown";
 
-import { getDepartmentOptions } from './helper';
+import { getDepartmentOptions } from "./helper";
 import { OptionsType } from "./type";
-import { InputText } from "primereact/inputtext"
+import { InputText } from "primereact/inputtext";
 
 interface JobFormModalProps {
-  visible: boolean
-  onHide: () => void
-  onSubmit: (data: JobFormData) => void
+  visible: boolean;
+  onHide: () => void;
+  onSubmit: (data: JobFormData) => void;
 }
 
-export default function JobFormModal({ visible, onHide, onSubmit }: JobFormModalProps) {
-  const [loading, setLoading] = useState(false)
-  const [departmentsOptions, setDepartmentOptions] = useState<OptionsType[]>([])
-  const {
-    control,
-    handleSubmit,
-    reset,
-  } = useForm<JobFormData>({
+export default function JobFormModal({
+  visible,
+  onHide,
+  onSubmit,
+}: JobFormModalProps) {
+  const [loading, setLoading] = useState(false);
+  const [departmentsOptions, setDepartmentOptions] = useState<OptionsType[]>(
+    []
+  );
+  const { control, handleSubmit, reset } = useForm<JobFormData>({
     defaultValues: {
       job: "",
-      salary: undefined, // Thay đổi từ 0 thành undefined
-      type: ""
-    }
-  })
+      salary: undefined,
+      type: "",
+      status: "active",
+    },
+  });
 
   useEffect(() => {
     const fetchDepartments = async (): Promise<void> => {
-      const departments = await getDepartmentOptions()
-      setDepartmentOptions(departments)
-    }
+      const departments = await getDepartmentOptions();
+      setDepartmentOptions(departments);
+    };
 
-    fetchDepartments()
-  }, [])
+    fetchDepartments();
+  }, []);
 
   const onFormSubmit = async (data: JobFormData) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      await onSubmit(data)
-      reset()
-      onHide()
+      await onSubmit(data);
+      reset();
+      onHide();
     } catch (error) {
-      console.error("Error creating job:", error)
+      console.error("Error creating job:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleCancel = () => {
-    reset()
-    onHide()
-  }
+    reset();
+    onHide();
+  };
 
   const footer = (
     <div className="flex justify-center gap-4">
@@ -77,7 +80,7 @@ export default function JobFormModal({ visible, onHide, onSubmit }: JobFormModal
         autoFocus
       />
     </div>
-  )
+  );
 
   return (
     <Dialog
@@ -90,11 +93,13 @@ export default function JobFormModal({ visible, onHide, onSubmit }: JobFormModal
       draggable={false}
       resizable={false}
       className="p-fluid w-1/3"
-      maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-      contentStyle={{ padding: '2rem' }}
+      maskStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+      contentStyle={{ padding: "2rem" }}
     >
-      <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col  gap-4">
-
+      <form
+        onSubmit={handleSubmit(onFormSubmit)}
+        className="flex flex-col  gap-4"
+      >
         <div className="field">
           <label className="block text-sm font-medium mb-2">
             Chọn Phòng ban <span className="text-red-500">*</span>
@@ -176,10 +181,6 @@ export default function JobFormModal({ visible, onHide, onSubmit }: JobFormModal
           />
         </div>
 
-
-
-
-
         <div className="field">
           <label className="block text-sm font-medium mb-2">
             Kiểu công việc <span className="text-red-500">*</span>
@@ -191,37 +192,40 @@ export default function JobFormModal({ visible, onHide, onSubmit }: JobFormModal
             rules={{ required: "Kiểu công việc là bắt buộc" }}
             render={({ field, fieldState }) => (
               <>
-                <div className="inline-block"><RadioButton
-                  inputId="office"
-                  name="type"
-                  value="văn Phòng"
-                  onChange={(e) => field.onChange(e.value)}
-                  checked={field.value === "văn Phòng"}
-                />
+                <div className="inline-block">
+                  <RadioButton
+                    inputId="office"
+                    name="type"
+                    value="văn Phòng"
+                    onChange={(e) => field.onChange(e.value)}
+                    checked={field.value === "văn Phòng"}
+                  />
                   <label htmlFor="văn Phòng" className="ml-2">
                     Văn phòng
-                  </label></div>
-                <div className="inline-block ml-4"><RadioButton
-
-                  inputId="remote"
-                  name="type"
-                  value="Làm việc từ xa"
-                  onChange={(e) => field.onChange(e.value)}
-                  checked={field.value === "Làm việc từ xa"}
-                />
+                  </label>
+                </div>
+                <div className="inline-block ml-4">
+                  <RadioButton
+                    inputId="remote"
+                    name="type"
+                    value="Làm việc từ xa"
+                    onChange={(e) => field.onChange(e.value)}
+                    checked={field.value === "Làm việc từ xa"}
+                  />
                   <label htmlFor="remote" className="ml-2">
                     Làm việc từ xa
                   </label>
                   {fieldState.error && (
-                    <small className="p-error">{fieldState.error.message}</small>
-                  )}</div>
-
+                    <small className="p-error">
+                      {fieldState.error.message}
+                    </small>
+                  )}
+                </div>
               </>
             )}
           />
-
         </div>
       </form>
     </Dialog>
-  )
+  );
 }

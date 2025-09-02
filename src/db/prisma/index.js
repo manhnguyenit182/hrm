@@ -213,7 +213,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "D:\\Workspace\\hrm\\src\\db\\prisma",
+      "value": "d:\\Workspace\\hrm\\src\\db\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -227,7 +227,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "D:\\Workspace\\hrm\\prisma\\schema.prisma",
+    "sourceFilePath": "d:\\Workspace\\hrm\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

@@ -7,9 +7,6 @@
   },
   "scripts": {
     "seed": "prisma db seed",
-    "seed:user": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" ./src/scripts/seed.user.ts",
-    "seed:jobs": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" ./src/scripts/seed.jobs.ts",
-    "seed:employee": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" ./src/scripts/seed.employee.ts",
     "seed:run": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" prisma/seed.ts",
     "dev": "next dev --turbopack",
     "build": "next build",
