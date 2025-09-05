@@ -15,11 +15,12 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Avatar } from "primereact/avatar";
+import { Eye } from "lucide-react";
 
 const EmployeesTable: React.FC = () => {
   const [employees, setEmployees] = useState<DataTableEmployee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(4);
   const toast = useRef<Toast>(null);
   const router = useRouter();
   // Calculate rows per page based on screen size
@@ -40,10 +41,10 @@ const EmployeesTable: React.FC = () => {
       calculatedRows = Math.min(calculatedRows, 15);
     } else if (screenWidth >= 1440) {
       // Laptop/desktop
-      calculatedRows = Math.min(calculatedRows, 10);
+      calculatedRows = Math.min(calculatedRows, 5);
     } else if (screenWidth >= 1024) {
       // Tablets in landscape
-      calculatedRows = Math.min(calculatedRows, 8);
+      calculatedRows = Math.min(calculatedRows, 4);
     } else {
       // Mobile/small screens
       calculatedRows = Math.min(calculatedRows, 5);
@@ -144,10 +145,10 @@ const EmployeesTable: React.FC = () => {
     return (
       <div className="flex gap-2">
         <Button
-          icon="pi pi-pencil"
-          className="p-button-rounded p-button-success p-button-sm"
+          icon={<Eye />}
+          className="p-button-rounded p-button-success "
           onClick={() => handleView(rowData)}
-          tooltip="Chỉnh sửa"
+          tooltip="Xem"
         />
         <Button
           icon="pi pi-trash"
@@ -177,7 +178,7 @@ const EmployeesTable: React.FC = () => {
   }, []);
   return (
     <div className="p-5 h-full shadow-md rounded-lg">
-      <header className="flex gap-4">
+      <header className="flex gap-4 mb-4">
         <IconField iconPosition="left" className="flex-1">
           <InputIcon className="pi pi-search" />
           <InputText
@@ -216,10 +217,6 @@ const EmployeesTable: React.FC = () => {
           <Column field="department.name" header="Phòng ban" />
           <Column field="job.job" header="Công việc" />
           <Column field="job.type" header="Loại" />
-          <Column
-            body={(rowData) => <span>{rowData.status}</span>}
-            header="Trạng thái"
-          />
           <Column
             header="Hành động"
             body={actionBodyTemplate}

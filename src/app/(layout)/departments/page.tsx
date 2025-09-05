@@ -9,6 +9,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useRouter } from "next/navigation";
+import { ChevronRight } from "lucide-react";
 export default function DepartmentsPage(): React.JSX.Element {
   const router = useRouter();
   const [departments, setDepartments] = React.useState<
@@ -112,7 +113,7 @@ export default function DepartmentsPage(): React.JSX.Element {
           </Dialog>
         </div>
       </div>
-      ;{/* phan scroll và data */}
+      {/* phan scroll và data */}
       <div className="flex-1 p-5 min-h-0 ">
         {/* noi dung scroll */}
         <div className="h-full overflow-y-auto">
@@ -133,6 +134,8 @@ export default function DepartmentsPage(): React.JSX.Element {
                   </div>
                   <Button
                     label="Xem tất cả"
+                    text
+                    severity="help"
                     onClick={() => handleViewAll(department.id)}
                   />
                 </header>
@@ -145,20 +148,27 @@ export default function DepartmentsPage(): React.JSX.Element {
                         key={employee.id}
                         className="flex items-center gap-2 my-2"
                       >
-                        {employee.image && (
-                          <Avatar
-                            image={employee.image}
-                            shape="circle"
-                            className="mr-2"
-                          />
-                        )}
-                        <div className="flex flex-col">
-                          <p>
-                            {employee.lastName} {employee.firstName}
-                          </p>
-                          <small className="text-gray-400">
-                            {employee.job?.job}
-                          </small>
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center">
+                            {employee.image && (
+                              <Avatar
+                                image={employee.image}
+                                shape="circle"
+                                className="mr-2"
+                              />
+                            )}
+                            <div className="flex flex-col">
+                              <p>
+                                {employee.lastName} {employee.firstName}
+                              </p>
+                              <small className="text-gray-400">
+                                {employee.job?.job}
+                              </small>
+                            </div>
+                          </div>
+                          <div className="flex items-center">
+                            <ChevronRight />
+                          </div>
                         </div>
                       </li>
                     ))}

@@ -124,7 +124,7 @@ async function main() {
       job: "CEO",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 100000000,
       status: "Active",
     },
@@ -132,7 +132,7 @@ async function main() {
       job: "COO",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 80000000,
       status: "Active",
     },
@@ -140,7 +140,7 @@ async function main() {
       job: "CTO",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 75000000,
       status: "Active",
     },
@@ -148,7 +148,7 @@ async function main() {
       job: "CPO",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 75000000,
       status: "Active",
     },
@@ -156,7 +156,7 @@ async function main() {
       job: "CFO",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 75000000,
       status: "Active",
     },
@@ -166,7 +166,7 @@ async function main() {
       job: "Trưởng phòng kỹ thuật",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 40000000,
       status: "Active",
     },
@@ -174,7 +174,7 @@ async function main() {
       job: "Lập trình viên Senior",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
-      type: "Full-time",
+      type: "Làm việc từ xa",
       salary: 35000000,
       status: "Active",
     },
@@ -182,7 +182,7 @@ async function main() {
       job: "Lập trình viên",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 20000000,
       status: "Active",
     },
@@ -190,7 +190,7 @@ async function main() {
       job: "Tester",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 18000000,
       status: "Active",
     },
@@ -198,7 +198,7 @@ async function main() {
       job: "DevOps Engineer",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
-      type: "Full-time",
+      type: "Làm việc từ xa",
       salary: 22000000,
       status: "Active",
     },
@@ -209,7 +209,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Sản Phẩm & Thiết Kế"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 35000000,
       status: "Active",
     },
@@ -218,7 +218,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Sản Phẩm & Thiết Kế"
       )?.id,
-      type: "Full-time",
+      type: "Làm việc từ xa",
       salary: 22000000,
       status: "Active",
     },
@@ -227,7 +227,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Sản Phẩm & Thiết Kế"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 18000000,
       status: "Active",
     },
@@ -238,7 +238,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 32000000,
       status: "Active",
     },
@@ -247,7 +247,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 25000000,
       status: "Active",
     },
@@ -256,7 +256,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 18000000,
       status: "Active",
     },
@@ -265,7 +265,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
-      type: "Full-time",
+      type: "Làm việc từ xa",
       salary: 20000000,
       status: "Active",
     },
@@ -274,7 +274,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 16000000,
       status: "Active",
     },
@@ -285,7 +285,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hỗ Trợ Khách Hàng"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 28000000,
       status: "Active",
     },
@@ -294,7 +294,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hỗ Trợ Khách Hàng"
       )?.id,
-      type: "Full-time",
+      type: "Làm việc từ xa",
       salary: 14000000,
       status: "Active",
     },
@@ -304,7 +304,7 @@ async function main() {
       job: "Trưởng phòng nhân sự",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Nhân Sự")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 32000000,
       status: "Active",
     },
@@ -312,7 +312,7 @@ async function main() {
       job: "Nhân Viên HR",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Nhân Sự")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 25000000,
       status: "Active",
     },
@@ -322,7 +322,7 @@ async function main() {
       job: "Trưởng phòng kế toán",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 30000000,
       status: "Active",
     },
@@ -330,7 +330,7 @@ async function main() {
       job: "Kế toán trưởng",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 25000000,
       status: "Active",
     },
@@ -338,7 +338,7 @@ async function main() {
       job: "Kế toán tổng hợp",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 18000000,
       status: "Active",
     },
@@ -346,7 +346,7 @@ async function main() {
       job: "Kế toán công nợ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 16000000,
       status: "Active",
     },
@@ -354,7 +354,7 @@ async function main() {
       job: "Kế toán thuế",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
-      type: "Full-time",
+      type: "Làm việc từ xa",
       salary: 17000000,
       status: "Active",
     },
@@ -365,7 +365,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 25000000,
       status: "Active",
     },
@@ -374,7 +374,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 22000000,
       status: "Active",
     },
@@ -383,7 +383,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 13000000,
       status: "Active",
     },
@@ -392,7 +392,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 12000000,
       status: "Active",
     },
@@ -401,7 +401,7 @@ async function main() {
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
-      type: "Full-time",
+      type: "Văn phòng",
       salary: 10000000,
       status: "Active",
     },
@@ -480,7 +480,7 @@ async function main() {
       address: "123 Đường Nguyễn Huệ, Quận 1",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "CEO")?.id,
@@ -501,7 +501,7 @@ async function main() {
       address: "456 Đường Lê Lợi, Quận 1",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "COO")?.id,
@@ -522,7 +522,7 @@ async function main() {
       address: "789 Đường Pasteur, Quận 3",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "CTO")?.id,
@@ -543,7 +543,7 @@ async function main() {
       address: "321 Đường Võ Văn Tần, Quận 3",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "CPO")?.id,
@@ -564,7 +564,7 @@ async function main() {
       address: "654 Đường Hai Bà Trưng, Quận 1",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find((d) => d.name === "Ban Giám Đốc")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "CFO")?.id,
@@ -587,7 +587,7 @@ async function main() {
       address: "147 Đường Cách Mạng Tháng 8, Quận 10",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Trưởng Phòng")?.id,
@@ -608,7 +608,7 @@ async function main() {
       address: "258 Đường Trần Hưng Đạo, Quận 5",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -629,7 +629,7 @@ async function main() {
       address: "369 Đường Lý Thái Tổ, Quận 10",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -650,7 +650,7 @@ async function main() {
       address: "741 Đường Nam Kỳ Khởi Nghĩa, Quận 3",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -671,7 +671,7 @@ async function main() {
       address: "852 Đường Điện Biên Phủ, Quận Bình Thạnh",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -692,7 +692,7 @@ async function main() {
       address: "963 Đường Xô Viết Nghệ Tĩnh, Quận Bình Thạnh",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kỹ Thuật")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -715,7 +715,7 @@ async function main() {
       address: "174 Đường Nguyễn Thị Minh Khai, Quận 1",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Sản Phẩm & Thiết Kế"
       )?.id,
@@ -737,7 +737,7 @@ async function main() {
       address: "285 Đường Cộng Hòa, Quận Tân Bình",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Sản Phẩm & Thiết Kế"
       )?.id,
@@ -759,7 +759,7 @@ async function main() {
       address: "396 Đường Hoàng Văn Thụ, Quận Phú Nhuận",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Sản Phẩm & Thiết Kế"
       )?.id,
@@ -783,7 +783,7 @@ async function main() {
       address: "507 Đường Sư Vạn Hạnh, Quận 10",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
@@ -806,7 +806,7 @@ async function main() {
       address: "729 Đường Tô Hiến Thành, Quận 10",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
@@ -828,7 +828,7 @@ async function main() {
       address: "830 Đường Âu Cơ, Quận Tân Phú",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
@@ -850,7 +850,7 @@ async function main() {
       address: "941 Đường Hùng Vương, Quận 5",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
@@ -872,7 +872,7 @@ async function main() {
       address: "152 Đường Nguyễn Oanh, Quận Gò Vấp",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Kinh Doanh & Marketing"
       )?.id,
@@ -896,7 +896,7 @@ async function main() {
       address: "25 Đường Lê Văn Sỹ, Quận 3",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hỗ Trợ Khách Hàng"
       )?.id,
@@ -919,7 +919,7 @@ async function main() {
       address: "263 Đường Phan Văn Trị, Quận Gò Vấp",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hỗ Trợ Khách Hàng"
       )?.id,
@@ -942,7 +942,7 @@ async function main() {
       address: "374 Đường Quang Trung, Quận Gò Vấp",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hỗ Trợ Khách Hàng"
       )?.id,
@@ -967,7 +967,7 @@ async function main() {
       address: "485 Đường Lý Thường Kiệt, Quận 10",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Nhân Sự")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Trưởng Phòng")?.id,
@@ -988,7 +988,7 @@ async function main() {
       address: "596 Đường Nguyễn Kiệm, Quận Phú Nhuận",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Nhân Sự")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -1009,7 +1009,7 @@ async function main() {
       address: "596 Đường Nguyễn Kiệm, Quận Phú Nhuận",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Nhân Sự")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -1030,7 +1030,7 @@ async function main() {
       address: "596 Đường Nguyễn Kiệm, Quận Phú Nhuận",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Nhân Sự")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -1053,7 +1053,7 @@ async function main() {
       address: "607 Đường Khánh Hội, Quận 4",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Trưởng Phòng")?.id,
@@ -1074,7 +1074,7 @@ async function main() {
       address: "718 Đường Nguyễn Văn Cừ, Quận 5",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -1095,7 +1095,7 @@ async function main() {
       address: "829 Đường Phạm Văn Đồng, Quận Thủ Đức",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -1116,7 +1116,7 @@ async function main() {
       address: "930 Đường Lê Đức Thơ, Quận Gò Vấp",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -1137,7 +1137,7 @@ async function main() {
       address: "141 Đường Võ Thị Sáu, Quận 3",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find((d) => d.name === "Phòng Kế Toán")
         ?.id,
       positionId: createdPositions.find((p) => p.title === "Nhân Viên")?.id,
@@ -1160,7 +1160,7 @@ async function main() {
       address: "252 Đường Bạch Đằng, Quận Bình Thạnh",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
@@ -1182,7 +1182,7 @@ async function main() {
       address: "363 Đường Hoàng Hoa Thám, Quận Tân Bình",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
@@ -1204,7 +1204,7 @@ async function main() {
       address: "474 Đường Tân Sơn Nhì, Quận Tân Phú",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
@@ -1226,7 +1226,7 @@ async function main() {
       address: "585 Đường Lũy Bán Bích, Quận Tân Phú",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đã hoàn thành",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
@@ -1248,7 +1248,7 @@ async function main() {
       address: "696 Đường Hậu Giang, Quận 6",
       city: "Hồ Chí Minh",
       state: "Hồ Chí Minh",
-      status: "Active",
+      status: "Đang chờ",
       departmentId: createdDepartments.find(
         (d) => d.name === "Phòng Hành Chính"
       )?.id,
@@ -1275,105 +1275,6 @@ async function main() {
 
   // Seed User accounts for employees
   const createdEmployees = await prisma.employees.findMany();
-
-  const usersData = [
-    {
-      email: "admin@company.com",
-      password: "admin123",
-      firstName: "Admin",
-      lastName: "System",
-      role: "admin",
-    },
-    {
-      email: "ceo@company.com",
-      password: "password123",
-      firstName: "Nguyễn",
-      lastName: "Văn An",
-      role: "admin",
-      employeeId: createdEmployees.find((e) => e.email === "ceo@company.com")
-        ?.id,
-    },
-    {
-      email: "cto@company.com",
-      password: "password123",
-      firstName: "Lê",
-      lastName: "Hoàng Minh",
-      role: "manager",
-      employeeId: createdEmployees.find((e) => e.email === "cto@company.com")
-        ?.id,
-    },
-    {
-      email: "truongphong.kt@company.com",
-      password: "password123",
-      firstName: "Đặng",
-      lastName: "Thị Mai",
-      role: "manager",
-      employeeId: createdEmployees.find(
-        (e) => e.email === "truongphong.kt@company.com"
-      )?.id,
-    },
-    {
-      email: "senior.dev@company.com",
-      password: "password123",
-      firstName: "Hoàng",
-      lastName: "Văn Tùng",
-      role: "user",
-      employeeId: createdEmployees.find(
-        (e) => e.email === "senior.dev@company.com"
-      )?.id,
-    },
-    {
-      email: "developer1@company.com",
-      password: "password123",
-      firstName: "Bùi",
-      lastName: "Thị Lan",
-      role: "user",
-      employeeId: createdEmployees.find(
-        (e) => e.email === "developer1@company.com"
-      )?.id,
-    },
-    {
-      email: "truongphong.marketing@company.com",
-      password: "password123",
-      firstName: "Châu",
-      lastName: "Văn Nam",
-      role: "manager",
-      employeeId: createdEmployees.find(
-        (e) => e.email === "truongphong.marketing@company.com"
-      )?.id,
-    },
-    {
-      email: "truongphong.hr@company.com",
-      password: "password123",
-      firstName: "Hồ",
-      lastName: "Văn Cường",
-      role: "manager",
-      employeeId: createdEmployees.find(
-        (e) => e.email === "truongphong.hr@company.com"
-      )?.id,
-    },
-    {
-      email: "hr@company.com",
-      password: "password123",
-      firstName: "Lưu",
-      lastName: "Thị Hạnh",
-      role: "user",
-      employeeId: createdEmployees.find((e) => e.email === "hr@company.com")
-        ?.id,
-    },
-  ];
-
-  let createdUsersCount = 0;
-  for (const userData of usersData) {
-    try {
-      await prisma.user.create({
-        data: userData,
-      });
-      createdUsersCount++;
-    } catch {
-      console.log(`⚠️ Skipped user ${userData.email} - might already exist`);
-    }
-  }
 
   // Seed Attendance records
   const attendanceData = [
@@ -1479,7 +1380,7 @@ async function main() {
   console.log(`✅ Created ${createdJobsCount} jobs`);
   console.log(`✅ Created ${createdHolidaysCount} holidays`);
   console.log(`✅ Created ${createdEmployeesCount} employees`);
-  console.log(`✅ Created ${createdUsersCount} users`);
+  // console.log(`✅ Created ${createdUsersCount} users`);
   console.log(`✅ Created ${createdAttendanceCount} attendance records`);
   console.log("🎉 Database seeding completed successfully!");
 }

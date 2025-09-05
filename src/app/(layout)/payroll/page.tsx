@@ -22,6 +22,7 @@ const Payroll: React.FC = () => {
   const toast = useRef<Toast>(null);
   const router = useRouter();
   // Calculate rows per page based on screen size
+
   const calculateRowsPerPage = () => {
     const screenHeight = window.innerHeight;
     const screenWidth = window.innerWidth;
@@ -102,7 +103,7 @@ const Payroll: React.FC = () => {
   }, []);
   return (
     <div className="p-5 h-full shadow-md rounded-lg">
-      <header className="flex gap-4">
+      <header className="flex gap-4 mb-4">
         <IconField iconPosition="left" className="flex-1">
           <InputIcon className="pi pi-search" />
           <InputText
@@ -146,7 +147,12 @@ const Payroll: React.FC = () => {
             )}
             header="Lương cơ bản"
           />
-          <Column header="Khấu trừ" body={<span>{"add Later"}</span>} />
+          <Column
+            header="Khấu trừ"
+            body={(rowData) => (
+              <span>{(rowData.job.salary * 0.08).toLocaleString("vi-VN")}</span>
+            )}
+          />
           <Column header="Trạng thái" field="status" />
         </DataTable>
       </main>

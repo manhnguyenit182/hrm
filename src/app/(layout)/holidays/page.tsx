@@ -58,7 +58,7 @@ export default function HolidaysPage() {
   };
   return (
     <div className="p-5 h-full shadow-md rounded-lg">
-      <header className="flex justify-end gap-4">
+      <header className="flex justify-end gap-4 mb-4">
         <Button
           label="Thêm ngày lễ"
           onClick={() => setVisible(true)}

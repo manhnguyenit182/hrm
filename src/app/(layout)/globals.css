@@ -80,13 +80,13 @@ body {
   border-color: var(--color-muted);
 }
 
-.p-button {
+.p-button:not(.p-button-text) {
   background: var(--color-primary-500) !important;
   border: 1px solid var(--color-primary-500) !important;
   color: var(--color-text) !important;
 }
 
-.p-button:hover {
+.p-button:not(.p-button-text):hover {
   background: #5e41e0 !important;
   border-color: #5e41e0 !important;
 }

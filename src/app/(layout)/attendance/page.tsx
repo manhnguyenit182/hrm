@@ -103,7 +103,7 @@ const Payroll: React.FC = () => {
   }, []);
   return (
     <div className="p-5 h-full shadow-md rounded-lg">
-      <header className="flex gap-4">
+      <header className="flex gap-4 mb-4">
         <IconField iconPosition="left" className="flex-1">
           <InputIcon className="pi pi-search" />
           <InputText
