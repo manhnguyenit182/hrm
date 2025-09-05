@@ -90,3 +90,23 @@ body {
   background: #5e41e0 !important;
   border-color: #5e41e0 !important;
 }
+
+/* TabMenu styling với primary color */
+.p-tabmenu .p-menuitem-text {
+  color: var(--color-primary-500) !important;
+}
+
+/* .p-tabmenu .p-tabmenuitem.p-highlight {
+  border-bottom: 2px solid var(--color-primary-500) !important;
+} */
+
+.p-tabmenu .p-tabmenuitem.p-highlight .p-menuitem-link {
+  color: var(--color-primary-500) !important;
+  border-bottom-color: var(--color-primary-500) !important;
+}
+
+
+.p-tabmenu .p-tabmenuitem .p-menuitem-link:hover {
+  color: var(--color-primary-500) !important;
+  border-bottom-color: rgba(113, 82, 243, 0.5) !important;
+}

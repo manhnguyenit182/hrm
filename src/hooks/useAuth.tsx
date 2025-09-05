@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Small delay to ensure cookie is set, then redirect
     setTimeout(() => {
       window.location.href = "/";
-    }, 3000);
+    }, 100);
   };
 
   const logout = async () => {

@@ -57,7 +57,7 @@ export default function HolidaysPage() {
     }
   };
   return (
-    <div className="p-5 h-full shadow-md rounded-lg">
+    <div className="p-5 h-full shadow-md rounded-lg border border-gray-200">
       <header className="flex justify-end gap-4 mb-4">
         <Button
           label="Thêm ngày lễ"
@@ -92,7 +92,6 @@ export default function HolidaysPage() {
                   <Calendar
                     {...field}
                     value={field.value}
-                    placeholder="Chọn ngày"
                     dateFormat="dd/mm/yy"
                     className={fieldState.error ? "p-invalid" : ""}
                     showIcon

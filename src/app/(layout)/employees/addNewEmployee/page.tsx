@@ -85,9 +85,14 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     { label: "nữ", value: "female" },
     { label: "Khác", value: "other" },
   ];
-
+  function getRandomAvatar(): string {
+    const randomNum = Math.floor(Math.random() * 70) + 1;
+    return `https://i.pravatar.cc/150?img=${randomNum}`;
+  }
   const onSubmit = async (data: EmployeeWithRelations) => {
-    data.status = "Active";
+    console.log("🚨 Form submitted!", { activeIndex, data }); // Debug log
+    data.status = "Đang chờ";
+    data.image = getRandomAvatar();
     const result = await createEmployee(data);
     if (result.success) {
       toast.current?.show({
@@ -104,7 +109,9 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     }
   };
 
-  const handleNext = async () => {
+  const handleNext = async (e?: React.MouseEvent) => {
+    e?.preventDefault(); // Ngăn form submit không mong muốn
+
     // Validate fields của tab hiện tại trước khi chuyển
     let fieldsToValidate: (keyof EmployeeWithRelations)[] = [];
 
@@ -132,12 +139,15 @@ export default function AddNewEmployeePage(): React.JSX.Element {
         "type",
       ];
     } else if (activeIndex === 2) {
-      // Không có fields để validate cho tab 3
-      fieldsToValidate = [];
+      // Tab tài liệu - không cần validate, chỉ chuyển khi user click
+      setActiveIndex(Math.min(3, activeIndex + 1));
+      return;
     } else if (activeIndex === 3) {
       fieldsToValidate = [];
+      return;
     }
 
+    // Chỉ validate khi có fields
     const isValid = await trigger(fieldsToValidate);
     if (isValid) {
       setActiveIndex(Math.min(3, activeIndex + 1));
@@ -146,19 +156,33 @@ export default function AddNewEmployeePage(): React.JSX.Element {
 
   const menuItems: MenuItem[] = [
     {
-      icon: <User className="mr-2" />,
+      icon: (
+        <User className="mr-2" style={{ color: "var(--color-primary-500)" }} />
+      ),
       label: "Thông tin cá nhân",
     },
     {
-      icon: <BriefcaseBusiness className="mr-2" />,
+      icon: (
+        <BriefcaseBusiness
+          className="mr-2"
+          style={{ color: "var(--color-primary-500)" }}
+        />
+      ),
       label: "Thông tin nghề nghiệp",
     },
     {
-      icon: <FileText className="mr-2" />,
+      icon: (
+        <FileText
+          className="mr-2"
+          style={{ color: "var(--color-primary-500)" }}
+        />
+      ),
       label: "Tài liệu",
     },
     {
-      icon: <Lock className="mr-2" />,
+      icon: (
+        <Lock className="mr-2" style={{ color: "var(--color-primary-500)" }} />
+      ),
       label: "Quyền truy cập tài khoản",
     },
   ];
@@ -618,16 +642,16 @@ export default function AddNewEmployeePage(): React.JSX.Element {
             <button
               type="button"
               onClick={handleNext}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-4 py-2 bg-[var(--color-primary-500)] text-white rounded"
             >
-              Next
+              Tiếp theo
             </button>
           ) : (
             <button
               type="submit"
-              className="px-4 py-2 bg-green-500 text-white rounded"
+              className="px-4 py-2 bg-[var(--color-primary-500)] text-white rounded"
             >
-              Submit
+              Xác nhận
             </button>
           )}
         </div>

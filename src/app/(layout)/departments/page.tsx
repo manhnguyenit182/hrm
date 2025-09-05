@@ -70,7 +70,7 @@ export default function DepartmentsPage(): React.JSX.Element {
     }
   };
   return (
-    <div className="flex flex-col h-full border">
+    <div className="flex flex-col h-full border border-gray-200 shadow-md rounded-lg">
       {/* Header  */}
       <div className=" p-5 pb-0">
         <div className="flex justify-end sm:flex-row gap-3">

@@ -82,3 +82,9 @@ export const getOrganizationChart = async () => {
     throw new Error("Failed to fetch organization chart");
   }
 };
+
+export async function getJobById(id: string) {
+  return prisma.jobs.findUnique({
+    where: { id },
+  });
+}

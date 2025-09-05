@@ -106,22 +106,6 @@ const createEmployee = async (
   }
 };
 
-const updateEmployee = async (
-  id: string,
-  data: Employees
-): Promise<Employees> => {
-  try {
-    const employee = await prisma.employees.update({
-      where: { id },
-      data,
-    });
-    return employee;
-  } catch (error) {
-    console.error("Error updating employee:", error);
-    throw new Error("Failed to update employee");
-  }
-};
-
 const deleteEmployee = async (
   id: string
 ): Promise<{ success: boolean; employee: Employees | null }> => {
@@ -159,7 +143,6 @@ export {
   getEmployees,
   getEmployeeById,
   createEmployee,
-  updateEmployee,
   deleteEmployee,
   getPosition,
 };

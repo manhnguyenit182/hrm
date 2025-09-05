@@ -64,7 +64,9 @@ export default function Sidebar(): React.JSX.Element {
   const { toggleSelected, selectedItem } = useAppContext();
 
   return (
-    <div className={`w-64 h-[95%] text-black shadow-xl border m-5 mr-0`}>
+    <div
+      className={`w-64 h-[95%] text-black rounded-lg bg-[color:#f5f5f5] m-5 mr-0`}
+    >
       <div className="p-6">
         <Link href="/" className="block mb-8">
           <Image
@@ -83,10 +85,10 @@ export default function Sidebar(): React.JSX.Element {
                 <Link
                   onClick={() => toggleSelected(item.label)}
                   href={item.href}
-                  className={`flex px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                  className={`flex px-4 py-3 text-sm font-medium rounded-lg rounded-l-none transition-all duration-200 group  ${
                     selectedItem === item.label
-                      ? "bg-[var(--color-primary-500)] text-white shadow-lg"
-                      : "hover:bg-[var(--color-primary-500)] hover:text-blue-300"
+                      ? "bg-[color:#ebe9fe] text-[var(--color-primary-500)] border-l-4 border-[var(--color-primary-500)]"
+                      : "hover:bg-[color:#f5f5ff] hover:text-[var(--color-primary-500)]  "
                   }`}
                 >
                   <span className="group-hover:scale-110 transition-transform duration-200">

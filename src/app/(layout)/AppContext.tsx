@@ -15,6 +15,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 const pathToMenuMap: Record<string, string> = {
   "/": "Bảng điều khiển",
   "/employees": "Nhân viên",
+  "/employees/addNewEmployee": "Thêm nhân viên",
   "/departments": "Phòng ban",
   "/attendance": "Chấm công",
   "/payroll": "Lương",
@@ -34,7 +35,31 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Auto-select item based on current pathname
   useEffect(() => {
-    const currentMenuItem = pathToMenuMap[pathname] || pathToMenuMap["/"];
+    let currentMenuItem = pathToMenuMap[pathname];
+
+    // Handle dynamic routes
+    if (!currentMenuItem) {
+      // Check for dynamic employee view route
+      if (pathname.startsWith("/employees/viewEmployee/")) {
+        console.log("Matched dynamic employee view route");
+        currentMenuItem = "Nhân viên";
+      }
+      // Check for dynamic department view route
+      else if (pathname.startsWith("/departments/viewDepartment/")) {
+        currentMenuItem = "Phòng ban";
+      }
+      // Add more dynamic routes as needed
+      else {
+        currentMenuItem = pathToMenuMap["/"];
+      }
+    }
+
+    if (pathname === "/employees/addNewEmployee") {
+      setSelectedItem("Nhân viên");
+      return;
+    }
+
+    console.log("Pathname changed:", pathname, "->", currentMenuItem);
     setSelectedItem(currentMenuItem);
   }, [pathname]);
 

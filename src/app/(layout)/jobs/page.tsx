@@ -18,12 +18,14 @@ export default function JobsPage(): React.JSX.Element {
   const [showForm, setShowForm] = useState(false);
   const [jobData, setJobData] = useState<JobData[]>([]);
   const toast = useRef<Toast>(null);
+
+  const fetchJobData = async () => {
+    const data = await getJobData();
+    setJobData(data);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getJobData();
-      setJobData(data);
-    };
-    fetchData();
+    fetchJobData();
   }, []);
   console.log("jobdata", jobData);
 
@@ -38,6 +40,8 @@ export default function JobsPage(): React.JSX.Element {
           detail: "Tạo công việc thành công!",
           life: 3000,
         });
+        await fetchJobData(); // Refresh data after creating
+        setShowForm(false); // Close the form
       } else {
         toast.current?.show({
           severity: "error",
@@ -79,16 +83,32 @@ export default function JobsPage(): React.JSX.Element {
         {/* body */}
         <div className="flex-1  ">
           <div className=" flex justify-around  items-center">
-            <JobCard jobData={jobData.filter((job) => job.status === "Active")}>
-              Đang hoạt động
+            <JobCard
+              jobData={jobData.filter((job) => job.status === "Active")}
+              onStatusUpdate={fetchJobData}
+            >
+              <div className="flex items-center gap-2 m-4">
+                <div className="h-3 w-3 rounded-2xl bg-yellow-500 inline-block"></div>
+                Đang hoạt động
+              </div>
             </JobCard>
-            <JobCard jobData={jobData.filter((job) => job.status === "Ended")}>
-              Đã kết thúc
+            <JobCard
+              jobData={jobData.filter((job) => job.status === "Ended")}
+              onStatusUpdate={fetchJobData}
+            >
+              <div className="flex items-center gap-2 m-4">
+                <div className="h-3 w-3 rounded-2xl bg-red-500 inline-block"></div>
+                Đã kết thúc
+              </div>
             </JobCard>
             <JobCard
               jobData={jobData.filter((job) => job.status === "Completed")}
+              onStatusUpdate={fetchJobData}
             >
-              Đã hoàn thành
+              <div className="flex items-center gap-2 m-4">
+                <div className="h-3 w-3 rounded-2xl bg-green-500 inline-block"></div>
+                Đã hoàn thành
+              </div>
             </JobCard>
           </div>
         </div>

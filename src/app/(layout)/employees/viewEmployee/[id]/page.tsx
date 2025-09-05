@@ -29,6 +29,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedMenuItem, setSelectedMenuItem] = useState<string>("userInfo");
+  const [activeMenuIndex, setActiveMenuIndex] = useState(0); // Track active menu item
   let fullName;
 
   const menuItems = [
@@ -37,39 +38,57 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
       icon: <UserRound />,
       command: () => {
         setSelectedMenuItem("userInfo");
+        setActiveMenuIndex(0);
       },
     },
     {
       label: "Chấm công",
       icon: <CalendarCheck />,
-      command: () => setSelectedMenuItem("attendance"),
+      command: () => {
+        setSelectedMenuItem("attendance");
+        setActiveMenuIndex(1);
+      },
     },
     {
       label: "Dự án",
       icon: <ScrollText />,
-      command: () => setSelectedMenuItem("project"),
+      command: () => {
+        setSelectedMenuItem("project");
+        setActiveMenuIndex(2);
+      },
     },
     {
       label: "Nghỉ phép",
       icon: <SquareChartGantt />,
-      command: () => setSelectedMenuItem("leave"),
+      command: () => {
+        setSelectedMenuItem("leave");
+        setActiveMenuIndex(3);
+      },
     },
   ];
+
+  // Đảm bảo userInfo được selected khi component mount
+  useEffect(() => {
+    setSelectedMenuItem("userInfo");
+    setActiveMenuIndex(0);
+  }, []);
   const profileMenu = [
     {
-      icon: <UserRound className="mr-2" />,
+      icon: <UserRound className="mr-2 text-[var(--color-primary-500)]" />,
       label: "Thông tin cá nhân",
     },
     {
-      icon: <BriefcaseBusiness className="mr-2" />,
+      icon: (
+        <BriefcaseBusiness className="mr-2 text-[var(--color-primary-500)]" />
+      ),
       label: "Thông tin nghề nghiệp",
     },
     {
-      icon: <FileText className="mr-2" />,
+      icon: <FileText className="mr-2 text-[var(--color-primary-500)]" />,
       label: "Tài liệu",
     },
     {
-      icon: <Lock className="mr-2" />,
+      icon: <Lock className="mr-2 text-[var(--color-primary-500)]" />,
       label: "Quyền truy cập tài khoản",
     },
   ];
@@ -107,7 +126,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   }
 
   return (
-    <div className="border border-gray-200 h-full shadow">
+    <div className="border border-gray-200 rounded-lg h-full shadow">
       <div className="flex flex-col p-5">
         <header className=" flex flex-1 justify-between">
           <nav className="flex">
@@ -128,7 +147,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
         </header>
         <hr className="mt-4 mb-4 border-gray-400" />
         <main className="flex ">
-          <Menu model={menuItems} className={"mr-5 "} />
+          <Menu model={menuItems} className={"mr-5"} />
           <section className="flex-1">
             {selectedMenuItem === "userInfo" && (
               <div>

@@ -102,7 +102,7 @@ const Payroll: React.FC = () => {
     fetchEmployees();
   }, []);
   return (
-    <div className="p-5 h-full shadow-md rounded-lg">
+    <div className="p-5 h-full shadow-md rounded-lg border border-gray-200">
       <header className="flex gap-4 mb-4">
         <IconField iconPosition="left" className="flex-1">
           <InputIcon className="pi pi-search" />
@@ -153,7 +153,22 @@ const Payroll: React.FC = () => {
               <span>{(rowData.job.salary * 0.08).toLocaleString("vi-VN")}</span>
             )}
           />
-          <Column header="Trạng thái" field="status" />
+          <Column
+            header="Trạng thái"
+            body={(rowData) => (
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  rowData.status === "Đã hoàn thành"
+                    ? "bg-green-100 text-green-800"
+                    : rowData.status === "Đang chờ"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+              >
+                {rowData.status}
+              </span>
+            )}
+          />
         </DataTable>
       </main>
 

@@ -59,7 +59,7 @@ export default function ViewDepartmentPage({
     [params]
   );
   return (
-    <div className="p-5 h-full shadow-md rounded-lg">
+    <div className="p-5 h-full  rounded-xl border border-gray-200">
       <header className="flex gap-4">
         <IconField iconPosition="left" className="flex-1">
           <InputIcon className="pi pi-search" />

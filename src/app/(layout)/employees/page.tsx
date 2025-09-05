@@ -177,7 +177,7 @@ const EmployeesTable: React.FC = () => {
     fetchEmployees();
   }, []);
   return (
-    <div className="p-5 h-full shadow-md rounded-lg">
+    <div className="p-5 h-full border shadow-md border-gray-200 rounded-lg">
       <header className="flex gap-4 mb-4">
         <IconField iconPosition="left" className="flex-1">
           <InputIcon className="pi pi-search" />
@@ -218,7 +218,7 @@ const EmployeesTable: React.FC = () => {
           <Column field="job.job" header="Công việc" />
           <Column field="job.type" header="Loại" />
           <Column
-            header="Hành động"
+            header="Thao tác"
             body={actionBodyTemplate}
             style={{ width: "120px" }}
           />

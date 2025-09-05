@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     console.log("Attempting to connect to database...");
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { employee: true },
+      include: { employee: { include: { job: true } } },
     });
     console.log(
       "Database query result:",
