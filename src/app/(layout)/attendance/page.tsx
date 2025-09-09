@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
@@ -9,11 +9,8 @@ import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import { useRouter } from "next/navigation";
 import { Avatar } from "primereact/avatar";
 import { Skeleton } from "primereact/skeleton";
-import { getEmployees } from "../employees/actions";
-import { employeesTableMapping } from "../employees/helpers";
 import { AttendanceWithEmployee } from "./types";
 import { getAttendance } from "./actions";
 
@@ -22,7 +19,6 @@ const Payroll: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const toast = useRef<Toast>(null);
-  const router = useRouter();
   // Calculate rows per page based on screen size
   const calculateRowsPerPage = () => {
     const screenHeight = window.innerHeight;

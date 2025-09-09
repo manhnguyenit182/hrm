@@ -14,7 +14,6 @@ import {
   UserRound,
   Lock,
 } from "lucide-react";
-import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { TabMenu } from "primereact/tabmenu";
 import { classNames } from "primereact/utils";
@@ -30,7 +29,6 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedMenuItem, setSelectedMenuItem] = useState<string>("userInfo");
-  const [activeMenuIndex, setActiveMenuIndex] = useState(0); // Track active menu item
   let fullName;
 
   const menuItems = [
@@ -43,7 +41,6 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
       ),
       command: () => {
         setSelectedMenuItem("userInfo");
-        setActiveMenuIndex(0);
       },
     },
     {
@@ -51,7 +48,6 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
       icon: <CalendarCheck />,
       command: () => {
         setSelectedMenuItem("attendance");
-        setActiveMenuIndex(1);
       },
     },
     {
@@ -59,7 +55,6 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
       icon: <ScrollText />,
       command: () => {
         setSelectedMenuItem("project");
-        setActiveMenuIndex(2);
       },
     },
     {
@@ -67,7 +62,6 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
       icon: <SquareChartGantt />,
       command: () => {
         setSelectedMenuItem("leave");
-        setActiveMenuIndex(3);
       },
     },
   ];
@@ -75,7 +69,6 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   // Đảm bảo userInfo được selected khi component mount
   useEffect(() => {
     setSelectedMenuItem("userInfo");
-    setActiveMenuIndex(0);
   }, []);
   const profileMenu = [
     {

@@ -3,8 +3,6 @@ import { Holidays } from "./types";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { IconField } from "primereact/iconfield";
-import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { useEffect, useRef, useState } from "react";
 import { addHoliday, getHolidays } from "./actions";
@@ -12,7 +10,6 @@ import { useForm, Controller } from "react-hook-form";
 import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
 import { Calendar } from "primereact/calendar";
-import { Chip } from "primereact/chip";
 
 export default function HolidaysPage() {
   const [holidays, setHolidays] = useState<Holidays[]>([]);
