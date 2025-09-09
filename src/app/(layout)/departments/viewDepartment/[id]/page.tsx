@@ -76,7 +76,7 @@ export default function ViewDepartmentPage({
           value={employees}
           loading={loading}
           paginator
-          rows={5}
+          rows={7}
           // rowsPerPageOptions={[5, 10, 15, 20]}
           className="p-datatable-sm"
           emptyMessage="No employees found"
@@ -89,7 +89,7 @@ export default function ViewDepartmentPage({
                   <Avatar image={rowData.image} shape="circle" />
                 )}
                 <span>
-                  {rowData.lastName} {rowData.firstName}
+                  {rowData.firstName} {rowData.lastName}
                 </span>
               </div>
             )}

@@ -17,11 +17,19 @@ import { JobData } from "./component/type";
 export default function JobsPage(): React.JSX.Element {
   const [showForm, setShowForm] = useState(false);
   const [jobData, setJobData] = useState<JobData[]>([]);
+  const [loading, setLoading] = useState(true);
   const toast = useRef<Toast>(null);
 
   const fetchJobData = async () => {
-    const data = await getJobData();
-    setJobData(data);
+    try {
+      setLoading(true);
+      const data = await getJobData();
+      setJobData(data);
+    } catch (error) {
+      console.error("Error fetching job data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -70,13 +78,18 @@ export default function JobsPage(): React.JSX.Element {
           <div className="flex flex-col sm:flex-row gap-3">
             <IconField iconPosition="left" className="flex-1">
               <InputIcon className="pi pi-search" />
-              <InputText placeholder="Tìm kiếm" className="w-[35%]" />
+              <InputText
+                placeholder="Tìm kiếm"
+                className="w-[35%]"
+                disabled={loading}
+              />
             </IconField>
             <Button
               label="Tạo công việc"
               icon="pi pi-plus"
               className="px-4 py-2"
               onClick={() => setShowForm(true)}
+              disabled={loading}
             />
           </div>
         </div>
@@ -86,6 +99,7 @@ export default function JobsPage(): React.JSX.Element {
             <JobCard
               jobData={jobData.filter((job) => job.status === "Active")}
               onStatusUpdate={fetchJobData}
+              isLoading={loading}
             >
               <div className="flex items-center gap-2 m-4">
                 <div className="h-3 w-3 rounded-2xl bg-yellow-500 inline-block"></div>
@@ -95,6 +109,7 @@ export default function JobsPage(): React.JSX.Element {
             <JobCard
               jobData={jobData.filter((job) => job.status === "Ended")}
               onStatusUpdate={fetchJobData}
+              isLoading={loading}
             >
               <div className="flex items-center gap-2 m-4">
                 <div className="h-3 w-3 rounded-2xl bg-red-500 inline-block"></div>
@@ -104,6 +119,7 @@ export default function JobsPage(): React.JSX.Element {
             <JobCard
               jobData={jobData.filter((job) => job.status === "Completed")}
               onStatusUpdate={fetchJobData}
+              isLoading={loading}
             >
               <div className="flex items-center gap-2 m-4">
                 <div className="h-3 w-3 rounded-2xl bg-green-500 inline-block"></div>

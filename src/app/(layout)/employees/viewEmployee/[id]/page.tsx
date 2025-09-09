@@ -17,6 +17,7 @@ import {
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
 import { TabMenu } from "primereact/tabmenu";
+import { classNames } from "primereact/utils";
 
 interface EditEmployeePageProps {
   params: Promise<{
@@ -36,6 +37,10 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
     {
       label: "Thông tin cá nhân",
       icon: <UserRound />,
+      classNames: classNames(
+        "p-menuitem",
+        selectedMenuItem === "userInfo" ? "bg-gray-200" : ""
+      ),
       command: () => {
         setSelectedMenuItem("userInfo");
         setActiveMenuIndex(0);
@@ -121,7 +126,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
   if (!employee) {
     return <div>Employee not found</div>;
   } else {
-    fullName = employee.lastName + " " + employee.firstName;
+    fullName = employee.firstName + " " + employee.lastName;
     console.log(employee);
   }
 
@@ -143,7 +148,6 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
               </div>
             </div>
           </nav>
-          <Button label="Lưu" icon="pi pi-check" className="ml-auto" />
         </header>
         <hr className="mt-4 mb-4 border-gray-400" />
         <main className="flex ">
@@ -159,7 +163,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
                 <div className="tab-content">
                   {activeIndex === 0 && (
                     <div className="flex flex-col">
-                      <div className="flex ">
+                      <div className="flex mt-4">
                         <div className="flex-1/3">
                           <span className="text-gray-400">First Name</span>
                           <p>{employee.firstName}</p>

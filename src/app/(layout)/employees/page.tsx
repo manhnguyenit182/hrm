@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Avatar } from "primereact/avatar";
 import { Eye } from "lucide-react";
+import { Skeleton } from "primereact/skeleton";
 
 const EmployeesTable: React.FC = () => {
   const [employees, setEmployees] = useState<DataTableEmployee[]>([]);
@@ -31,14 +32,14 @@ const EmployeesTable: React.FC = () => {
     // Estimate available height for table (subtract header, padding, pagination)
     const availableHeight = screenHeight - 300; // Reserve space for header, pagination, etc.
     const rowHeight = 50; // Approximate row height in px
-
+    console.log("Screen width:", screenWidth);
     // Base calculation on screen height
     let calculatedRows = Math.floor(availableHeight / rowHeight - 1);
 
     // Adjust based on screen size breakpoints
-    if (screenWidth >= 1920) {
+    if (screenWidth >= 1820) {
       // 24+ inch monitors
-      calculatedRows = Math.min(calculatedRows, 15);
+      calculatedRows = Math.min(calculatedRows, 8);
     } else if (screenWidth >= 1440) {
       // Laptop/desktop
       calculatedRows = Math.min(calculatedRows, 5);
@@ -47,11 +48,11 @@ const EmployeesTable: React.FC = () => {
       calculatedRows = Math.min(calculatedRows, 4);
     } else {
       // Mobile/small screens
-      calculatedRows = Math.min(calculatedRows, 5);
+      calculatedRows = Math.min(calculatedRows, 4);
     }
 
     // Ensure minimum rows
-    return Math.max(calculatedRows, 5);
+    return Math.max(calculatedRows, 4);
   };
 
   // Update rows per page on window resize
@@ -176,6 +177,30 @@ const EmployeesTable: React.FC = () => {
     };
     fetchEmployees();
   }, []);
+  // Create skeleton data for loading state
+  const skeletonItems = Array.from({ length: rowsPerPage }, (_, i) => ({
+    id: i,
+  }));
+
+  // Skeleton template for name column with avatar
+  const skeletonNameTemplate = () => (
+    <div className="flex items-center gap-2">
+      <Skeleton shape="circle" size="2rem" />
+      <Skeleton width="8rem" height="1rem" />
+    </div>
+  );
+
+  // Skeleton template for regular text columns
+  const skeletonTextTemplate = () => <Skeleton width="100%" height="1rem" />;
+
+  // Skeleton template for action buttons
+  const skeletonActionTemplate = () => (
+    <div className="flex gap-2">
+      <Skeleton width="2rem" height="2rem" borderRadius="50%" />
+      <Skeleton width="2rem" height="2rem" borderRadius="50%" />
+    </div>
+  );
+
   return (
     <div className="p-5 h-full border shadow-md border-gray-200 rounded-lg">
       <header className="flex gap-4 mb-4">
@@ -185,41 +210,63 @@ const EmployeesTable: React.FC = () => {
             placeholder="Tìm kiếm nhân viên..."
             onChange={handleSearchChange}
             className="w-[35%]"
+            disabled={loading}
           />
         </IconField>
         <Link href="/employees/addNewEmployee">
-          <Button label="Thêm nhân viên" icon="pi pi-plus" />
+          <Button label="Thêm nhân viên" icon="pi pi-plus" disabled={loading} />
         </Link>
       </header>
 
       <main className="">
         <DataTable
-          value={employees}
-          loading={loading}
-          paginator
+          value={loading ? skeletonItems : employees}
+          paginator={!loading}
           rows={rowsPerPage}
-          // rowsPerPageOptions={[5, 10, 15, 20]}
           className="p-datatable-sm"
-          emptyMessage="No employees found"
+          emptyMessage="Không tìm thấy nhân viên nào"
+          loading={false} // We handle loading state manually with skeleton
         >
           <Column
+            field="fullName"
             header="Họ và tên"
-            body={(rowData) => (
-              <div className="flex items-center gap-2">
-                {rowData.image && (
-                  <Avatar image={rowData.image} shape="circle" />
-                )}
-                <span>{rowData.fullName}</span>
-              </div>
-            )}
+            sortable
+            body={
+              loading
+                ? skeletonNameTemplate
+                : (rowData) => (
+                    <div className="flex items-center gap-2">
+                      {rowData.image && (
+                        <Avatar image={rowData.image} shape="circle" />
+                      )}
+                      <span>{rowData.fullName}</span>
+                    </div>
+                  )
+            }
           />
-          <Column field="phone" header="Điện thoại" />
-          <Column field="department.name" header="Phòng ban" />
-          <Column field="job.job" header="Công việc" />
-          <Column field="job.type" header="Loại" />
+          <Column
+            field="phone"
+            header="Điện thoại"
+            body={loading ? skeletonTextTemplate : undefined}
+          />
+          <Column
+            field="department.name"
+            header="Phòng ban"
+            body={loading ? skeletonTextTemplate : undefined}
+          />
+          <Column
+            field="job.job"
+            header="Công việc"
+            body={loading ? skeletonTextTemplate : undefined}
+          />
+          <Column
+            field="job.type"
+            header="Loại"
+            body={loading ? skeletonTextTemplate : undefined}
+          />
           <Column
             header="Thao tác"
-            body={actionBodyTemplate}
+            body={loading ? skeletonActionTemplate : actionBodyTemplate}
             style={{ width: "120px" }}
           />
         </DataTable>

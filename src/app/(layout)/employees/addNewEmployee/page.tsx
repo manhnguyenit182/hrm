@@ -94,6 +94,7 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     data.status = "Đang chờ";
     data.image = getRandomAvatar();
     const result = await createEmployee(data);
+
     if (result.success) {
       toast.current?.show({
         severity: "success",
@@ -625,7 +626,22 @@ export default function AddNewEmployeePage(): React.JSX.Element {
               <p>Thông tin chi tiết về tài liệu</p>
             </div>
           )}
-          {activeIndex === 3 && <div>Content for Quyền truy cập tài khoản</div>}
+          {activeIndex === 3 && (
+            <p>ds</p>
+            // <div>
+            //   <Controller
+            //     name="email"
+            //     control={control}
+            //     render={({ field }) => (
+            //       <InputText
+            //         {...field}
+            //         placeholder="Email for account"
+            //         className="w-full mb-4"
+            //       />
+            //     )}
+            //   />
+            // </div>
+          )}
         </main>
 
         <div className="flex justify-between mt-6">

@@ -11,6 +11,7 @@ import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { useRouter } from "next/navigation";
 import { Avatar } from "primereact/avatar";
+import { Skeleton } from "primereact/skeleton";
 import { getEmployees } from "../employees/actions";
 import { employeesTableMapping } from "../employees/helpers";
 import { AttendanceWithEmployee } from "./types";
@@ -101,6 +102,28 @@ const Payroll: React.FC = () => {
     };
     fetchEmployees();
   }, []);
+
+  // Create skeleton data for loading state
+  const skeletonItems = Array.from({ length: rowsPerPage }, (_, i) => ({
+    id: i,
+  }));
+
+  // Skeleton template for name column with avatar
+  const skeletonNameTemplate = () => (
+    <div className="flex items-center gap-2">
+      <Skeleton shape="circle" size="2rem" />
+      <Skeleton width="8rem" height="1rem" />
+    </div>
+  );
+
+  // Skeleton template for regular text columns
+  const skeletonTextTemplate = () => <Skeleton width="100%" height="1rem" />;
+
+  // Skeleton template for status badge
+  const skeletonStatusTemplate = () => (
+    <Skeleton width="4rem" height="1.5rem" borderRadius="1rem" />
+  );
+
   return (
     <div className="p-5 h-full shadow-md rounded-lg border border-gray-200">
       <header className="flex gap-4 mb-4">
@@ -110,78 +133,102 @@ const Payroll: React.FC = () => {
             placeholder="Tìm kiếm nhân viên..."
             // onChange={handleSearchChange}
             className="w-[35%]"
+            disabled={loading}
           />
         </IconField>
       </header>
 
       <main className="">
         <DataTable
-          value={employees}
-          loading={loading}
-          paginator
+          value={loading ? skeletonItems : employees}
+          paginator={!loading}
           rows={rowsPerPage}
-          // rowsPerPageOptions={[5, 10, 15, 20]}
           className="p-datatable-sm"
-          emptyMessage="No employees found"
+          emptyMessage="Không tìm thấy nhân viên nào"
+          loading={false} // We handle loading state manually with skeleton
         >
           <Column
             header="Họ và tên"
-            body={(rowData) => (
-              <div className="flex items-center gap-2">
-                {rowData.employee?.image && (
-                  <Avatar image={rowData.employee.image} shape="circle" />
-                )}
-                <span>
-                  {rowData.employee?.lastName} {rowData.employee?.firstName}
-                </span>
-              </div>
-            )}
+            body={
+              loading
+                ? skeletonNameTemplate
+                : (rowData) => (
+                    <div className="flex items-center gap-2">
+                      {rowData.employee?.image && (
+                        <Avatar image={rowData.employee.image} shape="circle" />
+                      )}
+                      <span>
+                        {rowData.employee?.lastName}{" "}
+                        {rowData.employee?.firstName}
+                      </span>
+                    </div>
+                  )
+            }
           />
           <Column
             header="Chức vụ"
-            body={(rowData) => (
-              <span>{rowData.employee?.position?.title || "N/A"}</span>
-            )}
+            body={
+              loading
+                ? skeletonTextTemplate
+                : (rowData) => (
+                    <span>{rowData.employee?.position?.title || "N/A"}</span>
+                  )
+            }
           />
           <Column
             header="Loại"
-            body={(rowData) => (
-              <span>{rowData.employee?.job?.type || "Office"}</span>
-            )}
+            body={
+              loading
+                ? skeletonTextTemplate
+                : (rowData) => (
+                    <span>{rowData.employee?.job?.type || "Office"}</span>
+                  )
+            }
           />
           <Column
             header="Giờ vào"
-            body={(rowData) => (
-              <span>
-                {rowData.clockIn
-                  ? new Date(rowData.clockIn).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })
-                  : "N/A"}
-              </span>
-            )}
+            body={
+              loading
+                ? skeletonTextTemplate
+                : (rowData) => (
+                    <span>
+                      {rowData.clockIn
+                        ? new Date(rowData.clockIn).toLocaleTimeString(
+                            "en-US",
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
+                          )
+                        : "N/A"}
+                    </span>
+                  )
+            }
           />
           <Column
             header="Trạng thái"
-            body={(rowData) => (
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  rowData.status === "Present"
-                    ? "bg-green-100 text-green-800"
-                    : rowData.status === "Late"
-                    ? "bg-red-100 text-red-800"
-                    : "bg-gray-100 text-gray-800"
-                }`}
-              >
-                {rowData.status === "Present"
-                  ? "Đúng giờ"
-                  : rowData.status === "Late"
-                  ? "Muộn"
-                  : "Không xác định"}
-              </span>
-            )}
+            body={
+              loading
+                ? skeletonStatusTemplate
+                : (rowData) => (
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        rowData.status === "Present"
+                          ? "bg-green-100 text-green-800"
+                          : rowData.status === "Late"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {rowData.status === "Present"
+                        ? "Đúng giờ"
+                        : rowData.status === "Late"
+                        ? "Muộn"
+                        : "Không xác định"}
+                    </span>
+                  )
+            }
           />
         </DataTable>
       </main>

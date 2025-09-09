@@ -14,10 +14,20 @@ export const getDepartmentOptions = async (): Promise<Option[]> => {
 
 export const getPositionOptions = async (): Promise<Option[]> => {
   const positions = await getPosition();
-  return positions.map((position) => ({
-    label: position.title,
-    value: position.id,
-  })) as Option[];
+  return positions.map((position) => {
+    if (
+      position.title !== "COO" &&
+      position.title !== "CEO" &&
+      position.title !== "CTO" &&
+      position.title !== "CFO" &&
+      position.title !== "CPO"
+    ) {
+      return {
+        label: position.title,
+        value: position.id,
+      };
+    }
+  }) as Option[];
 };
 
 export const getJobOptions = async (): Promise<

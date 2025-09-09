@@ -58,14 +58,8 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({
       setSelectedItem("Nhân viên");
       return;
     }
-
-    console.log("Pathname changed:", pathname, "->", currentMenuItem);
     setSelectedItem(currentMenuItem);
   }, [pathname]);
-
-  useEffect(() => {
-    console.log("Selected item changed:", selectedItem);
-  }, [selectedItem]);
 
   return (
     <AppContext.Provider

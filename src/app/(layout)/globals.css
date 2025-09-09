@@ -110,3 +110,7 @@ body {
   color: var(--color-primary-500) !important;
   border-bottom-color: rgba(113, 82, 243, 0.5) !important;
 }
+
+table.p-organizationchart-table {
+  width: 500px !important;
+}

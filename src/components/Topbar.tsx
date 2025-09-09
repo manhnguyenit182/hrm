@@ -45,12 +45,9 @@ const Topbar: React.FC<TopbarProps> = ({ className = "" }) => {
     }
 
     const fetJob = async () => {
-      console.log("Fetching job for user:", user);
       if (user?.employee?.jobId) {
-        console.log("User has jobId:", user.employee.jobId);
         try {
           const job = await getJobById(user.employee.jobId);
-          console.log("User job:", job);
           setJob(job);
         } catch (error) {
           console.error("Error fetching job:", error);

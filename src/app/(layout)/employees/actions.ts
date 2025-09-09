@@ -12,46 +12,56 @@ const getEmployees = async (
     const whereCondition = query
       ? {
           OR: [
-            {
-              firstName: {
-                contains: query,
-                mode: "insensitive" as const,
-              },
-            },
-            {
-              lastName: {
-                contains: query,
-                mode: "insensitive" as const,
-              },
-            },
-            {
-              email: {
-                contains: query,
-                mode: "insensitive" as const,
-              },
-            },
-            {
-              phone: {
-                contains: query,
-                mode: "insensitive" as const,
-              },
-            },
-            {
-              department: {
-                name: {
-                  contains: query,
-                  mode: "insensitive" as const,
-                },
-              },
-            },
-            {
-              position: {
-                title: {
-                  contains: query,
-                  mode: "insensitive" as const,
-                },
-              },
-            },
+            // Search trong firstName
+            { firstName: { contains: query, mode: "insensitive" as const } },
+            // Search trong lastName
+            { lastName: { contains: query, mode: "insensitive" as const } },
+            // Search trong phone
+            { phone: { contains: query, mode: "insensitive" as const } },
+            ...(query.includes(" ")
+              ? (() => {
+                  const nameParts = query.trim().split(/\s+/);
+                  if (nameParts.length >= 2) {
+                    return [
+                      // Trường hợp "firstName lastName"
+                      {
+                        AND: [
+                          {
+                            firstName: {
+                              contains: nameParts[0],
+                              mode: "insensitive" as const,
+                            },
+                          },
+                          {
+                            lastName: {
+                              contains: nameParts[1],
+                              mode: "insensitive" as const,
+                            },
+                          },
+                        ],
+                      },
+                      // Trường hợp "lastName firstName"
+                      {
+                        AND: [
+                          {
+                            lastName: {
+                              contains: nameParts[0],
+                              mode: "insensitive" as const,
+                            },
+                          },
+                          {
+                            firstName: {
+                              contains: nameParts[1],
+                              mode: "insensitive" as const,
+                            },
+                          },
+                        ],
+                      },
+                    ];
+                  }
+                  return [];
+                })()
+              : []),
           ],
         }
       : {};

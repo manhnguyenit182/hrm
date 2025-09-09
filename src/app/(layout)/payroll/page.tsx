@@ -9,8 +9,8 @@ import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog } from "primereact/confirmdialog";
-import { useRouter } from "next/navigation";
 import { Avatar } from "primereact/avatar";
+import { Skeleton } from "primereact/skeleton";
 import { getEmployees } from "../employees/actions";
 import { employeesTableMapping } from "../employees/helpers";
 import { DataTableEmployee } from "../employees/types";
@@ -20,7 +20,6 @@ const Payroll: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const toast = useRef<Toast>(null);
-  const router = useRouter();
   // Calculate rows per page based on screen size
 
   const calculateRowsPerPage = () => {
@@ -50,7 +49,7 @@ const Payroll: React.FC = () => {
     }
 
     // Ensure minimum rows
-    return Math.max(calculatedRows, 5);
+    return Math.max(calculatedRows, 4);
   };
 
   // Update rows per page on window resize
@@ -101,6 +100,28 @@ const Payroll: React.FC = () => {
     };
     fetchEmployees();
   }, []);
+
+  // Create skeleton data for loading state
+  const skeletonItems = Array.from({ length: rowsPerPage }, (_, i) => ({
+    id: i,
+  }));
+
+  // Skeleton template for name column with avatar
+  const skeletonNameTemplate = () => (
+    <div className="flex items-center gap-2">
+      <Skeleton shape="circle" size="2rem" />
+      <Skeleton width="8rem" height="1rem" />
+    </div>
+  );
+
+  // Skeleton template for regular text columns
+  const skeletonTextTemplate = () => <Skeleton width="100%" height="1rem" />;
+
+  // Skeleton template for status badge
+  const skeletonStatusTemplate = () => (
+    <Skeleton width="4rem" height="1.5rem" borderRadius="1rem" />
+  );
+
   return (
     <div className="p-5 h-full shadow-md rounded-lg border border-gray-200">
       <header className="flex gap-4 mb-4">
@@ -110,64 +131,88 @@ const Payroll: React.FC = () => {
             placeholder="Tìm kiếm nhân viên..."
             onChange={handleSearchChange}
             className="w-[35%]"
+            disabled={loading}
           />
         </IconField>
       </header>
 
       <main className="">
         <DataTable
-          value={employees}
-          loading={loading}
-          paginator
+          value={loading ? skeletonItems : employees}
+          paginator={!loading}
           rows={rowsPerPage}
-          // rowsPerPageOptions={[5, 10, 15, 20]}
           className="p-datatable-sm"
-          emptyMessage="No employees found"
+          emptyMessage="Không tìm thấy nhân viên nào"
+          loading={false} // We handle loading state manually with skeleton
         >
           <Column
             header="Họ và tên"
-            body={(rowData) => (
-              <div className="flex items-center gap-2">
-                {rowData.image && (
-                  <Avatar image={rowData.image} shape="circle" />
-                )}
-                <span>{rowData.fullName}</span>
-              </div>
-            )}
+            body={
+              loading
+                ? skeletonNameTemplate
+                : (rowData) => (
+                    <div className="flex items-center gap-2">
+                      {rowData.image && (
+                        <Avatar image={rowData.image} shape="circle" />
+                      )}
+                      <span>{rowData.fullName}</span>
+                    </div>
+                  )
+            }
           />
           <Column
-            body={(rowData) => (
-              <span>{(rowData.job.salary * 12).toLocaleString("vi-VN")}</span>
-            )}
             header="CTC"
+            body={
+              loading
+                ? skeletonTextTemplate
+                : (rowData) => (
+                    <span>
+                      {(rowData.job.salary * 12).toLocaleString("vi-VN")}
+                    </span>
+                  )
+            }
           />
           <Column
-            body={(rowData) => (
-              <span>{rowData.job.salary.toLocaleString("vi-VN")}</span>
-            )}
             header="Lương cơ bản"
+            body={
+              loading
+                ? skeletonTextTemplate
+                : (rowData) => (
+                    <span>{rowData.job.salary.toLocaleString("vi-VN")}</span>
+                  )
+            }
           />
           <Column
             header="Khấu trừ"
-            body={(rowData) => (
-              <span>{(rowData.job.salary * 0.08).toLocaleString("vi-VN")}</span>
-            )}
+            body={
+              loading
+                ? skeletonTextTemplate
+                : (rowData) => (
+                    <span>
+                      {(rowData.job.salary * 0.08).toLocaleString("vi-VN")}
+                    </span>
+                  )
+            }
           />
           <Column
             header="Trạng thái"
-            body={(rowData) => (
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  rowData.status === "Đã hoàn thành"
-                    ? "bg-green-100 text-green-800"
-                    : rowData.status === "Đang chờ"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : "bg-gray-100 text-gray-800"
-                }`}
-              >
-                {rowData.status}
-              </span>
-            )}
+            body={
+              loading
+                ? skeletonStatusTemplate
+                : (rowData) => (
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        rowData.status === "Đã hoàn thành"
+                          ? "bg-green-100 text-green-800"
+                          : rowData.status === "Đang chờ"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {rowData.status}
+                    </span>
+                  )
+            }
           />
         </DataTable>
       </main>
