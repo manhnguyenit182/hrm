@@ -1,3 +1,4 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import Topbar from "@/components/Topbar";
 import Sidebar from "@/components/Sidebar";
@@ -5,7 +6,6 @@ import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import "./globals.css";
 import { AppContextProvider } from "./AppContext";
 import { AuthProvider } from "@/hooks/useAuth";
 export const metadata: Metadata = {
