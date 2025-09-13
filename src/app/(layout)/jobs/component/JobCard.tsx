@@ -186,12 +186,14 @@ export default function JobCard({
             <Button
               label="Hủy"
               icon="pi pi-times"
+              className="btn-primary"
               text
               onClick={() => setShowStatusDialog(false)}
             />
             <Button
               label="Cập nhật"
               icon="pi pi-check"
+              className="btn-primary"
               onClick={handleUpdateStatus}
             />
           </div>

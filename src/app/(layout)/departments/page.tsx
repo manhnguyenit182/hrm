@@ -118,7 +118,7 @@ export default function DepartmentsPage(): React.JSX.Element {
           <Button
             label="Thêm phòng ban"
             icon="pi pi-plus"
-            className="px-4 py-2"
+            className="px-4 py-2 btn-primary"
             onClick={handleAdd}
             disabled={loading}
           />
@@ -149,7 +149,7 @@ export default function DepartmentsPage(): React.JSX.Element {
                 />
               </div>
               <div className="flex justify-end">
-                <Button type="submit" label="Thêm" />
+                <Button className="btn-primary" type="submit" label="Thêm" />
               </div>
             </form>
           </Dialog>
@@ -183,7 +183,7 @@ export default function DepartmentsPage(): React.JSX.Element {
                       <Button
                         label="Xem tất cả"
                         text
-                        severity="help"
+                        className="text-primary"
                         onClick={() => handleViewAll(department.id)}
                       />
                     </header>

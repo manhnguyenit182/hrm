@@ -152,6 +152,7 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
                   model={profileMenu}
                   activeIndex={activeIndex}
                   onTabChange={(e) => setActiveIndex(e.index)}
+                  className="tab-menu-primary"
                 />
                 <div className="tab-content">
                   {activeIndex === 0 && (

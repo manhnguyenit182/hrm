@@ -69,14 +69,14 @@ export default function JobFormModal({
       <Button
         label="Hủy"
         onClick={handleCancel}
-        className="flex-1 max-w-[45%] px-4 py-2"
+        className="flex-1 max-w-[45%]  btn-primary"
         disabled={loading}
       />
       <Button
         label="Thêm"
         onClick={handleSubmit(onFormSubmit)}
         loading={loading}
-        className="flex-1 max-w-[45%]"
+        className="flex-1 max-w-[45%] btn-primary"
         autoFocus
       />
     </div>

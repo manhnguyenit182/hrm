@@ -194,6 +194,7 @@ export default function AddNewEmployeePage(): React.JSX.Element {
         activeIndex={activeIndex}
         model={menuItems}
         onTabChange={(e) => setActiveIndex(e.index)}
+        className="tab-menu-primary"
       />
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -658,15 +659,12 @@ export default function AddNewEmployeePage(): React.JSX.Element {
             <button
               type="button"
               onClick={handleNext}
-              className="px-4 py-2 bg-[var(--color-primary-500)] text-white rounded"
+              className="px-4 py-2 btn-primary rounded"
             >
               Tiếp theo
             </button>
           ) : (
-            <button
-              type="submit"
-              className="px-4 py-2 bg-[var(--color-primary-500)] text-white rounded"
-            >
+            <button type="submit" className="px-4 py-2 btn-primary rounded">
               Xác nhận
             </button>
           )}

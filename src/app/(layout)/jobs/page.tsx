@@ -87,7 +87,7 @@ export default function JobsPage(): React.JSX.Element {
             <Button
               label="Tạo công việc"
               icon="pi pi-plus"
-              className="px-4 py-2"
+              className="px-4 py-2 btn-primary"
               onClick={() => setShowForm(true)}
               disabled={loading}
             />

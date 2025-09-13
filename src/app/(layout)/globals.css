@@ -75,38 +75,32 @@ body {
   border-color: var(--color-muted);
 }
 
-/* 
-.p-button:not(.p-button-text) {
+.btn-primary {
   background: var(--color-primary-500) !important;
   border: 1px solid var(--color-primary-500) !important;
   color: var(--color-text) !important;
 }
 
-.p-button:not(.p-button-text):hover {
+.btn-primary:hover {
   background: #5e41e0 !important;
   border-color: #5e41e0 !important;
-} */
+}
+
+
 
 /* TabMenu styling với primary color */
-/* .p-tabmenu .p-menuitem-text {
+.tab-menu-primary .p-menuitem-text {
   color: var(--color-primary-500) !important;
-} */
+}
 
-/* .p-tabmenu .p-tabmenuitem.p-highlight {
-  border-bottom: 2px solid var(--color-primary-500) !important;
-} */
 
-/* .p-tabmenu .p-tabmenuitem.p-highlight .p-menuitem-link {
+
+.tab-menu-primary .p-tabmenuitem.p-highlight .p-menuitem-link {
   color: var(--color-primary-500) !important;
   border-bottom-color: var(--color-primary-500) !important;
 }
 
-
-.p-tabmenu .p-tabmenuitem .p-menuitem-link:hover {
+.tab-menu-primary .p-tabmenuitem .p-menuitem-link:hover {
   color: var(--color-primary-500) !important;
   border-bottom-color: rgba(113, 82, 243, 0.5) !important;
-} */
-
-/* table.p-organizationchart-table {
-  width: 500px !important;
-} */
+}

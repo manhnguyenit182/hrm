@@ -58,6 +58,7 @@ export default function HolidaysPage() {
       <header className="flex justify-end gap-4 mb-4">
         <Button
           label="Thêm ngày lễ"
+          className="btn-primary"
           onClick={() => setVisible(true)}
           icon="pi pi-plus"
         />
@@ -90,14 +91,14 @@ export default function HolidaysPage() {
                     {...field}
                     value={field.value}
                     dateFormat="dd/mm/yy"
-                    className={fieldState.error ? "p-invalid" : ""}
+                    className={` ${fieldState.error ? "p-invalid" : ""}`}
                     showIcon
                   />
                 )}
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit" label="Thêm" />
+              <Button type="submit" className="btn-primary" label="Thêm" />
             </div>
           </form>
         </Dialog>

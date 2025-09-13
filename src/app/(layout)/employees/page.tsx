@@ -147,13 +147,13 @@ const EmployeesTable: React.FC = () => {
       <div className="flex gap-2">
         <Button
           icon={<Eye />}
-          className="p-button-rounded p-button-success "
+          className="p-button-rounded btn-primary "
           onClick={() => handleView(rowData)}
           tooltip="Xem"
         />
         <Button
           icon="pi pi-trash"
-          className="p-button-rounded p-button-danger p-button-sm"
+          className="p-button-rounded btn-primary  "
           onClick={() => handleDelete(rowData)}
           tooltip="Xóa"
         />
@@ -214,7 +214,12 @@ const EmployeesTable: React.FC = () => {
           />
         </IconField>
         <Link href="/employees/addNewEmployee">
-          <Button label="Thêm nhân viên" icon="pi pi-plus" disabled={loading} />
+          <Button
+            label="Thêm nhân viên"
+            className="btn-primary"
+            icon="pi pi-plus"
+            disabled={loading}
+          />
         </Link>
       </header>
 
