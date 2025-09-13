@@ -4,9 +4,7 @@ import type { Metadata } from "next";
 import Topbar from "@/components/Topbar";
 import Sidebar from "@/components/Sidebar";
 import { PrimeReactProvider } from "primereact/api";
-import "primereact/resources/themes/lara-light-cyan/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
+
 import { AppContextProvider } from "./AppContext";
 import { NextAuthProvider } from "@/components/NextAuthProvider";
 export const metadata: Metadata = {
