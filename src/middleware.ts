@@ -1,40 +1,55 @@
+import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { isProtectedPath, isPublicPath } from "@/lib/middleware-helpers";
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export default withAuth(
+  function middleware(req) {
+    const { pathname } = req.nextUrl;
+    const token = req.nextauth.token;
 
-  // Check if route is public or protected
-  const isPublic = isPublicPath(pathname);
-  const isProtected = isProtectedPath(pathname);
+    // Check if route is public or protected
+    const isPublic = isPublicPath(pathname);
+    const isProtected = isProtectedPath(pathname);
 
-  // Get token from cookies
-  const token = request.cookies.get("token")?.value;
+    // If user has valid session and trying to access login page, redirect to dashboard
+    if (isPublic && token) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
 
-  // If accessing protected route without token, redirect to login
-  if (isProtected && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    // If accessing protected route without valid session, redirect to login
+    if (isProtected && !token) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        const { pathname } = req.nextUrl;
+        const isPublic = isPublicPath(pathname);
+
+        // Allow access to public routes
+        if (isPublic) {
+          return true;
+        }
+
+        // For protected routes, require a valid token
+        return !!token;
+      },
+    },
   }
-
-  // If user has token and trying to access login page, redirect to dashboard
-  // Note: Token validation will be done in the API routes/server components
-  if (isPublic && token) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  return NextResponse.next();
-}
+);
 
 export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
+     * - api (API routes except auth)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
   ],
 };

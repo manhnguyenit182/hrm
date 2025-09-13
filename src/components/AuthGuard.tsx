@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 interface AuthGuardProps {
@@ -13,24 +14,26 @@ interface AuthGuardProps {
  * Redirects to login if user is not authenticated
  */
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
+  const { status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    // Check if token exists in cookies
-    const hasToken = document.cookie.includes("token=");
+    if (status === "loading") return; // Still loading
 
-    if (!hasToken) {
+    if (status === "unauthenticated") {
       router.push("/login");
       return;
     }
+  }, [status, router]);
 
-    // Optionally, you can also check token validity by calling /api/auth/me
-    // This will be handled by the useAuth hook
-  }, [router]);
+  // Show loading state while checking auth
+  if (status === "loading") {
+    return fallback ? <>{fallback}</> : <div>Loading...</div>;
+  }
 
-  // You can show a loading state while checking auth
-  if (fallback) {
-    return <>{fallback}</>;
+  // If not authenticated, don't render children (redirect will happen)
+  if (status === "unauthenticated") {
+    return null;
   }
 
   return <>{children}</>;

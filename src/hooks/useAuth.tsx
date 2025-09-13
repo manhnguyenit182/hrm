@@ -1,14 +1,15 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Employees } from "@/db/prisma";
+
 interface User {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
-  role?: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  role?: string | null;
   employee?: Employees | null;
 }
 
@@ -19,95 +20,61 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+export function useAuth(): AuthContextType {
+  const { data: session, status } = useSession();
   const router = useRouter();
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const response = await fetch("/api/auth/me");
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
-      } else if (response.status === 401) {
-        // Token is invalid, clear it
-        await fetch("/api/auth/clear-token", { method: "POST" });
-        setUser(null);
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      // On error, also clear token
-      await fetch("/api/auth/clear-token", { method: "POST" });
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const login = async (email: string, password: string) => {
     console.log("=== LOGIN FUNCTION CALLED ===");
     console.log("Email:", email);
-    console.log("Making API call to /api/auth/login");
 
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    console.log("API Response status:", response.status);
-    console.log("API Response ok:", response.ok);
+      console.log("SignIn result:", result);
 
-    const data = await response.json();
-    console.log("API Response data:", data);
+      if (result?.error) {
+        console.error("Login failed with error:", result.error);
+        throw new Error(result.error);
+      }
 
-    if (!response.ok) {
-      console.error("Login failed with error:", data.error);
-      throw new Error(data.error || "Đã có lỗi xảy ra");
+      if (result?.ok) {
+        console.log("Login successful, redirecting...");
+        // Small delay to ensure session is updated, then redirect
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 100);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
     }
-
-    console.log("Login successful, setting user data");
-    setUser(data.user);
-
-    // Small delay to ensure cookie is set, then redirect
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 100);
   };
 
   const logout = async () => {
     try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-      });
+      await signOut({ redirect: false });
+      router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-    } finally {
-      setUser(null);
       router.push("/login");
     }
   };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return {
+    user: session?.user || null,
+    loading: status === "loading",
+    login,
+    logout,
+  };
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+// For backward compatibility, export a provider component that does nothing
+// since SessionProvider is now used directly in layout
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }

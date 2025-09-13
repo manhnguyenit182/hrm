@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../(layout)/globals.css";
-import { AuthProvider } from "@/hooks/useAuth";
+import { NextAuthProvider } from "@/components/NextAuthProvider";
 
 export const metadata: Metadata = {
   title: "HRM System - Đăng nhập",
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className="antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <NextAuthProvider>{children}</NextAuthProvider>
       </body>
     </html>
   );
