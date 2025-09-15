@@ -46,6 +46,8 @@ model Employees {
   Attendance Attendance[]
   User User?
 
+
+  LeaveRequests LeaveRequests[]
 }
 
 model Departments {
@@ -117,4 +119,17 @@ model Holidays {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   Employees  Employees[]
+}
+
+model LeaveRequests {
+  id          String   @id @default(cuid())
+  employeeId  String?
+  employee    Employees? @relation(fields: [employeeId], references: [id])
+  startDate   DateTime?
+  endDate     DateTime?
+  type        String? //Loại nghỉ (ví dụ: phép năm, nghỉ bệnh...)
+  reason      String?
+  status      String? // e.g., 'pending', 'approved', 'rejected'
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt
 }
