@@ -70,7 +70,7 @@ export default function Sidebar(): React.JSX.Element {
       <div className="p-6">
         <Link href="/" className="block mb-8">
           <Image
-            src="/logo.png"
+            src="/logo.svg"
             alt="logo"
             width={120}
             height={140}
