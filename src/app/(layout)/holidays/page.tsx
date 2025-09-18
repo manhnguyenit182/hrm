@@ -57,100 +57,204 @@ function HolidaysPageComponent() {
     }
   };
   return (
-    <div className="p-5 h-full shadow-md rounded-lg border border-gray-200">
-      <header className="flex justify-end gap-4 mb-4">
-        <Button
-          label="Thêm ngày lễ"
-          className="btn-primary"
-          disabled={!canCreateHoliday}
-          onClick={() => setVisible(true)}
-          icon="pi pi-plus"
-        />
-        <Dialog
-          header="Thêm phòng ban"
-          visible={visible}
-          style={{ width: "50vw" }}
-          onHide={() => {
-            if (!visible) return;
-            setVisible(false);
-            reset();
-          }}
-        >
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="field flex flex-col mb-3">
-              <label htmlFor="name">Tên ngày lễ</label>
-              <Controller
-                name="title"
-                control={control}
-                render={({ field }) => <InputText id="title" {...field} />}
-              />
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="bg-gradient-surface rounded-2xl shadow-lg p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+          <div>
+            <h1 className="text-3xl font-bold text-gradient mb-2">
+              Quản lý ngày nghỉ lễ
+            </h1>
+            <p className="text-gray-600">
+              Thiết lập và quản lý các ngày nghỉ lễ trong năm
+            </p>
+            <div className="flex items-center space-x-6 mt-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span className="text-sm text-gray-600">
+                  {holidays.length} ngày nghỉ lễ
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-sm text-gray-600">
+                  {
+                    holidays.filter(
+                      (h) =>
+                        h.date &&
+                        dateToday.getTime() < new Date(h.date).getTime()
+                    ).length
+                  }{" "}
+                  sắp tới
+                </span>
+              </div>
             </div>
-            <div className="field flex flex-col mb-3">
-              <label htmlFor="date">Ngày lễ</label>
-              <Controller
-                name="date"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <Calendar
-                    {...field}
-                    value={field.value}
-                    dateFormat="dd/mm/yy"
-                    className={` ${fieldState.error ? "p-invalid" : ""}`}
-                    showIcon
-                  />
-                )}
-              />
-            </div>
-            <div className="flex justify-end">
-              <Button type="submit" className="btn-primary" label="Thêm" />
-            </div>
-          </form>
-        </Dialog>
-      </header>
+          </div>
 
-      <main>
+          <div className="flex items-center space-x-4">
+            <Button
+              label="Thêm ngày nghỉ lễ"
+              icon="pi pi-plus"
+              className="btn-primary"
+              disabled={!canCreateHoliday}
+              onClick={() => setVisible(true)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="card-modern overflow-hidden">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <i className="pi pi-calendar text-blue-600"></i>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800">
+              Danh sách ngày nghỉ lễ
+            </h3>
+          </div>
+        </div>
+
         <DataTable
           value={holidays}
           loading={loading}
           footer={<DataTableFooter />}
-          className="p-datatable-sm"
-          emptyMessage="No employees found"
+          className="modern-datatable"
+          emptyMessage="Không tìm thấy ngày nghỉ lễ nào"
+          rows={10}
         >
           <Column
+            header="Ngày nghỉ lễ"
             body={(rowData) => (
-              <div
-                style={{
-                  borderLeft:
+              <div className="flex items-center space-x-3">
+                <div
+                  className={`w-1 h-12 rounded-full ${
                     rowData.date &&
                     dateToday.getTime() < new Date(rowData.date).getTime()
-                      ? "4px solid var(--color-primary-500)"
-                      : "4px solid var(--color-muted)",
-                }}
-              >
-                {rowData.date
-                  ? new Date(rowData.date).toLocaleDateString("vi-VN", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })
-                  : "N/A"}
+                      ? "bg-blue-500"
+                      : "bg-gray-300"
+                  }`}
+                />
+                <div>
+                  <p className="font-semibold text-gray-800">
+                    {rowData.date
+                      ? new Date(rowData.date).toLocaleDateString("vi-VN", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })
+                      : "N/A"}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {rowData.date &&
+                    dateToday.getTime() < new Date(rowData.date).getTime()
+                      ? "Sắp tới"
+                      : "Đã qua"}
+                  </p>
+                </div>
               </div>
             )}
-            header="Date"
+            style={{ minWidth: "200px" }}
           />
           <Column
-            body={(rowData) =>
-              rowData.date
-                ? rowData.date.toLocaleDateString("vi-VN", {
-                    weekday: "long",
-                  })
-                : "N/A"
-            }
-            header="Day"
+            header="Thứ"
+            body={(rowData) => (
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                {rowData.date
+                  ? rowData.date.toLocaleDateString("vi-VN", {
+                      weekday: "long",
+                    })
+                  : "N/A"}
+              </span>
+            )}
+            style={{ minWidth: "150px" }}
           />
-          <Column field="title" header="Holiday Name" />
+          <Column
+            field="title"
+            header="Tên ngày lễ"
+            body={(rowData) => (
+              <div>
+                <p className="font-semibold text-gray-800">{rowData.title}</p>
+              </div>
+            )}
+            style={{ minWidth: "200px" }}
+          />
         </DataTable>
-      </main>
+      </div>
+
+      {/* Add Holiday Dialog */}
+      <Dialog
+        header="Thêm ngày nghỉ lễ mới"
+        visible={visible}
+        style={{ width: "500px", maxWidth: "90vw" }}
+        onHide={() => {
+          if (!visible) return;
+          setVisible(false);
+          reset();
+        }}
+        modal
+        className="modern-dialog"
+      >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-gray-700">
+              Tên ngày lễ <span className="text-red-500">*</span>
+            </label>
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <InputText
+                  {...field}
+                  placeholder="Ví dụ: Tết Nguyên Đán"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              )}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-gray-700">
+              Ngày <span className="text-red-500">*</span>
+            </label>
+            <Controller
+              name="date"
+              control={control}
+              render={({ field, fieldState }) => (
+                <Calendar
+                  {...field}
+                  value={field.value}
+                  dateFormat="dd/mm/yy"
+                  className={`w-full ${fieldState.error ? "p-invalid" : ""}`}
+                  showIcon
+                  placeholder="Chọn ngày nghỉ lễ"
+                  inputClassName="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              )}
+            />
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+            <Button
+              type="button"
+              label="Hủy"
+              icon="pi pi-times"
+              className="btn-secondary"
+              onClick={() => {
+                setVisible(false);
+                reset();
+              }}
+            />
+            <Button
+              type="submit"
+              label="Thêm mới"
+              icon="pi pi-plus"
+              className="btn-primary"
+            />
+          </div>
+        </form>
+      </Dialog>
 
       <Toast ref={toast} />
     </div>

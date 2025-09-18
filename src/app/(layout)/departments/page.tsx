@@ -9,7 +9,6 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 import { Skeleton } from "primereact/skeleton";
 import { withPermission } from "@/components/PermissionGuard";
 import { PERMISSIONS } from "@/constants/permissions";
@@ -85,152 +84,354 @@ function DepartmentsPageComponent(): React.JSX.Element {
 
   // Skeleton component for department cards
   const DepartmentCardSkeleton = () => (
-    <div className="h-[50vh] border border-gray-200 rounded-lg p-4 overflow-hidden">
+    <div className="card-modern overflow-hidden">
       {/* Header skeleton */}
-      <header className="flex justify-between items-center mb-4">
-        <div className="flex flex-col gap-2">
-          <Skeleton width="8rem" height="1.5rem" />
-          <Skeleton width="6rem" height="1rem" />
-        </div>
-        <Skeleton width="5rem" height="2rem" borderRadius="0.5rem" />
-      </header>
-      <hr className="border-gray-300 mb-4" />
-      {/* Employee list skeleton */}
-      <div className="space-y-3">
-        {Array.from({ length: 4 }, (_, index) => (
-          <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Skeleton shape="circle" size="2.5rem" />
-              <div className="flex flex-col gap-1">
-                <Skeleton width="7rem" height="1rem" />
-                <Skeleton width="5rem" height="0.8rem" />
+      <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 border-b border-gray-100">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center space-x-3 mb-3">
+              <Skeleton shape="circle" size="3rem" />
+              <div className="space-y-2">
+                <Skeleton width="8rem" height="1.5rem" />
+                <Skeleton width="6rem" height="1rem" />
               </div>
             </div>
-            <Skeleton shape="circle" size="1.5rem" />
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <Skeleton shape="circle" size="2rem" />
+                  <div className="space-y-1">
+                    <Skeleton width="2rem" height="1rem" />
+                    <Skeleton width="3rem" height="0.7rem" />
+                  </div>
+                </div>
+              </div>
+              <Skeleton shape="circle" size="2.5rem" />
+            </div>
           </div>
-        ))}
+        </div>
+      </div>
+
+      {/* Content skeleton */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <Skeleton width="7rem" height="1.2rem" />
+          <Skeleton width="3rem" height="1rem" borderRadius="1rem" />
+        </div>
+
+        <div className="space-y-3">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div
+              key={index}
+              className="flex items-center space-x-3 p-3 rounded-lg"
+            >
+              <div className="relative">
+                <Skeleton shape="circle" size="2.5rem" />
+                <Skeleton
+                  shape="circle"
+                  size="0.75rem"
+                  className="absolute -bottom-0.5 -right-0.5"
+                />
+              </div>
+
+              <div className="flex-1 space-y-1">
+                <Skeleton width="8rem" height="1rem" />
+                <Skeleton width="6rem" height="0.8rem" />
+              </div>
+
+              <Skeleton width="0.5rem" height="0.5rem" />
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <Skeleton width="100%" height="1.5rem" />
+        </div>
       </div>
     </div>
   );
 
   return (
-    <div className="flex flex-col h-full border border-gray-200 shadow-md rounded-lg">
-      {/* Header  */}
-      <div className=" p-5 pb-0">
-        <div className="flex justify-end sm:flex-row gap-3">
-          <Button
-            label="Thêm phòng ban"
-            icon="pi pi-plus"
-            className="px-4 py-2 btn-primary"
-            onClick={handleAdd}
-            disabled={loading}
-          />
-          <Dialog
-            header="Thêm phòng ban"
-            visible={visible}
-            style={{ width: "50vw" }}
-            onHide={() => {
-              if (!visible) return;
-              setVisible(false);
-            }}
-          >
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="field flex flex-col mb-3">
-                <label htmlFor="name">Tên phòng ban</label>
-                <Controller
-                  name="name"
-                  control={control}
-                  render={({ field }) => <InputText id="name" {...field} />}
-                />
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="bg-gradient-surface rounded-2xl shadow-lg p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+          <div>
+            <h1 className="text-3xl font-bold text-gradient mb-2">
+              Quản lý phòng ban
+            </h1>
+            <p className="text-gray-600">
+              Tổng quan về các phòng ban và nhân viên trong công ty
+            </p>
+            <div className="flex items-center space-x-6 mt-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span className="text-sm text-gray-600">
+                  {departments.length} phòng ban
+                </span>
               </div>
-              <div className="field flex flex-col mb-3">
-                <label htmlFor="location">Địa điểm</label>
-                <Controller
-                  name="location"
-                  control={control}
-                  render={({ field }) => <InputText id="location" {...field} />}
-                />
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-sm text-gray-600">
+                  {departments.reduce(
+                    (total, dept) => total + (dept.Employees?.length || 0),
+                    0
+                  )}{" "}
+                  nhân viên
+                </span>
               </div>
-              <div className="flex justify-end">
-                <Button className="btn-primary" type="submit" label="Thêm" />
-              </div>
-            </form>
-          </Dialog>
-        </div>
-      </div>
-      {/* phan scroll và data */}
-      <div className="flex-1 p-5 min-h-0 ">
-        {/* noi dung scroll */}
-        <div className="h-full overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 grid-rows-1 md:grid-rows-2 gap-4 ">
-            {loading
-              ? // Show skeleton cards when loading
-                Array.from({ length: 4 }, (_, index) => (
-                  <DepartmentCardSkeleton key={index} />
-                ))
-              : // Show actual department data when not loading
-                departments.map((department) => (
-                  <div
-                    key={department.id}
-                    className="h-[50vh] border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow duration-200 overflow-hidden"
-                  >
-                    {/* thẻ tiêu đề */}
-                    <header className="flex justify-between items-center ">
-                      <div className="flex flex-col">
-                        <h3 className="font-bold text-lg text-gray-800 mb-2">
-                          {department.name}
-                        </h3>
-                        <p>{department.Employees?.length} thành viên</p>
-                        <p className="text-gray-600 text-sm mb-3"></p>
-                      </div>
-                      <Button
-                        label="Xem tất cả"
-                        text
-                        className="text-primary"
-                        onClick={() => handleViewAll(department.id)}
-                      />
-                    </header>
-                    <hr className="border-gray-300" />
-                    <div>
-                      {/* ra danh sach nhan vien */}
-                      <ul>
-                        {department.Employees?.map((employee) => (
-                          <li
-                            key={employee.id}
-                            className="flex items-center gap-2 my-2"
-                          >
-                            <div className="flex items-center justify-between w-full">
-                              <div className="flex items-center">
-                                {employee.image && (
-                                  <Avatar
-                                    image={employee.image}
-                                    shape="circle"
-                                    className="mr-2"
-                                  />
-                                )}
-                                <div className="flex flex-col">
-                                  <p>
-                                    {employee.firstName} {employee.lastName}
-                                  </p>
-                                  <small className="text-gray-400">
-                                    {employee.job?.job}
-                                  </small>
-                                </div>
-                              </div>
-                              <div className="flex items-center">
-                                <ChevronRight />
-                              </div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ))}
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              label="Thêm phòng ban"
+              icon="pi pi-plus"
+              className="btn-primary !px-6 !py-3"
+              onClick={handleAdd}
+              disabled={loading}
+            />
           </div>
         </div>
       </div>
+
+      {/* Departments Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {loading
+          ? // Show skeleton cards when loading
+            Array.from({ length: 6 }, (_, index) => (
+              <DepartmentCardSkeleton key={index} />
+            ))
+          : // Show actual department data when not loading
+            departments.map((department) => (
+              <div
+                key={department.id}
+                className="card-modern overflow-hidden group"
+              >
+                {/* Department Header */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-100">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+                          <i className="pi pi-building text-white text-xl"></i>
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-xl text-gray-800 group-hover:text-primary-600 transition-colors">
+                            {department.name}
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            <i className="pi pi-map-marker text-gray-400 mr-1"></i>
+                            {department.location || "Chưa có địa điểm"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                              <i className="pi pi-users text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                              <p className="text-lg font-bold text-gray-800">
+                                {department.Employees?.length || 0}{" "}
+                                <span className="text-xs text-gray-500">
+                                  Thành viên
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Button
+                          icon="pi pi-arrow-right"
+                          className="!p-2 !bg-white !text-[color:var(--color-primary-500)] hover:!bg-gray-50 !border-gray-200 !rounded-xl transition-all duration-200 "
+                          onClick={() => handleViewAll(department.id)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Employees List */}
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="font-semibold text-gray-700">
+                      Danh sách nhân viên
+                    </h4>
+                    {(department.Employees?.length || 0) > 4 && (
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        +{(department.Employees?.length || 0) - 4} khác
+                      </span>
+                    )}
+                  </div>
+
+                  {department.Employees && department.Employees.length > 0 ? (
+                    <div className="space-y-3">
+                      {department.Employees.slice(0, 4).map((employee) => (
+                        <div
+                          key={employee.id}
+                          className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group/employee"
+                        >
+                          <div className="relative">
+                            <Avatar
+                              image={employee.image || undefined}
+                              icon={!employee.image ? "pi pi-user" : undefined}
+                              shape="circle"
+                              size="large"
+                              className="!w-10 !h-10 border-2 border-white shadow-sm"
+                            />
+                            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-800 truncate">
+                              {employee.firstName} {employee.lastName}
+                            </p>
+                            <p className="text-sm text-gray-500 truncate">
+                              {employee.job?.job || "Chưa có chức vụ"}
+                            </p>
+                          </div>
+
+                          <div className="opacity-0 group-hover/employee:opacity-100 transition-opacity">
+                            <i className="pi pi-chevron-right text-gray-400 text-sm"></i>
+                          </div>
+                        </div>
+                      ))}
+
+                      {(department.Employees?.length || 0) === 0 && (
+                        <div className="text-center py-8">
+                          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i className="pi pi-users text-gray-400 text-2xl"></i>
+                          </div>
+                          <p className="text-gray-500 text-sm">
+                            Chưa có nhân viên
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i className="pi pi-users text-gray-400 text-2xl"></i>
+                      </div>
+                      <p className="text-gray-500 text-sm">Chưa có nhân viên</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+      </div>
+
+      {/* Empty State */}
+      {!loading && departments.length === 0 && (
+        <div className="card-modern p-12 text-center">
+          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i className="pi pi-building text-gray-400 text-3xl"></i>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">
+            Chưa có phòng ban nào
+          </h3>
+          <p className="text-gray-500 mb-6">
+            Bắt đầu bằng cách tạo phòng ban đầu tiên cho công ty của bạn
+          </p>
+          <Button
+            label="Tạo phòng ban đầu tiên"
+            icon="pi pi-plus"
+            className="btn-primary !px-6 !py-3"
+            onClick={handleAdd}
+          />
+        </div>
+      )}
+
       <Toast ref={toast} />
+
+      {/* Add Department Dialog */}
+      <Dialog
+        header="Thêm phòng ban mới"
+        visible={visible}
+        style={{ width: "50vw", minWidth: "320px" }}
+        onHide={() => {
+          if (!visible) return;
+          setVisible(false);
+          reset();
+        }}
+        modal
+        blockScroll
+        className="modern-dialog"
+      >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-2">
+          <div className="space-y-2">
+            <label
+              htmlFor="name"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              Tên phòng ban <span className="text-red-500">*</span>
+            </label>
+            <Controller
+              name="name"
+              control={control}
+              rules={{ required: "Vui lòng nhập tên phòng ban" }}
+              render={({ field, fieldState }) => (
+                <div>
+                  <InputText
+                    id="name"
+                    {...field}
+                    placeholder="Nhập tên phòng ban..."
+                    className="w-full"
+                  />
+                  {fieldState.error && (
+                    <small className="text-red-500 mt-1 block">
+                      {fieldState.error.message}
+                    </small>
+                  )}
+                </div>
+              )}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="location"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              Địa điểm
+            </label>
+            <Controller
+              name="location"
+              control={control}
+              render={({ field }) => (
+                <InputText
+                  id="location"
+                  {...field}
+                  placeholder="Nhập địa điểm văn phòng..."
+                  className="w-full"
+                />
+              )}
+            />
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+            <Button
+              type="button"
+              label="Hủy"
+              severity="secondary"
+              className="btn-secondary !px-6 !py-3"
+              onClick={() => {
+                setVisible(false);
+                reset();
+              }}
+            />
+            <Button
+              type="submit"
+              label="Tạo phòng ban"
+              className="btn-primary !px-6 !py-3"
+            />
+          </div>
+        </form>
+      </Dialog>
     </div>
   );
 }

@@ -22,12 +22,14 @@ export default function RootLayout({
       <NextAuthProvider>
         <AppContextProvider>
           <html lang="en" className="h-full">
-            <body className="h-full">
+            <body className="h-full bg-gray-50">
               <div className="flex h-full">
                 <Sidebar />
                 <div className="flex flex-col flex-1 min-h-0 h-screen">
                   <Topbar />
-                  <div className="flex-1 mx-7 mb-5 h-[80%]">{children}</div>
+                  <main className="flex-1 overflow-auto p-6 bg-gray-50">
+                    <div className="max-w-full mx-auto">{children}</div>
+                  </main>
                 </div>
               </div>
             </body>

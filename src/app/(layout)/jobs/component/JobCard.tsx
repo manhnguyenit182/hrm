@@ -1,6 +1,5 @@
 import { BriefcaseBusiness } from "lucide-react";
 import { JobData } from "./type";
-import { Chip } from "primereact/chip";
 import { useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
@@ -11,12 +10,10 @@ import { useRef } from "react";
 import { Skeleton } from "primereact/skeleton";
 
 export default function JobCard({
-  children,
   jobData,
   onStatusUpdate,
   isLoading = false,
 }: {
-  children: React.ReactNode;
   jobData: JobData[];
   onStatusUpdate?: () => void;
   isLoading?: boolean;
@@ -100,94 +97,121 @@ export default function JobCard({
   return (
     <>
       <Toast ref={toast} />
-      <div className="h-[65vh] w-3/10  rounded-lg border border-gray-200 flex flex-col">
-        <div className="pb-4">{children}</div>
-        <div className="flex flex-col overflow-auto gap-4 p-4">
-          {isLoading
-            ? // Show skeleton items when loading
-              Array.from({ length: 3 }, (_, index) => (
-                <JobItemSkeleton key={index} />
-              ))
-            : // Show actual job data when not loading
-              jobData.map((job) => (
-                // tung cai card nho
-                <div
-                  key={job.id}
-                  onClick={(e) => handleClick(e, job)}
-                  className="p-2 bg-gray-100 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
-                >
-                  <div className="flex mb-4 gap-5 items-center">
-                    <BriefcaseBusiness className="ml-4" />
-                    <div className="flex flex-col">
-                      <h3 className="font-semibold">{job.job}</h3>
-                      <span className="text-sm text-gray-600">
-                        {job.department}
-                      </span>
-                    </div>
+      <div className="flex flex-col overflow-hidden">
+        <div className="flex flex-col overflow-auto space-y-4 p-4 max-h-96">
+          {isLoading ? (
+            // Show skeleton items when loading
+            Array.from({ length: 3 }, (_, index) => (
+              <JobItemSkeleton key={index} />
+            ))
+          ) : jobData.length === 0 ? (
+            // Show empty state
+            <div className="p-8 text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i className="pi pi-briefcase text-gray-400 text-2xl"></i>
+              </div>
+              <p className="text-gray-500 text-sm">Không có công việc nào</p>
+            </div>
+          ) : (
+            // Show actual job data when not loading
+            jobData.map((job) => (
+              // Enhanced job card
+              <div
+                key={job.id}
+                onClick={(e) => handleClick(e, job)}
+                className="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:shadow-lg hover:border-blue-300 transition-all duration-200 group"
+              >
+                <div className="flex items-start space-x-4 mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                    <BriefcaseBusiness className="w-6 h-6 text-blue-600" />
                   </div>
-                  <div className="flex mb-5 flex-nowrap gap-3">
-                    <Chip
-                      label={job.department}
-                      style={{
-                        padding: "2px 8px",
-                        fontSize: "10px",
-                        color: "white",
-                        backgroundColor: "var(--color-primary-500)",
-                      }}
-                    />
-                    <Chip
-                      label={job.type}
-                      style={{
-                        padding: "2px 8px",
-                        fontSize: "10px",
-                        color: "white",
-                        backgroundColor: "var(--color-primary-500)",
-                      }}
-                    />
-                    <Chip
-                      label={job.typeWork}
-                      style={{
-                        padding: "2px 8px",
-                        fontSize: "10px",
-                        color: "white",
-                        backgroundColor: "var(--color-primary-500)",
-                      }}
-                    />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-800 truncate mb-1">
+                      {job.job}
+                    </h3>
+                    <p className="text-sm text-gray-500">{job.department}</p>
                   </div>
-                  <div className="flex justify-between items-center mb-2">
-                    <div>
-                      <b>{job.salary.toLocaleString("vi-VN")}</b> {" /Tháng"}
-                    </div>
-                    {/* <Button
-                    label="Chỉnh sửa trạng thái"
-                    icon="pi pi-pencil"
-                    size="small"
-                    text
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedJob(job);
                       setSelectedStatus(job.status);
                       setShowStatusDialog(true);
                     }}
-                  /> */}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    <i className="pi pi-ellipsis-v text-gray-400"></i>
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-blue-100 text-blue-800">
+                    <i className="pi pi-building mr-1 text-xs"></i>
+                    {job.department}
+                  </span>
+                  <span className="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-800">
+                    <i className="pi pi-users mr-1 text-xs"></i>
+                    {job.type}
+                  </span>
+                  <span className="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-purple-100 text-purple-800">
+                    <i className="pi pi-map-marker mr-1 text-xs"></i>
+                    {job.typeWork}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-lg font-bold text-gray-800">
+                      {job.salary.toLocaleString("vi-VN")} VNĐ
+                    </p>
+                    <p className="text-sm text-gray-500">Mỗi tháng</p>
+                  </div>
+                  <div className="text-right">
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium ${
+                        job.status === "Active"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : job.status === "Completed"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      <div
+                        className={`w-2 h-2 rounded-full mr-1 ${
+                          job.status === "Active"
+                            ? "bg-yellow-400"
+                            : job.status === "Completed"
+                            ? "bg-green-400"
+                            : "bg-red-400"
+                        }`}
+                      ></div>
+                      {job.status === "Active"
+                        ? "Hoạt động"
+                        : job.status === "Completed"
+                        ? "Hoàn thành"
+                        : "Kết thúc"}
+                    </span>
                   </div>
                 </div>
-              ))}
+              </div>
+            ))
+          )}
         </div>
       </div>
 
       <Dialog
         header="Chỉnh sửa trạng thái công việc"
         visible={showStatusDialog}
-        style={{ width: "450px" }}
+        style={{ width: "450px", maxWidth: "90vw" }}
         onHide={() => setShowStatusDialog(false)}
+        modal
+        className="modern-dialog"
         footer={
-          <div>
+          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
             <Button
               label="Hủy"
               icon="pi pi-times"
-              className="btn-primary"
-              text
+              className="btn-secondary"
               onClick={() => setShowStatusDialog(false)}
             />
             <Button

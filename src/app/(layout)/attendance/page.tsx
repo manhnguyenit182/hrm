@@ -68,22 +68,6 @@ function AttendancePageComponent(): React.ReactElement {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // const debounceRef = useRef<NodeJS.Timeout | null>(null);
-  // const handleSearchChange = useCallback(
-  //   (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     const searchTerm = e.target.value.toLowerCase();
-  //     if (debounceRef.current) {
-  //       console.log("haha");
-  //       clearTimeout(debounceRef.current);
-  //     }
-  //     debounceRef.current = setTimeout(async () => {
-  //       const data = await getAttendance(searchTerm);
-  //       setEmployees(data);
-  //     }, 400); // 400ms debounce
-  //   },
-  //   []
-  // );
-
   useEffect(() => {
     // Fetch employee data from API or database
     const fetchEmployees = async () => {
@@ -123,113 +107,169 @@ function AttendancePageComponent(): React.ReactElement {
   );
 
   return (
-    <div className="p-5 h-full shadow-md rounded-lg border border-gray-200">
-      <header className="flex gap-4 mb-4">
-        <IconField iconPosition="left" className="flex-1">
-          <InputIcon className="pi pi-search" />
-          <InputText
-            placeholder="Tìm kiếm nhân viên..."
-            // onChange={handleSearchChange}
-            className="w-[35%]"
-            disabled={loading}
-          />
-        </IconField>
-      </header>
+    <div className="space-y-6">
+      {/* Search and Filter Section */}
+      <div className="card-modern p-6">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1">
+            <IconField iconPosition="left" className=" max-w-2/5">
+              <InputIcon className="pi pi-search text-gray-400" />
+              <InputText
+                placeholder="Tìm kiếm nhân viên theo tên hoặc chức vụ..."
+                // onChange={handleSearchChange}
+                className="w-full !pl-10 !py-3 !text-base"
+                disabled={loading}
+              />
+            </IconField>
+          </div>
+        </div>
+      </div>
 
-      <main className="">
+      {/* Attendance DataTable */}
+      <div className="card-modern overflow-hidden">
         <DataTable
           value={loading ? skeletonItems : employees}
           paginator={!loading}
           rows={rowsPerPage}
-          className="p-datatable-sm"
-          emptyMessage="Không tìm thấy nhân viên nào"
-          loading={false} // We handle loading state manually with skeleton
+          className="modern-datatable"
+          emptyMessage="Không tìm thấy dữ liệu chấm công"
+          loading={false}
+          paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+          currentPageReportTemplate="Hiển thị {first} đến {last} trong tổng số {totalRecords} bản ghi"
         >
           <Column
-            header="Họ và tên"
+            header="Thông tin nhân viên"
             body={
               loading
                 ? skeletonNameTemplate
                 : (rowData) => (
-                    <div className="flex items-center gap-2">
-                      {rowData.employee?.image && (
-                        <Avatar image={rowData.employee.image} shape="circle" />
-                      )}
-                      <span>
-                        {rowData.employee?.lastName}{" "}
-                        {rowData.employee?.firstName}
-                      </span>
+                    <div className="flex items-center space-x-4">
+                      <div className="relative">
+                        <Avatar
+                          image={rowData.employee?.image || undefined}
+                          icon={
+                            !rowData.employee?.image ? "pi pi-user" : undefined
+                          }
+                          shape="circle"
+                          size="large"
+                          className="!w-12 !h-12 border-2 border-white shadow-sm"
+                        />
+                        <div
+                          className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-white rounded-full ${
+                            rowData.status === "Present"
+                              ? "bg-green-400"
+                              : rowData.status === "Late"
+                              ? "bg-red-400"
+                              : "bg-gray-400"
+                          }`}
+                        ></div>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-800 text-base">
+                          {rowData.employee?.firstName}{" "}
+                          {rowData.employee?.lastName}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {rowData.employee?.position?.title ||
+                            "Chưa có chức vụ"}
+                        </p>
+                      </div>
                     </div>
                   )
             }
+            style={{ minWidth: "250px" }}
           />
           <Column
-            header="Chức vụ"
+            header="LOẠI CÔNG VIỆC"
             body={
               loading
                 ? skeletonTextTemplate
                 : (rowData) => (
-                    <span>{rowData.employee?.position?.title || "N/A"}</span>
-                  )
-            }
-          />
-          <Column
-            header="Loại"
-            body={
-              loading
-                ? skeletonTextTemplate
-                : (rowData) => (
-                    <span>{rowData.employee?.job?.type || "Office"}</span>
-                  )
-            }
-          />
-          <Column
-            header="Giờ vào"
-            body={
-              loading
-                ? skeletonTextTemplate
-                : (rowData) => (
-                    <span>
-                      {rowData.clockIn
-                        ? new Date(rowData.clockIn).toLocaleTimeString(
-                            "en-US",
-                            {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: true,
-                            }
-                          )
-                        : "N/A"}
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                        rowData.employee?.job?.type === "Văn phòng"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-orange-100 text-orange-800"
+                      }`}
+                    >
+                      {rowData.employee?.job?.type || "Văn phòng"}
                     </span>
                   )
             }
+            style={{ minWidth: "180px" }}
           />
           <Column
-            header="Trạng thái"
+            header="Thời gian vào"
+            body={
+              loading
+                ? skeletonTextTemplate
+                : (rowData) => (
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-2">
+                        <i className="pi pi-clock text-gray-400"></i>
+                        <span className="font-medium text-gray-700">
+                          {rowData.clockIn
+                            ? new Date(rowData.clockIn).toLocaleTimeString(
+                                "vi-VN",
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: false,
+                                }
+                              )
+                            : "Chưa vào"}
+                        </span>
+                      </div>
+                      {rowData.clockIn && (
+                        <div className="text-xs text-gray-500">
+                          {new Date(rowData.clockIn).toLocaleDateString(
+                            "vi-VN"
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )
+            }
+            style={{ minWidth: "160px" }}
+          />
+          <Column
+            header="Trạng thái chấm công"
             body={
               loading
                 ? skeletonStatusTemplate
                 : (rowData) => (
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        rowData.status === "Present"
-                          ? "bg-green-100 text-green-800"
+                    <div className="flex flex-col items-start space-y-2">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                          rowData.status === "Present"
+                            ? "bg-green-100 text-green-800"
+                            : rowData.status === "Late"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full mr-2 ${
+                            rowData.status === "Present"
+                              ? "bg-green-400"
+                              : rowData.status === "Late"
+                              ? "bg-red-400"
+                              : "bg-gray-400"
+                          }`}
+                        ></div>
+                        {rowData.status === "Present"
+                          ? "Đúng giờ"
                           : rowData.status === "Late"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {rowData.status === "Present"
-                        ? "Đúng giờ"
-                        : rowData.status === "Late"
-                        ? "Muộn"
-                        : "Không xác định"}
-                    </span>
+                          ? "Đi muộn"
+                          : "Chưa xác định"}
+                      </span>
+                    </div>
                   )
             }
+            style={{ minWidth: "180px" }}
           />
         </DataTable>
-      </main>
+      </div>
 
       <Toast ref={toast} />
       <ConfirmDialog />

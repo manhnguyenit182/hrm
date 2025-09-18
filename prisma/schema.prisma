@@ -33,6 +33,7 @@ model Employees {
   phone         String?
   email         String       @unique
   address       String?
+  deduction    Float?
   city          String?
   image         String?  
   state         String?

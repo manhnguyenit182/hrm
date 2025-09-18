@@ -125,54 +125,99 @@ const PayrollPageComponent: React.FC = () => {
   );
 
   return (
-    <div className="p-5 h-full shadow-md rounded-lg border border-gray-200">
-      <header className="flex gap-4 mb-4">
-        <IconField iconPosition="left" className="flex-1">
-          <InputIcon className="pi pi-search" />
-          <InputText
-            placeholder="Tìm kiếm nhân viên..."
-            onChange={handleSearchChange}
-            className="w-[35%]"
-            disabled={loading}
-          />
-        </IconField>
-      </header>
+    <div className="space-y-6">
+      {/* Search and Actions */}
+      <div className="card-modern p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+          <div className="flex-1 max-w-md">
+            <IconField iconPosition="left" className="w-full">
+              <InputIcon className="pi pi-search" />
+              <InputText
+                placeholder="Tìm kiếm nhân viên..."
+                onChange={handleSearchChange}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={loading}
+              />
+            </IconField>
+          </div>
+        </div>
+      </div>
 
-      <main className="">
+      {/* Payroll Table */}
+      <div className="card-modern overflow-hidden">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <i className="pi pi-table text-blue-600"></i>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800">
+              Bảng lương chi tiết
+            </h3>
+          </div>
+        </div>
+
         <DataTable
           value={loading ? skeletonItems : employees}
           paginator={!loading}
           rows={rowsPerPage}
-          className="p-datatable-sm"
+          className="modern-datatable"
           emptyMessage="Không tìm thấy nhân viên nào"
-          loading={false} // We handle loading state manually with skeleton
+          loading={false}
+          paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+          currentPageReportTemplate="Hiển thị {first} đến {last} trong tổng số {totalRecords} nhân viên"
         >
           <Column
-            header="Họ và tên"
+            header="Nhân viên"
             body={
               loading
                 ? skeletonNameTemplate
                 : (rowData) => (
-                    <div className="flex items-center gap-2">
-                      {rowData.image && (
-                        <Avatar image={rowData.image} shape="circle" />
-                      )}
-                      <span>{rowData.fullName}</span>
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        {rowData.image ? (
+                          <Avatar
+                            image={rowData.image}
+                            shape="circle"
+                            size="large"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                            <i className="pi pi-user text-gray-500"></i>
+                          </div>
+                        )}
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {rowData.fullName}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {rowData.job?.title || "Chưa có chức vụ"}
+                        </p>
+                      </div>
                     </div>
                   )
             }
+            style={{ minWidth: "250px" }}
           />
           <Column
-            header="CTC"
+            header="Lương năm (CTC)"
             body={
               loading
                 ? skeletonTextTemplate
                 : (rowData) => (
-                    <span>
-                      {(rowData.job.salary * 12).toLocaleString("vi-VN")}
-                    </span>
+                    <div className="space-y-1">
+                      <p className="font-bold text-lg text-blue-600">
+                        {((rowData.job?.salary || 0) * 12).toLocaleString(
+                          "vi-VN"
+                        )}{" "}
+                        VNĐ
+                      </p>
+                      <p className="text-sm text-gray-500">Lương thô/năm</p>
+                    </div>
                   )
             }
+            style={{ minWidth: "180px" }}
           />
           <Column
             header="Lương cơ bản"
@@ -180,9 +225,15 @@ const PayrollPageComponent: React.FC = () => {
               loading
                 ? skeletonTextTemplate
                 : (rowData) => (
-                    <span>{rowData.job.salary.toLocaleString("vi-VN")}</span>
+                    <div className="space-y-1">
+                      <p className="font-semibold text-gray-800">
+                        {(rowData.job?.salary || 0).toLocaleString("vi-VN")} VNĐ
+                      </p>
+                      <p className="text-sm text-gray-500">Mỗi tháng</p>
+                    </div>
                   )
             }
+            style={{ minWidth: "150px" }}
           />
           <Column
             header="Khấu trừ"
@@ -190,11 +241,38 @@ const PayrollPageComponent: React.FC = () => {
               loading
                 ? skeletonTextTemplate
                 : (rowData) => (
-                    <span>
-                      {(rowData.job.salary * 0.08).toLocaleString("vi-VN")}
-                    </span>
+                    <div className="space-y-1">
+                      <p className="font-semibold text-orange-600">
+                        -
+                        {((rowData.job?.salary || 0) * 0.08).toLocaleString(
+                          "vi-VN"
+                        )}{" "}
+                        VNĐ
+                      </p>
+                      <p className="text-sm text-gray-500">Thuế + BHXH (8%)</p>
+                    </div>
                   )
             }
+            style={{ minWidth: "150px" }}
+          />
+          <Column
+            header="Lương thực nhận"
+            body={
+              loading
+                ? skeletonTextTemplate
+                : (rowData) => (
+                    <div className="space-y-1">
+                      <p className="font-bold text-lg text-green-600">
+                        {((rowData.job?.salary || 0) * 0.92).toLocaleString(
+                          "vi-VN"
+                        )}{" "}
+                        VNĐ
+                      </p>
+                      <p className="text-sm text-gray-500">Sau khấu trừ</p>
+                    </div>
+                  )
+            }
+            style={{ minWidth: "180px" }}
           />
           <Column
             header="Trạng thái"
@@ -203,7 +281,7 @@ const PayrollPageComponent: React.FC = () => {
                 ? skeletonStatusTemplate
                 : (rowData) => (
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                         rowData.status === "Đã hoàn thành"
                           ? "bg-green-100 text-green-800"
                           : rowData.status === "Đang chờ"
@@ -211,13 +289,23 @@ const PayrollPageComponent: React.FC = () => {
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
-                      {rowData.status}
+                      <div
+                        className={`w-2 h-2 rounded-full mr-2 ${
+                          rowData.status === "Đã hoàn thành"
+                            ? "bg-green-400"
+                            : rowData.status === "Đang chờ"
+                            ? "bg-yellow-400"
+                            : "bg-gray-400"
+                        }`}
+                      ></div>
+                      {rowData.status || "Chưa xử lý"}
                     </span>
                   )
             }
+            style={{ minWidth: "140px" }}
           />
         </DataTable>
-      </main>
+      </div>
 
       <Toast ref={toast} />
       <ConfirmDialog />

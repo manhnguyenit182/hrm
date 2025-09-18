@@ -24,11 +24,7 @@ interface AuthContextType {
 export function useAuth(): AuthContextType {
   const { data: session, status } = useSession();
   const router = useRouter();
-  console.log("Session data:", session);
   const login = async (email: string, password: string) => {
-    console.log("=== LOGIN FUNCTION CALLED ===");
-    console.log("Email:", email);
-
     try {
       const result = await signIn("credentials", {
         email,

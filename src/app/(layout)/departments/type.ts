@@ -15,7 +15,8 @@ export type DepartmentWithEmployees = Departments & {
     lastName: string | null;
     createdAt: Date;
     phone: string | null;
-    status: string | null;
+    email: string | null;
+    type: string | null;
     image: string | null;
     job: Jobs | null;
   }>;

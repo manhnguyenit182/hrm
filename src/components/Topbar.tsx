@@ -28,10 +28,12 @@ const Topbar: React.FC<TopbarProps> = ({ className = "" }) => {
     {
       template: () => (
         <div
-          className="flex items-center gap-2 p-3 text-red-600 hover:bg-gray-100 cursor-pointer w-full"
+          className="flex items-center gap-3 p-4 text-red-600 hover:bg-red-50 cursor-pointer w-full transition-colors duration-200 rounded-lg"
           onClick={handleLogout}
         >
-          <i className="pi pi-sign-out text-red-600"></i>
+          <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+            <i className="pi pi-sign-out text-red-600 text-sm"></i>
+          </div>
           <span className="text-red-600 font-medium">Đăng xuất</span>
         </div>
       ),
@@ -64,35 +66,70 @@ const Topbar: React.FC<TopbarProps> = ({ className = "" }) => {
   };
 
   return (
-    <div
-      className={`bg-white  flex  m-5 justify-between items-center px-4 py-2 ${className}`}
-    >
-      <b className="text-xl">{selectedItem}</b>
+    <div className="bg-white backdrop-blur-sm border-b border-gray-100 shadow-sm">
+      <div className="flex justify-between items-center px-6 py-4">
+        {/* Page Title */}
+        <div className="flex items-center space-x-4">
+          <h1 className="text-2xl font-bold text-gradient">{selectedItem}</h1>
+          <div className="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+            <span>•</span>
+            <span>
+              {new Date().toLocaleDateString("vi-VN", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          </div>
+        </div>
 
-      <div className="flex items-center gap-3">
-        {/* User info with dropdown menu */}
-        <div className="relative">
+        {/* User Profile Section */}
+        <div className="flex items-center gap-4 space-x-4">
+          {/* Notifications */}
           <Button
-            onClick={handleUserClick}
-            className="flex items-center gap-2 !p-2 !bg-white  !text-black hover:!bg-gray-100 !border-gray-300"
-          >
-            <Avatar
-              image={user?.employee?.image || ""}
-              icon="pi pi-user"
-              shape="square"
-            />
-            <div className="flex flex-col items-start">
-              <span className="text-sm font-medium">
-                {user?.firstName && user?.lastName
-                  ? `${user.firstName} ${user.lastName}`
-                  : user?.email || "User"}
-              </span>
-              <small className="text-gray-400">{job?.job}</small>
-            </div>
-            <ChevronDown />
-          </Button>
+            icon="pi pi-bell"
+            className="!p-2 !bg-gray-50 !text-gray-600 hover:!bg-gray-100 !border-gray-200 !rounded-xl transition-all duration-200"
+            outlined
+          />
 
-          <Menu ref={menuRef} model={menuItems} popup className="mt-2" />
+          {/* User Dropdown */}
+          <div className="relative">
+            <Button
+              onClick={handleUserClick}
+              className="!flex !items-center !gap-3 !p-3 !bg-white hover:!bg-gray-50 !border-gray-200 !rounded-xl !shadow-sm transition-all duration-200"
+            >
+              <div className="relative">
+                <Avatar
+                  image={user?.employee?.image || ""}
+                  icon="pi pi-user"
+                  shape="circle"
+                  className="!w-10 !h-10 border-2 border-white shadow-md"
+                />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
+              </div>
+
+              <div className="hidden md:flex flex-col items-start text-left">
+                <span className="text-sm font-semibold text-gray-800">
+                  {user?.firstName && user?.lastName
+                    ? `${user.firstName} ${user.lastName}`
+                    : user?.email || "User"}
+                </span>
+                <span className="text-xs text-gray-500 font-medium">
+                  {job?.job || "Chức vụ"}
+                </span>
+              </div>
+
+              <ChevronDown className="w-4 h-4 text-gray-400 transition-transform duration-200" />
+            </Button>
+
+            <Menu
+              ref={menuRef}
+              model={menuItems}
+              popup
+              className="!mt-2 !shadow-xl !border-gray-200 !rounded-xl overflow-hidden"
+            />
+          </div>
         </div>
       </div>
     </div>

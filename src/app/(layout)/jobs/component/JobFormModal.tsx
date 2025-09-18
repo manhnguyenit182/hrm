@@ -65,18 +65,20 @@ export default function JobFormModal({
   };
 
   const footer = (
-    <div className="flex justify-center gap-4">
+    <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
       <Button
         label="Hủy"
+        icon="pi pi-times"
+        className="btn-secondary"
         onClick={handleCancel}
-        className="flex-1 max-w-[45%]  btn-primary"
         disabled={loading}
       />
       <Button
-        label="Thêm"
+        label="Tạo công việc"
+        icon="pi pi-plus"
+        className="btn-primary"
         onClick={handleSubmit(onFormSubmit)}
         loading={loading}
-        className="flex-1 max-w-[45%] btn-primary"
         autoFocus
       />
     </div>
@@ -86,72 +88,69 @@ export default function JobFormModal({
     <Dialog
       header="Tạo công việc mới"
       visible={visible}
-      headerStyle={{ paddingBottom: 0 }}
+      style={{ width: "500px", maxWidth: "90vw" }}
       onHide={handleCancel}
       footer={footer}
       modal
-      draggable={false}
-      resizable={false}
-      className="p-fluid w-1/3"
-      maskStyle={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-      contentStyle={{ padding: "2rem" }}
+      className="modern-dialog"
     >
-      <form
-        onSubmit={handleSubmit(onFormSubmit)}
-        className="flex flex-col  gap-4"
-      >
-        <div className="field">
-          <label className="block text-sm font-medium mb-2">
-            Chọn Phòng ban <span className="text-red-500">*</span>
+      <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6 p-2">
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-gray-700">
+            Phòng ban <span className="text-red-500">*</span>
           </label>
           <Controller
             name="departmentId"
             control={control}
             rules={{ required: "Phòng ban là bắt buộc" }}
             render={({ field, fieldState }) => (
-              <>
+              <div>
                 <Dropdown
-                  id="department"
                   {...field}
                   options={departmentsOptions}
-                  placeholder="Chọn Phòng ban"
-                  className={fieldState.error ? "p-invalid" : ""}
+                  placeholder="Chọn phòng ban"
+                  className={`w-full ${fieldState.error ? "p-invalid" : ""}`}
+                  panelClassName="modern-dropdown-panel"
                 />
                 {fieldState.error && (
-                  <small className="p-error">{fieldState.error.message}</small>
+                  <small className="text-red-500 mt-1 block">
+                    {fieldState.error.message}
+                  </small>
                 )}
-              </>
+              </div>
             )}
           />
         </div>
 
-        <div className="field">
-          <label htmlFor="job" className="block text-sm font-medium mb-2">
-            Công việc <span className="text-red-500">*</span>
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-gray-700">
+            Tên công việc <span className="text-red-500">*</span>
           </label>
           <Controller
             name="job"
             control={control}
-            rules={{ required: "Công việc là bắt buộc" }}
+            rules={{ required: "Tên công việc là bắt buộc" }}
             render={({ field, fieldState }) => (
-              <>
+              <div>
                 <InputText
-                  id="job"
                   {...field}
-                  placeholder="Nhập Công việc"
-                  className={fieldState.error ? "p-invalid" : ""}
+                  placeholder="Nhập tên công việc"
+                  className={`w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                    fieldState.error ? "p-invalid" : ""
+                  }`}
                 />
-
                 {fieldState.error && (
-                  <small className="p-error">{fieldState.error.message}</small>
+                  <small className="text-red-500 mt-1 block">
+                    {fieldState.error.message}
+                  </small>
                 )}
-              </>
+              </div>
             )}
           />
         </div>
 
-        <div className="field">
-          <label htmlFor="salary" className="block text-sm font-medium mb-2">
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-gray-700">
             Lương cơ bản <span className="text-red-500">*</span>
           </label>
           <Controller
@@ -162,37 +161,38 @@ export default function JobFormModal({
               min: { value: 1, message: "Lương phải lớn hơn 0" },
             }}
             render={({ field, fieldState }) => (
-              <>
+              <div>
                 <InputNumber
-                  id="salary"
                   value={field.value}
                   onValueChange={(e) => field.onChange(e.value)}
                   placeholder="Nhập lương cơ bản"
                   mode="currency"
                   currency="VND"
                   locale="vi-VN"
-                  className={fieldState.error ? "p-invalid" : ""}
+                  className={`w-full ${fieldState.error ? "p-invalid" : ""}`}
+                  inputClassName="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 {fieldState.error && (
-                  <small className="p-error">{fieldState.error.message}</small>
+                  <small className="text-red-500 mt-1 block">
+                    {fieldState.error.message}
+                  </small>
                 )}
-              </>
+              </div>
             )}
           />
         </div>
 
-        <div className="field">
-          <label className="block text-sm font-medium mb-2">
-            Kiểu công việc <span className="text-red-500">*</span>
+        <div className="space-y-3">
+          <label className="block text-sm font-semibold text-gray-700">
+            Hình thức làm việc <span className="text-red-500">*</span>
           </label>
-
           <Controller
             name="type"
             control={control}
-            rules={{ required: "Kiểu công việc là bắt buộc" }}
+            rules={{ required: "Hình thức làm việc là bắt buộc" }}
             render={({ field, fieldState }) => (
-              <>
-                <div className="inline-block">
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                   <RadioButton
                     inputId="office"
                     name="type"
@@ -200,11 +200,21 @@ export default function JobFormModal({
                     onChange={(e) => field.onChange(e.value)}
                     checked={field.value === "văn Phòng"}
                   />
-                  <label htmlFor="văn Phòng" className="ml-2">
-                    Văn phòng
+                  <label htmlFor="office" className="cursor-pointer flex-1">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i className="pi pi-building text-blue-600"></i>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800">Văn phòng</p>
+                        <p className="text-sm text-gray-500">
+                          Làm việc tại văn phòng công ty
+                        </p>
+                      </div>
+                    </div>
                   </label>
                 </div>
-                <div className="inline-block ml-4">
+                <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                   <RadioButton
                     inputId="remote"
                     name="type"
@@ -212,16 +222,28 @@ export default function JobFormModal({
                     onChange={(e) => field.onChange(e.value)}
                     checked={field.value === "Làm việc từ xa"}
                   />
-                  <label htmlFor="remote" className="ml-2">
-                    Làm việc từ xa
+                  <label htmlFor="remote" className="cursor-pointer flex-1">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i className="pi pi-home text-green-600"></i>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800">
+                          Làm việc từ xa
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Làm việc online từ nhà
+                        </p>
+                      </div>
+                    </div>
                   </label>
-                  {fieldState.error && (
-                    <small className="p-error">
-                      {fieldState.error.message}
-                    </small>
-                  )}
                 </div>
-              </>
+                {fieldState.error && (
+                  <small className="text-red-500 mt-1 block">
+                    {fieldState.error.message}
+                  </small>
+                )}
+              </div>
             )}
           />
         </div>

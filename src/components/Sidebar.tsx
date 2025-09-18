@@ -134,50 +134,93 @@ export default function Sidebar(): React.JSX.Element {
         <Link
           onClick={() => toggleSelected(item.label)}
           href={item.href}
-          className={`flex px-4 py-3 text-sm font-medium rounded-lg rounded-l-none transition-all duration-200 group  ${
+          className={`group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-300 relative overflow-hidden ${
             selectedItem === item.label
-              ? "bg-[color:#ebe9fe] text-[var(--color-primary-500)] border-l-4 border-[var(--color-primary-500)]"
-              : "hover:bg-[color:#f5f5ff] hover:text-[var(--color-primary-500)]  "
+              ? "bg-gradient-primary text-white shadow-lg transform scale-[1.02]"
+              : "text-gray-600 hover:text-white hover:bg-gradient-primary hover:shadow-md hover:transform hover:scale-[1.02]"
           }`}
         >
-          <span className="group-hover:scale-110 transition-transform duration-200">
+          {/* Background Animation */}
+          <div
+            className={`absolute inset-0 bg-gradient-primary transition-all duration-300 ${
+              selectedItem === item.label
+                ? "opacity-100"
+                : "opacity-0 group-hover:opacity-100"
+            }`}
+          />
+
+          {/* Icon */}
+          <span
+            className={`relative z-10 flex items-center justify-center w-6 h-6 mr-3 transition-transform duration-300 ${
+              selectedItem === item.label
+                ? "text-white"
+                : "text-gray-500 group-hover:text-white group-hover:scale-110"
+            }`}
+          >
             {item.icon}
           </span>
-          {item.label}
+
+          {/* Label */}
+          <span className="relative z-10 font-medium">{item.label}</span>
+
+          {/* Active Indicator */}
+          {selectedItem === item.label && (
+            <div className="absolute right-3 w-2 h-2 bg-white rounded-full opacity-75" />
+          )}
         </Link>
       </li>
     );
   };
 
   return (
-    <div
-      className={`w-64 h-[95%] text-black rounded-lg bg-[color:#f5f5f5] m-5 mr-0`}
-    >
-      <div className="p-6">
-        <Link href="/" className="block mb-8">
-          <Image
-            src="/logo.svg"
-            alt="logo"
-            width={120}
-            height={140}
-            className="w-auto h-12 object-contain mx-auto"
-          />
-        </Link>
-
-        <nav className="space-y-6">
-          {menuGroups.map((group: MenuGroup) => (
-            <div key={group.title} className="space-y-2">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3">
-                {group.title}
-              </h3>
-              <ul className="space-y-1">
-                {group.items.map((item: MenuItem) => (
-                  <MenuItemComponent key={item.href} item={item} />
-                ))}
-              </ul>
+    <div className="w-64 h-full bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 shadow-xl">
+      <div className="flex flex-col h-full">
+        {/* Logo Section */}
+        <div className="p-6 border-b border-gray-100">
+          <Link href="/" className="block">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
+                <Image
+                  src="/logo.svg"
+                  alt="logo"
+                  width={24}
+                  height={24}
+                  className="w-6 h-6 filter brightness-0 invert"
+                />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gradient">HRM</h1>
+                <p className="text-xs text-gray-500">Management System</p>
+              </div>
             </div>
-          ))}
-        </nav>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto py-6">
+          <nav className="px-4 space-y-8">
+            {menuGroups.map((group: MenuGroup) => (
+              <div key={group.title} className="space-y-3">
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-3">
+                  {group.title}
+                </h3>
+                <ul className="space-y-1">
+                  {group.items.map((item: MenuItem) => (
+                    <MenuItemComponent key={item.href} item={item} />
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-100">
+          <div className="text-xs text-gray-400 text-center">
+            <p>© 2025 HRM System</p>
+            <p>Version 1.0.0</p>
+          </div>
+        </div>
       </div>
     </div>
   );

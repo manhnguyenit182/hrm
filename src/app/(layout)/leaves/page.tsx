@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
-import { InputText } from "primereact/inputtext";
+import { InputTextarea } from "primereact/inputtextarea";
 import { useState, useRef, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { createLeaveRequest, getLeaveRequestsByEmployeeId } from "./actions";
@@ -13,7 +13,6 @@ import { withPermission } from "@/components/PermissionGuard";
 import { PERMISSIONS } from "@/constants/permissions";
 import { Toast } from "primereact/toast";
 import { TabView, TabPanel } from "primereact/tabview";
-import { Card } from "primereact/card";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { getAttendance } from "../attendance/actions";
@@ -213,79 +212,114 @@ function EmployeeUtilitiesPageComponent() {
   );
 
   return (
-    <div className="p-5 h-full">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Tiện ích nhân viên</h1>
-        <p className="text-gray-600">Quản lý nghỉ phép và điểm danh của bạn</p>
-      </div>
+    <div className="space-y-6">
+      {/* Page Header */}
 
-      <TabView>
-        {canCreateLeave && (
-          <TabPanel header="Đơn nghỉ phép" leftIcon="pi pi-calendar mr-2">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Quick Stats */}
-              <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <Card className="shadow-md">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold">Tổng ngày nghỉ</h3>
-                      <p className="text-2xl font-bold text-blue-600">
-                        {leaveStats.total}
-                      </p>
+      {/* Tab Content */}
+      <div className="card-modern">
+        <TabView className="modern-tabs">
+          {canCreateLeave && (
+            <TabPanel header="Đơn nghỉ phép" leftIcon="pi pi-calendar mr-2">
+              <div className="p-6 space-y-6">
+                {/* Quick Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="card-modern p-6 hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-1">
+                          Tổng ngày nghỉ
+                        </h3>
+                        <p className="text-3xl font-bold text-blue-600">
+                          {leaveStats.total}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">Ngày/năm</p>
+                      </div>
+                      <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center">
+                        <i className="pi pi-calendar text-blue-600 text-2xl"></i>
+                      </div>
                     </div>
-                    <i className="pi pi-calendar text-3xl text-blue-500"></i>
                   </div>
-                </Card>
-                <Card className="shadow-md">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold">Đã sử dụng</h3>
-                      <p className="text-2xl font-bold text-orange-600">
-                        {leaveStats.used}
-                      </p>
-                    </div>
-                    <i className="pi pi-check-circle text-3xl text-orange-500"></i>
-                  </div>
-                </Card>
-                <Card className="shadow-md">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold">Còn lại</h3>
-                      <p className="text-2xl font-bold text-green-600">
-                        {leaveStats.remaining}
-                      </p>
-                    </div>
-                    <i className="pi pi-clock text-3xl text-green-500"></i>
-                  </div>
-                </Card>
-              </div>
 
-              {/* Create Leave Request */}
-              <div className="lg:col-span-3">
-                <Card title="Tạo đơn nghỉ phép mới" className="shadow-md">
-                  <div className="flex justify-between items-center">
-                    <p className="text-gray-600 mb-0">
-                      Tạo đơn xin nghỉ phép và gửi cho quản lý phê duyệt
-                    </p>
+                  <div className="card-modern p-6 hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-1">
+                          Đã sử dụng
+                        </h3>
+                        <p className="text-3xl font-bold text-orange-600">
+                          {leaveStats.used}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Ngày đã nghỉ
+                        </p>
+                      </div>
+                      <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center">
+                        <i className="pi pi-check-circle text-orange-600 text-2xl"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="card-modern p-6 hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-1">
+                          Còn lại
+                        </h3>
+                        <p className="text-3xl font-bold text-green-600">
+                          {leaveStats.remaining}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Ngày khả dụng
+                        </p>
+                      </div>
+                      <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center">
+                        <i className="pi pi-clock text-green-600 text-2xl"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Create Leave Request */}
+                <div className="card-modern p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+                        <i className="pi pi-plus text-white text-xl"></i>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-800 mb-1">
+                          Tạo đơn nghỉ phép mới
+                        </h3>
+                        <p className="text-gray-600">
+                          Gửi yêu cầu nghỉ phép cho quản lý phê duyệt
+                        </p>
+                      </div>
+                    </div>
                     <Button
                       label="Tạo đơn mới"
                       icon="pi pi-plus"
-                      className="p-button-success"
+                      className="btn-primary !px-6 !py-3"
                       onClick={() => setVisible(true)}
                     />
                   </div>
-                </Card>
-              </div>
+                </div>
 
-              {/* My Leave Requests */}
-              <div className="lg:col-span-4">
-                <Card title="Đơn nghỉ phép của tôi" className="shadow-md">
+                {/* My Leave Requests */}
+                <div className="card-modern p-6">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <i className="pi pi-list text-purple-600"></i>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      Đơn nghỉ phép của tôi
+                    </h3>
+                  </div>
                   <DataTable
                     value={leaveRequests}
                     emptyMessage="Chưa có đơn nghỉ phép nào"
                     paginator
                     rows={5}
-                    className="p-datatable-sm"
+                    className="modern-datatable"
                   >
                     <Column
                       field="startDate"
@@ -308,12 +342,12 @@ function EmployeeUtilitiesPageComponent() {
                       header="Trạng thái"
                       body={(rowData) => (
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
                             rowData.status === "approved"
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-green-100 text-green-700 border border-green-200"
                               : rowData.status === "rejected"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
+                              ? "bg-red-100 text-red-700 border border-red-200"
+                              : "bg-yellow-100 text-yellow-700 border border-yellow-200"
                           }`}
                         >
                           {rowData.status === "approved"
@@ -332,123 +366,165 @@ function EmployeeUtilitiesPageComponent() {
                       }
                     />
                   </DataTable>
-                </Card>
-              </div>
-            </div>
-          </TabPanel>
-        )}
-
-        {canViewAttendance && (
-          <TabPanel header="Điểm danh" leftIcon="pi pi-users mr-2">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Today's Attendance Status */}
-              <Card title="Trạng thái hôm nay" className="shadow-md">
-                <div className="text-center">
-                  <div className="mb-4">
-                    <i
-                      className={`pi ${
-                        todayAttendance
-                          ? todayAttendance.status === "present"
-                            ? "pi-check-circle text-green-500"
-                            : todayAttendance.status === "late"
-                            ? "pi-clock text-yellow-500"
-                            : "pi-times-circle text-red-500"
-                          : "pi-question-circle text-gray-400"
-                      } text-4xl`}
-                    ></i>
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    {todayAttendance
-                      ? getAttendanceStatusLabel(todayAttendance.status || "")
-                      : "Chưa điểm danh"}
-                  </h3>
-                  <p className="text-gray-600">{currentDate}</p>
-                  {todayAttendance?.clockIn && (
-                    <p className="text-sm text-gray-500 mt-2">
-                      Giờ vào:{" "}
-                      {new Date(todayAttendance.clockIn).toLocaleTimeString(
-                        "vi-VN"
-                      )}
-                    </p>
-                  )}
                 </div>
-              </Card>
-
-              {/* Attendance History */}
-              <div className="lg:col-span-3">
-                <Card title="Lịch sử điểm danh" className="shadow-md">
-                  <DataTable
-                    value={attendanceData.slice(0, 10)} // Show last 10 records
-                    loading={attendanceLoading}
-                    emptyMessage="Không có dữ liệu điểm danh"
-                    paginator
-                    rows={5}
-                    className="p-datatable-sm"
-                  >
-                    <Column
-                      field="date"
-                      header="Ngày"
-                      body={(rowData) =>
-                        new Date(rowData.date || "").toLocaleDateString("vi-VN")
-                      }
-                    />
-                    <Column
-                      field="clockIn"
-                      header="Giờ vào"
-                      body={(rowData) =>
-                        rowData.clockIn
-                          ? new Date(rowData.clockIn).toLocaleTimeString(
-                              "vi-VN"
-                            )
-                          : "-"
-                      }
-                    />
-                    <Column
-                      field="clockOut"
-                      header="Giờ ra"
-                      body={(rowData) =>
-                        rowData.clockOut
-                          ? new Date(rowData.clockOut).toLocaleTimeString(
-                              "vi-VN"
-                            )
-                          : "-"
-                      }
-                    />
-                    <Column
-                      field="status"
-                      header="Trạng thái"
-                      body={(rowData) => (
-                        <Chip
-                          label={getAttendanceStatusLabel(rowData.status || "")}
-                          className={`p-chip-${getAttendanceStatusSeverity(
-                            rowData.status || ""
-                          )}`}
-                        />
-                      )}
-                    />
-                  </DataTable>
-                </Card>
               </div>
-            </div>
-          </TabPanel>
-        )}
-      </TabView>
+            </TabPanel>
+          )}
+
+          {canViewAttendance && (
+            <TabPanel header="Điểm danh" leftIcon="pi pi-users mr-2">
+              <div className="p-6 space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                  {/* Today's Attendance Status */}
+                  <div className="card-modern p-6">
+                    <div className="text-center">
+                      <div className="w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+                        <i
+                          className={`pi ${
+                            todayAttendance
+                              ? todayAttendance.status === "present"
+                                ? "pi-check-circle text-green-500"
+                                : todayAttendance.status === "late"
+                                ? "pi-clock text-yellow-500"
+                                : "pi-times-circle text-red-500"
+                              : "pi-question-circle text-gray-400"
+                          } text-3xl`}
+                        ></i>
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        {todayAttendance
+                          ? getAttendanceStatusLabel(
+                              todayAttendance.status || ""
+                            )
+                          : "Chưa điểm danh"}
+                      </h3>
+                      <p className="text-gray-600 mb-3">{currentDate}</p>
+                      {todayAttendance?.clockIn && (
+                        <div className="bg-gray-50 rounded-lg p-3">
+                          <p className="text-sm text-gray-600">
+                            <strong>Giờ vào:</strong>{" "}
+                            {new Date(
+                              todayAttendance.clockIn
+                            ).toLocaleTimeString("vi-VN")}
+                          </p>
+                          {todayAttendance.clockOut && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              <strong>Giờ ra:</strong>{" "}
+                              {new Date(
+                                todayAttendance.clockOut
+                              ).toLocaleTimeString("vi-VN")}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Attendance History */}
+                  <div className="lg:col-span-3 card-modern p-6">
+                    <div className="flex items-center space-x-3 mb-6">
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i className="pi pi-clock text-blue-600"></i>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-800">
+                        Lịch sử điểm danh
+                      </h3>
+                    </div>
+                    <DataTable
+                      value={attendanceData.slice(0, 10)}
+                      loading={attendanceLoading}
+                      emptyMessage="Không có dữ liệu điểm danh"
+                      paginator
+                      rows={5}
+                      className="modern-datatable"
+                    >
+                      <Column
+                        field="date"
+                        header="Ngày"
+                        body={(rowData) =>
+                          new Date(rowData.date || "").toLocaleDateString(
+                            "vi-VN"
+                          )
+                        }
+                      />
+                      <Column
+                        field="clockIn"
+                        header="Giờ vào"
+                        body={(rowData) =>
+                          rowData.clockIn
+                            ? new Date(rowData.clockIn).toLocaleTimeString(
+                                "vi-VN"
+                              )
+                            : "-"
+                        }
+                      />
+                      <Column
+                        field="clockOut"
+                        header="Giờ ra"
+                        body={(rowData) =>
+                          rowData.clockOut
+                            ? new Date(rowData.clockOut).toLocaleTimeString(
+                                "vi-VN"
+                              )
+                            : "-"
+                        }
+                      />
+                      <Column
+                        field="status"
+                        header="Trạng thái"
+                        body={(rowData) => (
+                          <Chip
+                            label={getAttendanceStatusLabel(
+                              rowData.status || ""
+                            )}
+                            className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
+                              getAttendanceStatusSeverity(
+                                rowData.status || ""
+                              ) === "success"
+                                ? "bg-green-100 text-green-700 border border-green-200"
+                                : getAttendanceStatusSeverity(
+                                    rowData.status || ""
+                                  ) === "danger"
+                                ? "bg-red-100 text-red-700 border border-red-200"
+                                : getAttendanceStatusSeverity(
+                                    rowData.status || ""
+                                  ) === "warning"
+                                ? "bg-yellow-100 text-yellow-700 border border-yellow-200"
+                                : "bg-blue-100 text-blue-700 border border-blue-200"
+                            }`}
+                          />
+                        )}
+                      />
+                    </DataTable>
+                  </div>
+                </div>
+              </div>
+            </TabPanel>
+          )}
+        </TabView>
+      </div>
+
+      <Toast ref={toast} />
 
       {/* Leave Request Dialog */}
       <Dialog
         header="Tạo đơn xin nghỉ phép"
         visible={visible}
-        style={{ width: "50vw" }}
+        style={{ width: "50vw", minWidth: "320px" }}
         onHide={() => {
           reset();
           setVisible(false);
         }}
         modal
         blockScroll
+        className="modern-dialog"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <div className="field flex flex-col mb-3">
-            <label htmlFor="dateRange" className="font-medium mb-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-2">
+          <div className="space-y-2">
+            <label
+              htmlFor="dateRange"
+              className="block text-sm font-semibold text-gray-700"
+            >
               Chọn khoảng thời gian <span className="text-red-500">*</span>
             </label>
             <Controller
@@ -470,18 +546,16 @@ function EmployeeUtilitiesPageComponent() {
                 <div>
                   <Calendar
                     value={field.value}
-                    onChange={(e) => {
-                      console.log("Selected date range:", e.value);
-                      field.onChange(e.value);
-                    }}
+                    onChange={(e) => field.onChange(e.value)}
                     selectionMode="range"
                     readOnlyInput
-                    hideOnRangeSelection
-                    placeholder="Chọn khoảng thời gian nghỉ"
-                    className={fieldState.error ? "p-invalid" : ""}
+                    showIcon
+                    dateFormat="dd/mm/yy"
+                    placeholder="Chọn ngày bắt đầu và kết thúc"
+                    className="w-full"
                   />
                   {fieldState.error && (
-                    <small className="p-error">
+                    <small className="text-red-500 mt-1 block">
                       {fieldState.error.message}
                     </small>
                   )}
@@ -490,30 +564,33 @@ function EmployeeUtilitiesPageComponent() {
             />
           </div>
 
-          <div className="field flex flex-col mb-3">
-            <label htmlFor="type" className="font-medium mb-2">
-              Loại phép <span className="text-red-500">*</span>
+          <div className="space-y-2">
+            <label
+              htmlFor="type"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              Loại nghỉ phép <span className="text-red-500">*</span>
             </label>
             <Controller
               name="type"
               control={control}
-              rules={{ required: "Vui lòng chọn loại phép" }}
+              rules={{ required: "Vui lòng chọn loại nghỉ phép" }}
               render={({ field, fieldState }) => (
                 <div>
                   <Dropdown
-                    id="type"
-                    {...field}
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.value)}
                     options={[
-                      { label: "Phép năm", value: "Phép năm" },
-                      { label: "Nghỉ không lương", value: "Nghỉ không lương" },
-                      { label: "Nghỉ ốm", value: "Nghỉ ốm" },
-                      { label: "Nghỉ việc riêng", value: "Nghỉ việc riêng" },
+                      { label: "Nghỉ phép thường niên", value: "annual" },
+                      { label: "Nghỉ ốm", value: "sick" },
+                      { label: "Nghỉ cá nhân", value: "personal" },
+                      { label: "Nghỉ khẩn cấp", value: "emergency" },
                     ]}
-                    placeholder="Chọn loại phép"
-                    className={fieldState.error ? "p-invalid" : ""}
+                    placeholder="Chọn loại nghỉ phép"
+                    className="w-full"
                   />
                   {fieldState.error && (
-                    <small className="p-error">
+                    <small className="text-red-500 mt-1 block">
                       {fieldState.error.message}
                     </small>
                   )}
@@ -522,30 +599,28 @@ function EmployeeUtilitiesPageComponent() {
             />
           </div>
 
-          <div className="field flex flex-col mb-3">
-            <label htmlFor="reason" className="font-medium mb-2">
-              Lý do nghỉ <span className="text-red-500">*</span>
+          <div className="space-y-2">
+            <label
+              htmlFor="reason"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              Lý do nghỉ phép <span className="text-red-500">*</span>
             </label>
             <Controller
               name="reason"
               control={control}
-              rules={{
-                required: "Vui lòng nhập lý do nghỉ",
-                minLength: {
-                  value: 10,
-                  message: "Lý do nghỉ phải có ít nhất 10 ký tự",
-                },
-              }}
+              rules={{ required: "Vui lòng nhập lý do nghỉ phép" }}
               render={({ field, fieldState }) => (
                 <div>
-                  <InputText
-                    id="reason"
-                    {...field}
-                    placeholder="Nhập lý do nghỉ"
-                    className={fieldState.error ? "p-invalid" : ""}
+                  <InputTextarea
+                    value={field.value || ""}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    placeholder="Nhập lý do nghỉ phép của bạn..."
+                    rows={4}
+                    className="w-full"
                   />
                   {fieldState.error && (
-                    <small className="p-error">
+                    <small className="text-red-500 mt-1 block">
                       {fieldState.error.message}
                     </small>
                   )}
@@ -554,11 +629,12 @@ function EmployeeUtilitiesPageComponent() {
             />
           </div>
 
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
             <Button
               type="button"
               label="Hủy"
               severity="secondary"
+              className="btn-secondary !px-6 !py-3"
               onClick={() => {
                 reset();
                 setVisible(false);
@@ -568,13 +644,11 @@ function EmployeeUtilitiesPageComponent() {
               type="submit"
               label="Gửi đơn"
               loading={loading}
-              disabled={loading}
+              className="btn-primary !px-6 !py-3"
             />
           </div>
         </form>
       </Dialog>
-
-      <Toast ref={toast} />
     </div>
   );
 }
