@@ -9,6 +9,7 @@ export interface AuthUser {
   lastName?: string | null;
   role?: string | null;
   employee?: Employees | null;
+  permissions: string[];
 }
 
 /**
@@ -38,6 +39,7 @@ export async function verifyAuth(): Promise<{
         lastName: session.user.lastName,
         role: session.user.role,
         employee: session.user.employee,
+        permissions: session.user.permissions,
       },
     };
   } catch (error) {

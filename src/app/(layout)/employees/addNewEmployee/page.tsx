@@ -4,8 +4,8 @@ import { TabMenu } from "primereact/tabmenu";
 import { BriefcaseBusiness, FileText, User, Lock } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { EmployeeWithRelations } from "../types";
-import { createEmployee } from "../actions";
+import { NewEmployeeFormData } from "../types";
+import { createEmployee, getPosition } from "../actions";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { MenuItem } from "primereact/menuitem";
@@ -17,7 +17,12 @@ import {
 } from "./helper";
 import { Option } from "./types";
 import { Toast } from "primereact/toast";
-export default function AddNewEmployeePage(): React.JSX.Element {
+import bcrypt from "bcryptjs";
+import { PERMISSIONS } from "@/constants/permissions";
+import { withPermission } from "@/components/PermissionGuard";
+
+function AddNewEmployeePageComponent(): React.JSX.Element {
+  // Move all hooks to the top before any conditional returns
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [departmentOptions, setDepartmentOptions] = useState<Option[]>([]);
   const [positionOptions, setPositionOptions] = useState<Option[]>([]);
@@ -28,7 +33,7 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     Array<Option & { departmentId: string }>
   >([]);
   const toast = useRef<Toast>(null);
-  const { control, handleSubmit, trigger } = useForm<EmployeeWithRelations>({
+  const { control, handleSubmit, trigger } = useForm<NewEmployeeFormData>({
     defaultValues: {
       // field cho thong tin ca nhan
       firstName: "",
@@ -48,6 +53,16 @@ export default function AddNewEmployeePage(): React.JSX.Element {
       positionId: null,
       jobId: null,
       startDate: null,
+      type: null,
+      // field cho tai lieu
+      // field cho quyen truy cap tai khoan
+      user: {
+        email: "",
+        firstName: "",
+        lastName: "",
+        password: "",
+        role: "",
+      },
     },
   });
 
@@ -65,6 +80,7 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     };
     fetchData();
   }, []);
+
   const maritalStatusOptions = [
     { label: "Độc thân", value: "single" },
     { label: "Đã kết hôn", value: "married" },
@@ -89,12 +105,42 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     const randomNum = Math.floor(Math.random() * 70) + 1;
     return `https://i.pravatar.cc/150?img=${randomNum}`;
   }
-  const onSubmit = async (data: EmployeeWithRelations) => {
+  const onSubmit = async (data: NewEmployeeFormData) => {
     console.log("🚨 Form submitted!", { activeIndex, data }); // Debug log
     data.status = "Đang chờ";
     data.image = getRandomAvatar();
-    const result = await createEmployee(data);
+    const positions = await getPosition(data.positionId || undefined);
+    console.log(positions);
+    if (data.user) {
+      const title = positions[0]?.title || "";
 
+      switch (title) {
+        case "Trưởng Phòng":
+          data.user.role = "manager";
+          break;
+        case "CEO CFO CTO COO CPO":
+          data.user.role = "admin";
+          break;
+        default:
+          data.user.role = "employee";
+      }
+    }
+    const hashedPassword = await bcrypt.hash(data.user?.password || "", 12);
+    // Ensure user object is properly structured
+    const employeeData = {
+      ...data,
+      user: {
+        employeeId: "", // Will be set by the server/database
+        email: data.user?.email || "",
+        firstName: data.user?.firstName || "",
+        lastName: data.user?.lastName || "",
+        password: hashedPassword,
+        role: data.user?.role || "employee",
+      },
+    };
+
+    const result = await createEmployee(employeeData);
+    console.log("🚨 Employee created!", result);
     if (result.success) {
       toast.current?.show({
         severity: "success",
@@ -114,7 +160,7 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     e?.preventDefault(); // Ngăn form submit không mong muốn
 
     // Validate fields của tab hiện tại trước khi chuyển
-    let fieldsToValidate: (keyof EmployeeWithRelations)[] = [];
+    let fieldsToValidate: (keyof NewEmployeeFormData)[] = [];
 
     if (activeIndex === 0) {
       fieldsToValidate = [
@@ -628,20 +674,80 @@ export default function AddNewEmployeePage(): React.JSX.Element {
             </div>
           )}
           {activeIndex === 3 && (
-            <p>ds</p>
-            // <div>
-            //   <Controller
-            //     name="email"
-            //     control={control}
-            //     render={({ field }) => (
-            //       <InputText
-            //         {...field}
-            //         placeholder="Email for account"
-            //         className="w-full mb-4"
-            //       />
-            //     )}
-            //   />
-            // </div>
+            <div className="flex flex-col gap-4 my-4">
+              <div className="flex gap-2">
+                <div className="field flex flex-col flex-1/2 ">
+                  <Controller
+                    name="user.email"
+                    control={control}
+                    rules={{
+                      required: "Email for account is required",
+                      pattern: {
+                        value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                        message: "Email is not valid",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <InputText
+                        {...field}
+                        placeholder="Email for account"
+                        className="w-full mb-4"
+                      />
+                    )}
+                  />
+                </div>
+                <div className="field flex flex-col flex-1/2">
+                  <Controller
+                    name="user.password"
+                    control={control}
+                    rules={{
+                      required: "Password is required",
+                    }}
+                    render={({ field }) => (
+                      <InputText
+                        {...field}
+                        placeholder="Password"
+                        className="w-full mb-4"
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <div className="field flex flex-col flex-1/3">
+                  <Controller
+                    name="user.firstName"
+                    control={control}
+                    rules={{
+                      required: "First Name is required",
+                    }}
+                    render={({ field }) => (
+                      <InputText
+                        {...field}
+                        placeholder="First Name"
+                        className="w-full mb-4"
+                      />
+                    )}
+                  />
+                </div>
+                <div className="field flex flex-col flex-1/3">
+                  <Controller
+                    name="user.lastName"
+                    control={control}
+                    rules={{
+                      required: "Last Name is required",
+                    }}
+                    render={({ field }) => (
+                      <InputText
+                        {...field}
+                        placeholder="Last Name"
+                        className="w-full mb-4"
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
           )}
         </main>
 
@@ -652,7 +758,7 @@ export default function AddNewEmployeePage(): React.JSX.Element {
             disabled={activeIndex === 0}
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
           >
-            Previous
+            Quay lại
           </button>
 
           {activeIndex < 3 ? (
@@ -673,3 +779,10 @@ export default function AddNewEmployeePage(): React.JSX.Element {
     </div>
   );
 }
+
+// Wrap component với HOC để bảo vệ với permission
+const AddNewEmployeePage = withPermission(PERMISSIONS.EMPLOYEES.CREATE, {
+  redirectToNotFound: true,
+})(AddNewEmployeePageComponent);
+
+export default AddNewEmployeePage;

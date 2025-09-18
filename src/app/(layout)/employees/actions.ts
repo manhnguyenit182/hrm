@@ -84,8 +84,14 @@ const getEmployees = async (
   }
 };
 
-const getPosition = async () => {
+const getPosition = async (id?: string) => {
   try {
+    if (id) {
+      const position = await prisma.positions.findUnique({
+        where: { id },
+      });
+      return position ? [position] : [];
+    }
     const positions = await prisma.positions.findMany();
     return positions;
   } catch (error) {
@@ -95,12 +101,38 @@ const getPosition = async () => {
 };
 
 const createEmployee = async (
-  data: Employees
+  data: Employees & {
+    user: {
+      employeeId: string;
+      email: string;
+      firstName: string;
+      lastName: string;
+      password: string;
+      role: string;
+    };
+  }
 ): Promise<{ employee: Employees; success: boolean; error?: string }> => {
   try {
+    // Tách riêng data cho employee (loại bỏ user data)
+    const { user, ...employeeData } = data;
+
+    // Tạo employee trước
     const newEmployee = await prisma.employees.create({
-      data,
+      data: employeeData,
     });
+
+    // Sau đó tạo user với employeeId từ employee vừa tạo
+    await prisma.user.create({
+      data: {
+        employeeId: newEmployee.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        password: user.password,
+        role: user.role,
+      },
+    });
+
     return {
       employee: newEmployee,
       success: true,

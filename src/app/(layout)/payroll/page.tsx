@@ -14,8 +14,10 @@ import { Skeleton } from "primereact/skeleton";
 import { getEmployees } from "../employees/actions";
 import { employeesTableMapping } from "../employees/helpers";
 import { DataTableEmployee } from "../employees/types";
+import { withPermission } from "@/components/PermissionGuard";
+import { PERMISSIONS } from "@/constants/permissions";
 
-const Payroll: React.FC = () => {
+const PayrollPageComponent: React.FC = () => {
   const [employees, setEmployees] = useState<DataTableEmployee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -222,4 +224,5 @@ const Payroll: React.FC = () => {
     </div>
   );
 };
-export default Payroll;
+
+export default withPermission(PERMISSIONS.PAYROLL.VIEW)(PayrollPageComponent);

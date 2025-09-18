@@ -17,6 +17,8 @@ import {
 import { Menu } from "primereact/menu";
 import { TabMenu } from "primereact/tabmenu";
 import { classNames } from "primereact/utils";
+import { withPermission } from "@/components/PermissionGuard";
+import { PERMISSIONS } from "@/constants/permissions";
 
 interface EditEmployeePageProps {
   params: Promise<{
@@ -24,7 +26,7 @@ interface EditEmployeePageProps {
   }>;
 }
 
-export default function EditEmployeePage({ params }: EditEmployeePageProps) {
+function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
   const [employee, setEmployee] = useState<EmployeeWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -276,3 +278,9 @@ export default function EditEmployeePage({ params }: EditEmployeePageProps) {
     </div>
   );
 }
+
+const ViewEmployeePage = withPermission(PERMISSIONS.EMPLOYEES.VIEW, {
+  redirectToNotFound: true,
+})(ViewEmployeePageComponent);
+
+export default ViewEmployeePage;

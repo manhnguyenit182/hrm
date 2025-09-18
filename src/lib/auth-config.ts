@@ -2,7 +2,9 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@/db/prisma";
+import { PERMISSION_GROUPS } from "@/constants/permissions";
 const prisma = new PrismaClient();
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -66,6 +68,24 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
+      // console.log(
+      //   "=== JWT CALLBACK ===",
+      //   JSON.stringify({ token, user }, null, 2)
+      // );
+      const positionId = user?.employee?.positionId || null;
+      if (positionId) {
+        const userPosition = await prisma.positions.findUnique({
+          where: { id: positionId },
+        });
+        token.position = userPosition;
+        if (userPosition) {
+          const permissions =
+            PERMISSION_GROUPS[
+              userPosition.roleName as keyof typeof PERMISSION_GROUPS
+            ] || [];
+          token.permissions = Array.from(permissions);
+        }
+      }
       // Persist user data to token
       if (user) {
         token.id = user.id;
@@ -75,9 +95,14 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.employee = user.employee;
       }
+      console.log("JWT callback - token:", token);
       return token;
     },
     async session({ session, token }) {
+      console.log(
+        "=== SESSION CALLBACK ===",
+        JSON.stringify({ session, token }, null, 2)
+      );
       // Send properties to the client
       if (token && session.user) {
         session.user.id = token.id;
@@ -86,6 +111,8 @@ export const authOptions: NextAuthOptions = {
         session.user.lastName = token.lastName;
         session.user.role = token.role;
         session.user.employee = token.employee;
+        session.user.permissions = token.permissions || [];
+        session.user.position = token.position || null;
       }
       return session;
     },

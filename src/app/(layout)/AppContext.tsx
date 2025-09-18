@@ -21,6 +21,11 @@ const pathToMenuMap: Record<string, string> = {
   "/payroll": "Lương",
   "/jobs": "Công việc",
   "/holidays": "Ngày nghỉ",
+  "/leaves": "Tiện ích",
+  "/reports": "Báo cáo",
+  "/settings": "Cài đặt",
+  "/history": "Lịch sử",
+  "/manageLeaves": "Duyệt phép",
 };
 
 export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({

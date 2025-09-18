@@ -60,6 +60,8 @@ model Departments {
   Employees Employees[]
 
   Jobs Jobs[]
+
+  LeaveRequests LeaveRequests[]
 }
 
 model Positions {
@@ -70,6 +72,10 @@ model Positions {
   updatedAt   DateTime @updatedAt
 
   Employees Employees[]
+
+  roleName     String?
+  // role       Roles? @relation(fields: [roleId], references: [id])
+
 }
 
 model Attendance {
@@ -125,6 +131,8 @@ model LeaveRequests {
   id          String   @id @default(cuid())
   employeeId  String?
   employee    Employees? @relation(fields: [employeeId], references: [id])
+  departmentId String?
+  department  Departments? @relation(fields: [departmentId], references: [id])
   startDate   DateTime?
   endDate     DateTime?
   type        String? //Loại nghỉ (ví dụ: phép năm, nghỉ bệnh...)

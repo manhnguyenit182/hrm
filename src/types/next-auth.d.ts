@@ -1,6 +1,6 @@
 import { DefaultSession, DefaultUser } from "next-auth";
 import { DefaultJWT } from "next-auth/jwt";
-import { Employees } from "@/db/prisma";
+import { Employees, Positions } from "@/db/prisma";
 
 declare module "next-auth" {
   interface Session {
@@ -11,6 +11,9 @@ declare module "next-auth" {
       lastName?: string | null;
       role?: string | null;
       employee?: Employees | null;
+      permissions: string[];
+      position?: Positions | null;
+      permissions: string[];
     } & DefaultSession["user"];
   }
 
@@ -32,5 +35,7 @@ declare module "next-auth/jwt" {
     lastName?: string | null;
     role?: string | null;
     employee?: Employees | null;
+    permissions?: string[];
+    position?: Positions | null;
   }
 }

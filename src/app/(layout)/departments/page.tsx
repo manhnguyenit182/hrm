@@ -11,7 +11,10 @@ import { Toast } from "primereact/toast";
 import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { Skeleton } from "primereact/skeleton";
-export default function DepartmentsPage(): React.JSX.Element {
+import { withPermission } from "@/components/PermissionGuard";
+import { PERMISSIONS } from "@/constants/permissions";
+
+function DepartmentsPageComponent(): React.JSX.Element {
   const router = useRouter();
   const [departments, setDepartments] = React.useState<
     DepartmentWithEmployees[]
@@ -231,3 +234,9 @@ export default function DepartmentsPage(): React.JSX.Element {
     </div>
   );
 }
+
+const DepartmentsPage = withPermission(PERMISSIONS.DEPARTMENTS.VIEW, {
+  redirectToNotFound: true,
+})(DepartmentsPageComponent);
+
+export default DepartmentsPage;

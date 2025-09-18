@@ -10,8 +10,11 @@ import { useForm, Controller } from "react-hook-form";
 import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
 import { Calendar } from "primereact/calendar";
+import { withPermission } from "@/components/PermissionGuard";
+import { PERMISSIONS } from "@/constants/permissions";
+import { useCheckPermission } from "@/hooks/usePermission";
 
-export default function HolidaysPage() {
+function HolidaysPageComponent() {
   const [holidays, setHolidays] = useState<Holidays[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [visible, setVisible] = useState<boolean>(false);
@@ -42,7 +45,7 @@ export default function HolidaysPage() {
       </div>
     );
   };
-
+  const canCreateHoliday = useCheckPermission(PERMISSIONS.HOLIDAYS.CREATE);
   const onSubmit = async (data: Holidays) => {
     try {
       const newHoliday = await addHoliday(data);
@@ -59,6 +62,7 @@ export default function HolidaysPage() {
         <Button
           label="Thêm ngày lễ"
           className="btn-primary"
+          disabled={!canCreateHoliday}
           onClick={() => setVisible(true)}
           icon="pi pi-plus"
         />
@@ -152,3 +156,5 @@ export default function HolidaysPage() {
     </div>
   );
 }
+
+export default withPermission(PERMISSIONS.HOLIDAYS.VIEW)(HolidaysPageComponent);

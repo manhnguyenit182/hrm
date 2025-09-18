@@ -17,8 +17,10 @@ import Link from "next/link";
 import { Avatar } from "primereact/avatar";
 import { Eye } from "lucide-react";
 import { Skeleton } from "primereact/skeleton";
+import { withPermission } from "@/components/PermissionGuard";
+import { PERMISSIONS } from "@/constants/permissions";
 
-const EmployeesTable: React.FC = () => {
+function EmployeesPageComponent(): React.ReactElement {
   const [employees, setEmployees] = useState<DataTableEmployee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = useState<number>(4);
@@ -281,6 +283,10 @@ const EmployeesTable: React.FC = () => {
       <ConfirmDialog />
     </div>
   );
-};
+}
 
-export default EmployeesTable;
+const EmployeesPage = withPermission(PERMISSIONS.EMPLOYEES.VIEW, {
+  redirectToNotFound: true,
+})(EmployeesPageComponent);
+
+export default EmployeesPage;

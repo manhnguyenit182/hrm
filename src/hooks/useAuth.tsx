@@ -11,6 +11,7 @@ interface User {
   lastName?: string | null;
   role?: string | null;
   employee?: Employees | null;
+  permissions: string[];
 }
 
 interface AuthContextType {
@@ -23,7 +24,7 @@ interface AuthContextType {
 export function useAuth(): AuthContextType {
   const { data: session, status } = useSession();
   const router = useRouter();
-
+  console.log("Session data:", session);
   const login = async (email: string, password: string) => {
     console.log("=== LOGIN FUNCTION CALLED ===");
     console.log("Email:", email);

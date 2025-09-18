@@ -13,8 +13,10 @@ import { Avatar } from "primereact/avatar";
 import { Skeleton } from "primereact/skeleton";
 import { AttendanceWithEmployee } from "./types";
 import { getAttendance } from "./actions";
+import { withPermission } from "@/components/PermissionGuard";
+import { PERMISSIONS } from "@/constants/permissions";
 
-const Payroll: React.FC = () => {
+function AttendancePageComponent(): React.ReactElement {
   const [employees, setEmployees] = useState<AttendanceWithEmployee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -233,5 +235,8 @@ const Payroll: React.FC = () => {
       <ConfirmDialog />
     </div>
   );
-};
-export default Payroll;
+}
+
+export default withPermission(PERMISSIONS.ATTENDANCE.VIEW)(
+  AttendancePageComponent
+);

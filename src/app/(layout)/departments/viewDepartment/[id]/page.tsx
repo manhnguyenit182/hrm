@@ -9,8 +9,10 @@ import { getDepartmentsById } from "../../actions";
 import React from "react";
 import { DepartmentWithEmployees } from "../../type";
 import { Avatar } from "primereact/avatar";
+import { withPermission } from "@/components/PermissionGuard";
+import { PERMISSIONS } from "@/constants/permissions";
 
-export default function ViewDepartmentPage({
+function ViewDepartmentPageComponent({
   params,
 }: {
   params: Promise<{
@@ -106,3 +108,12 @@ export default function ViewDepartmentPage({
     </div>
   );
 }
+
+const ViewDepartmentPage = withPermission(
+  PERMISSIONS.DEPARTMENTS.VIEW_MEMBERS,
+  {
+    redirectToNotFound: true,
+  }
+)(ViewDepartmentPageComponent);
+
+export default ViewDepartmentPage;

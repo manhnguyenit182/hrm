@@ -13,8 +13,10 @@ import { JobFormData } from "./types";
 import JobCard from "./component/JobCard";
 import { getJobData } from "./component/helper";
 import { JobData } from "./component/type";
+import { withPermission } from "@/components/PermissionGuard";
+import { PERMISSIONS } from "@/constants/permissions";
 
-export default function JobsPage(): React.JSX.Element {
+function JobsPageComponent(): React.JSX.Element {
   const [showForm, setShowForm] = useState(false);
   const [jobData, setJobData] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,3 +140,5 @@ export default function JobsPage(): React.JSX.Element {
     </>
   );
 }
+
+export default withPermission(PERMISSIONS.JOBS.VIEW)(JobsPageComponent);

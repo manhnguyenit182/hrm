@@ -9,8 +9,10 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Chip } from "primereact/chip";
+import { withPermission } from "@/components/PermissionGuard";
+import { PERMISSIONS } from "@/constants/permissions";
 
-export default function History() {
+function HistoryPageComponent() {
   const { user } = useAuth();
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequests[]>([]);
   const [visible, setVisible] = useState<boolean>(false);
@@ -199,3 +201,5 @@ export default function History() {
     </div>
   );
 }
+
+export default withPermission(PERMISSIONS.HISTORY.VIEW)(HistoryPageComponent);
