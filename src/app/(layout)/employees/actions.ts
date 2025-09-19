@@ -205,10 +205,31 @@ const getEmployeeById = async (
   }
 };
 
+const updateEmployee = async (
+  id: string,
+  data: Partial<Employees>
+): Promise<{ success: boolean; employee?: Employees; error?: string }> => {
+  try {
+    const updatedEmployee = await prisma.employees.update({
+      where: { id },
+      data,
+    });
+    return { success: true, employee: updatedEmployee };
+  } catch (error: unknown) {
+    console.error("Error updating employee:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to update employee",
+    };
+  }
+};
+
 export {
   getEmployees,
   getEmployeeById,
   createEmployee,
+  updateEmployee,
   deleteEmployee,
   getPosition,
 };

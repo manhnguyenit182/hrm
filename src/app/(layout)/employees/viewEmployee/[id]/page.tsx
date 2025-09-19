@@ -1,9 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { EmployeeWithRelations } from "../../types";
-import { getEmployeeById } from "../../actions";
+import { getEmployeeById, updateEmployee, getPosition } from "../../actions";
+import { getDepartments } from "../../../departments/actions";
+import { getJobs } from "../../../jobs/actions";
+import { Departments, Jobs, Positions } from "@/db/prisma";
 import { Avatar } from "primereact/avatar";
+import { InputText } from "primereact/inputtext";
+import { Calendar } from "primereact/calendar";
+import { Dropdown } from "primereact/dropdown";
+import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
 import {
   BriefcaseBusiness,
   CalendarCheck,
@@ -13,6 +21,9 @@ import {
   SquareChartGantt,
   UserRound,
   Lock,
+  Edit,
+  Save,
+  X,
 } from "lucide-react";
 import { classNames } from "primereact/utils";
 import { withPermission } from "@/components/PermissionGuard";
@@ -29,7 +40,124 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
   const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedMenuItem, setSelectedMenuItem] = useState<string>("userInfo");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState<Partial<EmployeeWithRelations>>({});
+  const [saving, setSaving] = useState(false);
+  const toast = useRef<Toast>(null);
+
+  // Dropdown options state
+  const [departments, setDepartments] = useState<Departments[]>([]);
+  const [jobs, setJobs] = useState<Jobs[]>([]);
+  const [positions, setPositions] = useState<Positions[]>([]);
+
   let fullName;
+
+  // Options for dropdowns
+  const maritalStatusOptions = [
+    { label: "Độc thân", value: "single" },
+    { label: "Đã kết hôn", value: "married" },
+  ];
+
+  const genderOptions = [
+    { label: "Nam", value: "male" },
+    { label: "Nữ", value: "female" },
+    { label: "Khác", value: "other" },
+  ];
+
+  // Create dropdown options from loaded data
+  const departmentOptions = departments.map((dept) => ({
+    label: dept.name,
+    value: dept.id,
+  }));
+
+  const jobOptions = jobs.map((job) => ({
+    label: job.job,
+    value: job.id,
+  }));
+
+  const positionOptions = positions.map((pos) => ({
+    label: pos.roleName,
+    value: pos.id,
+  }));
+
+  const employeeTypeOptions = [
+    { label: "Toàn thời gian", value: "full-time" },
+    { label: "Bán thời gian", value: "part-time" },
+  ];
+
+  const employeeStatusOptions = [
+    { label: "Đang làm việc", value: "active" },
+    { label: "Tạm nghỉ", value: "inactive" },
+    { label: "Đã nghỉ việc", value: "terminated" },
+  ];
+
+  // Handle edit mode
+  const handleEdit = () => {
+    setIsEditing(true);
+    setEditData({ ...employee });
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditData({});
+  };
+
+  const handleSave = async () => {
+    if (!employee?.id) return;
+
+    setSaving(true);
+    try {
+      const result = await updateEmployee(employee.id, {
+        firstName: editData.firstName,
+        lastName: editData.lastName,
+        phone: editData.phone,
+        email: editData.email,
+        birthday: editData.birthday,
+        maritalStatus: editData.maritalStatus,
+        gender: editData.gender,
+        nationality: editData.nationality,
+        address: editData.address,
+        city: editData.city,
+        state: editData.state,
+        departmentId: editData.departmentId,
+        positionId: editData.positionId,
+        jobId: editData.jobId,
+        startDate: editData.startDate,
+        type: editData.type,
+        status: editData.status,
+      });
+
+      if (result.success) {
+        toast.current?.show({
+          severity: "success",
+          summary: "Thành công",
+          detail: "Cập nhật thông tin nhân viên thành công",
+          life: 3000,
+        });
+
+        // Update employee state
+        setEmployee((prev) => (prev ? { ...prev, ...editData } : null));
+        setIsEditing(false);
+        setEditData({});
+      } else {
+        toast.current?.show({
+          severity: "error",
+          summary: "Lỗi",
+          detail: result.error || "Không thể cập nhật thông tin",
+          life: 5000,
+        });
+      }
+    } catch {
+      toast.current?.show({
+        severity: "error",
+        summary: "Lỗi",
+        detail: "Có lỗi xảy ra khi cập nhật thông tin",
+        life: 5000,
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const menuItems = [
     {
@@ -111,6 +239,25 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
     };
     fetchEmployee();
   }, [params]);
+
+  // Load dropdown options
+  useEffect(() => {
+    const loadDropdownData = async () => {
+      try {
+        const [departmentsData, jobsData, positionsData] = await Promise.all([
+          getDepartments(),
+          getJobs(),
+          getPosition(),
+        ]);
+        setDepartments(departmentsData);
+        setJobs(jobsData);
+        setPositions(positionsData);
+      } catch (error) {
+        console.error("Error loading dropdown data:", error);
+      }
+    };
+    loadDropdownData();
+  }, []);
 
   if (loading) {
     return (
@@ -198,6 +345,37 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
               </div>
             </div>
           </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-3">
+            {!isEditing ? (
+              <Button
+                icon={<Edit className="w-4 h-4" />}
+                label="Chỉnh sửa"
+                onClick={handleEdit}
+                className="p-button-outlined p-button-primary"
+                size="small"
+              />
+            ) : (
+              <div className="flex space-x-2">
+                <Button
+                  icon={<Save className="w-4 h-4" />}
+                  label="Lưu"
+                  onClick={handleSave}
+                  loading={saving}
+                  className="p-button-primary"
+                  size="small"
+                />
+                <Button
+                  icon={<X className="w-4 h-4" />}
+                  label="Hủy"
+                  onClick={handleCancel}
+                  className="p-button-outlined p-button-secondary"
+                  size="small"
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -257,25 +435,64 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Họ
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.firstName}
-                        </p>
+                        {isEditing ? (
+                          <InputText
+                            value={editData.firstName || ""}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                firstName: e.target.value,
+                              })
+                            }
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.firstName}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Tên
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.lastName}
-                        </p>
+                        {isEditing ? (
+                          <InputText
+                            value={editData.lastName || ""}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                lastName: e.target.value,
+                              })
+                            }
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.lastName}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Số điện thoại
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.phone}
-                        </p>
+                        {isEditing ? (
+                          <InputText
+                            value={editData.phone || ""}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                phone: e.target.value,
+                              })
+                            }
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.phone}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -286,31 +503,77 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Email
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.email}
-                        </p>
+                        {isEditing ? (
+                          <InputText
+                            value={editData.email || ""}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                email: e.target.value,
+                              })
+                            }
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.email}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Ngày sinh
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.birthday
-                            ? employee.birthday.toLocaleDateString("vi-VN")
-                            : "Chưa cập nhật"}
-                        </p>
+                        {isEditing ? (
+                          <Calendar
+                            value={
+                              editData.birthday
+                                ? new Date(editData.birthday)
+                                : null
+                            }
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                birthday: e.value as Date,
+                              })
+                            }
+                            dateFormat="dd/mm/yy"
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.birthday
+                              ? employee.birthday.toLocaleDateString("vi-VN")
+                              : "Chưa cập nhật"}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Tình trạng hôn nhân
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.maritalStatus === "single"
-                            ? "Độc thân"
-                            : employee.maritalStatus === "married"
-                            ? "Đã kết hôn"
-                            : "Chưa cập nhật"}
-                        </p>
+                        {isEditing ? (
+                          <Dropdown
+                            value={editData.maritalStatus}
+                            options={maritalStatusOptions}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                maritalStatus: e.value,
+                              })
+                            }
+                            placeholder="Chọn tình trạng"
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.maritalStatus === "single"
+                              ? "Độc thân"
+                              : employee.maritalStatus === "married"
+                              ? "Đã kết hôn"
+                              : "Chưa cập nhật"}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -321,23 +584,48 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Giới tính
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.gender === "male"
-                            ? "Nam"
-                            : employee.gender === "female"
-                            ? "Nữ"
-                            : employee.gender === "other"
-                            ? "Khác"
-                            : "Chưa cập nhật"}
-                        </p>
+                        {isEditing ? (
+                          <Dropdown
+                            value={editData.gender}
+                            options={genderOptions}
+                            onChange={(e) =>
+                              setEditData({ ...editData, gender: e.value })
+                            }
+                            placeholder="Chọn giới tính"
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.gender === "male"
+                              ? "Nam"
+                              : employee.gender === "female"
+                              ? "Nữ"
+                              : employee.gender === "other"
+                              ? "Khác"
+                              : "Chưa cập nhật"}
+                          </p>
+                        )}
                       </div>
                       <div className="md:col-span-2 space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Địa chỉ
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.address || "Chưa cập nhật"}
-                        </p>
+                        {isEditing ? (
+                          <InputText
+                            value={editData.address || ""}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                address: e.target.value,
+                              })
+                            }
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.address || "Chưa cập nhật"}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -348,25 +636,61 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Tỉnh/Thành phố
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.state || "Chưa cập nhật"}
-                        </p>
+                        {isEditing ? (
+                          <InputText
+                            value={editData.state || ""}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                state: e.target.value,
+                              })
+                            }
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.state || "Chưa cập nhật"}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Quận/Huyện
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.city || "Chưa cập nhật"}
-                        </p>
+                        {isEditing ? (
+                          <InputText
+                            value={editData.city || ""}
+                            onChange={(e) =>
+                              setEditData({ ...editData, city: e.target.value })
+                            }
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.city || "Chưa cập nhật"}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Quốc tịch
                         </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.nationality || "Chưa cập nhật"}
-                        </p>
+                        {isEditing ? (
+                          <InputText
+                            value={editData.nationality || ""}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                nationality: e.target.value,
+                              })
+                            }
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.nationality || "Chưa cập nhật"}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -378,31 +702,70 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Phòng ban
                         </label>
-                        <div className="flex items-center">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                            {employee.department?.name || "Chưa có phòng ban"}
-                          </span>
-                        </div>
+                        {isEditing ? (
+                          <Dropdown
+                            value={editData.departmentId}
+                            options={departmentOptions}
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                departmentId: e.value,
+                              })
+                            }
+                            placeholder="Chọn phòng ban"
+                            className="w-full"
+                          />
+                        ) : (
+                          <div className="flex items-center">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                              {employee.department?.name || "Chưa có phòng ban"}
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Chức vụ
                         </label>
-                        <div className="flex items-center">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                            {employee.position?.title || "Chưa có chức vụ"}
-                          </span>
-                        </div>
+                        {isEditing ? (
+                          <Dropdown
+                            value={editData.positionId}
+                            options={positionOptions}
+                            onChange={(e) =>
+                              setEditData({ ...editData, positionId: e.value })
+                            }
+                            placeholder="Chọn chức vụ"
+                            className="w-full"
+                          />
+                        ) : (
+                          <div className="flex items-center">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                              {employee.position?.roleName || "Chưa có chức vụ"}
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Công việc
                         </label>
-                        <div className="flex items-center">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                            {employee.job?.job || "Chưa có công việc"}
-                          </span>
-                        </div>
+                        {isEditing ? (
+                          <Dropdown
+                            value={editData.jobId}
+                            options={jobOptions}
+                            onChange={(e) =>
+                              setEditData({ ...editData, jobId: e.value })
+                            }
+                            placeholder="Chọn công việc"
+                            className="w-full"
+                          />
+                        ) : (
+                          <div className="flex items-center">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                              {employee.job?.job || "Chưa có công việc"}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -411,44 +774,89 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                          Loại hợp đồng
+                          Loại nhân viên
                         </label>
-                        <div className="flex items-center">
-                          <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                              employee.job?.type === "full-time"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-orange-100 text-orange-800"
-                            }`}
-                          >
-                            {employee.job?.type === "full-time"
-                              ? "Toàn thời gian"
-                              : employee.job?.type === "part-time"
-                              ? "Bán thời gian"
-                              : "Chưa xác định"}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                          Ngày bắt đầu
-                        </label>
-                        <p className="text-lg font-medium text-gray-800">
-                          {employee.startDate
-                            ? employee.startDate.toLocaleDateString("vi-VN")
-                            : "Chưa cập nhật"}
-                        </p>
+                        {isEditing ? (
+                          <Dropdown
+                            value={editData.type}
+                            options={employeeTypeOptions}
+                            onChange={(e) =>
+                              setEditData({ ...editData, type: e.value })
+                            }
+                            placeholder="Chọn loại nhân viên"
+                            className="w-full"
+                          />
+                        ) : (
+                          <div className="flex items-center">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                              {employee.type || "Chưa cập nhật"}
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                           Trạng thái
                         </label>
-                        <div className="flex items-center">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                            <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                            Đang làm việc
-                          </span>
-                        </div>
+                        {isEditing ? (
+                          <Dropdown
+                            value={editData.status}
+                            options={employeeStatusOptions}
+                            onChange={(e) =>
+                              setEditData({ ...editData, status: e.value })
+                            }
+                            placeholder="Chọn trạng thái"
+                            className="w-full"
+                          />
+                        ) : (
+                          <div className="flex items-center">
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                                employee.status === "active"
+                                  ? "bg-green-100 text-green-800"
+                                  : employee.status === "inactive"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              {employee.status === "active"
+                                ? "Đang làm việc"
+                                : employee.status === "inactive"
+                                ? "Tạm nghỉ"
+                                : employee.status === "terminated"
+                                ? "Đã nghỉ việc"
+                                : "Chưa cập nhật"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                          Ngày bắt đầu
+                        </label>
+                        {isEditing ? (
+                          <Calendar
+                            value={
+                              editData.startDate
+                                ? new Date(editData.startDate)
+                                : null
+                            }
+                            onChange={(e) =>
+                              setEditData({
+                                ...editData,
+                                startDate: e.value as Date,
+                              })
+                            }
+                            dateFormat="dd/mm/yy"
+                            className="w-full"
+                          />
+                        ) : (
+                          <p className="text-lg font-medium text-gray-800">
+                            {employee.startDate
+                              ? employee.startDate.toLocaleDateString("vi-VN")
+                              : "Chưa cập nhật"}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -524,6 +932,8 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
           )}
         </div>
       </div>
+
+      <Toast ref={toast} />
     </div>
   );
 }

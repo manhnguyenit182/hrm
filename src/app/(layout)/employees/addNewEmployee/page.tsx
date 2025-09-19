@@ -19,16 +19,13 @@ import { Toast } from "primereact/toast";
 import bcrypt from "bcryptjs";
 import { PERMISSIONS } from "@/constants/permissions";
 import { withPermission } from "@/components/PermissionGuard";
-import DocumentUpload from "@/components/FileUpload";
+import SimpleFileUpload from "@/components/FileUpload";
 
 interface UploadedFile {
   id: string;
   fileName: string;
   fileUrl: string;
   publicId: string;
-  fileSize: number;
-  documentType: string;
-  description?: string;
   uploadedAt: string;
 }
 
@@ -136,19 +133,11 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
         lastName: data.user?.lastName || "",
         password: hashedPassword,
       },
-      documents: uploadedDocuments.map((doc) => ({
-        fileName: doc.fileName,
-        fileUrl: doc.fileUrl,
-        publicId: doc.publicId,
-        fileSize: doc.fileSize,
-        documentType: doc.documentType,
-        description: doc.description,
-        mimeType: "application/pdf",
-      })),
     };
 
     const result = await createEmployee(employeeData);
     console.log("🚨 Employee created!", result);
+    console.log("📁 Documents to save separately:", uploadedDocuments);
     if (result.success) {
       toast.current?.show({
         severity: "success",
@@ -754,10 +743,10 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
             </div>
           )}
           {activeIndex === 2 && (
-            <DocumentUpload
+            <SimpleFileUpload
               employeeId="temp-employee-id"
               existingDocuments={uploadedDocuments}
-              onDocumentsChange={(documents) => {
+              onDocumentsChange={(documents: UploadedFile[]) => {
                 setUploadedDocuments(documents);
                 console.log("Documents updated:", documents);
               }}
