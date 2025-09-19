@@ -19,6 +19,18 @@ import { Toast } from "primereact/toast";
 import bcrypt from "bcryptjs";
 import { PERMISSIONS } from "@/constants/permissions";
 import { withPermission } from "@/components/PermissionGuard";
+import DocumentUpload from "@/components/FileUpload";
+
+interface UploadedFile {
+  id: string;
+  fileName: string;
+  fileUrl: string;
+  publicId: string;
+  fileSize: number;
+  documentType: string;
+  description?: string;
+  uploadedAt: string;
+}
 
 function AddNewEmployeePageComponent(): React.JSX.Element {
   // Move all hooks to the top before any conditional returns
@@ -31,6 +43,9 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
   const [jobOptions, setJobOptions] = useState<
     Array<Option & { departmentId: string }>
   >([]);
+  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedFile[]>(
+    []
+  );
   const toast = useRef<Toast>(null);
   const { control, handleSubmit, trigger } = useForm<NewEmployeeFormData>({
     defaultValues: {
@@ -60,7 +75,6 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
         firstName: "",
         lastName: "",
         password: "",
-        role: "",
       },
     },
   });
@@ -110,20 +124,7 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
     data.image = getRandomAvatar();
     const positions = await getPosition(data.positionId || undefined);
     console.log(positions);
-    if (data.user) {
-      const title = positions[0]?.title || "";
 
-      switch (title) {
-        case "Trưởng Phòng":
-          data.user.role = "manager";
-          break;
-        case "CEO CFO CTO COO CPO":
-          data.user.role = "admin";
-          break;
-        default:
-          data.user.role = "employee";
-      }
-    }
     const hashedPassword = await bcrypt.hash(data.user?.password || "", 12);
     // Ensure user object is properly structured
     const employeeData = {
@@ -134,8 +135,16 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
         firstName: data.user?.firstName || "",
         lastName: data.user?.lastName || "",
         password: hashedPassword,
-        role: data.user?.role || "employee",
       },
+      documents: uploadedDocuments.map((doc) => ({
+        fileName: doc.fileName,
+        fileUrl: doc.fileUrl,
+        publicId: doc.publicId,
+        fileSize: doc.fileSize,
+        documentType: doc.documentType,
+        description: doc.description,
+        mimeType: "application/pdf",
+      })),
     };
 
     const result = await createEmployee(employeeData);
@@ -745,20 +754,14 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
             </div>
           )}
           {activeIndex === 2 && (
-            <div className="space-y-6">
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <i className="pi pi-file text-gray-400 text-2xl"></i>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                  Tài liệu nhân viên
-                </h3>
-                <p className="text-gray-500">
-                  Chức năng quản lý tài liệu sẽ được phát triển trong phiên bản
-                  sau
-                </p>
-              </div>
-            </div>
+            <DocumentUpload
+              employeeId="temp-employee-id"
+              existingDocuments={uploadedDocuments}
+              onDocumentsChange={(documents) => {
+                setUploadedDocuments(documents);
+                console.log("Documents updated:", documents);
+              }}
+            />
           )}
           {activeIndex === 3 && (
             <div className="space-y-6">
@@ -931,7 +934,6 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
   );
 }
 
-// Wrap component với HOC để bảo vệ với permission
 const AddNewEmployeePage = withPermission(PERMISSIONS.EMPLOYEES.CREATE, {
   redirectToNotFound: true,
 })(AddNewEmployeePageComponent);

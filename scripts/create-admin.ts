@@ -25,14 +25,12 @@ async function createAdminUser() {
         password: hashedPassword,
         firstName: "Admin",
         lastName: "System",
-        role: "admin",
       },
     });
 
     console.log("Admin user created successfully:", {
       id: adminUser.id,
       email: adminUser.email,
-      role: adminUser.role,
     });
 
     console.log("\nLogin credentials:");

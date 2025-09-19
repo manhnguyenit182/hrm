@@ -38,6 +38,7 @@ export function isProtectedPath(pathname: string): boolean {
     "/attendance",
     "/holidays",
     "/payroll",
+    "/leaves",
   ];
 
   return protectedRoutes.some(

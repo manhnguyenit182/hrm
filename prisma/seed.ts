@@ -1,4 +1,5 @@
 import { PrismaClient } from "../src/db/prisma";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 function getRandomAvatar(): string {
@@ -9,6 +10,15 @@ function getRandomAvatar(): string {
 
 async function main() {
   console.log("🌱 Starting to seed database...");
+
+  // Initialize counters
+  let createdDepartmentsCount = 0;
+  let createdPositionsCount = 0;
+  let createdJobsCount = 0;
+  let createdHolidaysCount = 0;
+  let createdEmployeesCount = 0;
+  let createdUsersCount = 0;
+  let createdAttendanceCount = 0;
 
   // Seed Departments first (since Employees depend on Departments)
   const departmentsData = [
@@ -46,7 +56,6 @@ async function main() {
     },
   ];
 
-  let createdDepartmentsCount = 0;
   for (const departmentData of departmentsData) {
     try {
       await prisma.departments.create({
@@ -65,39 +74,46 @@ async function main() {
     {
       title: "CEO",
       description: "Tổng Giám Đốc điều hành công ty",
+      roleName: "SUPER_ADMIN",
     },
     {
       title: "COO",
       description:
         "Giám Đốc Điều Hành – quản lý vận hành, nhân sự, hành chính, khách hàng",
+      roleName: "SUPER_ADMIN",
     },
     {
       title: "CTO",
       description: "Giám Đốc Công Nghệ – quản lý toàn bộ khối kỹ thuật",
+      roleName: "SUPER_ADMIN",
     },
     {
       title: "CPO",
       description: "Giám Đốc Sản Phẩm – quản lý product & design",
+      roleName: "SUPER_ADMIN",
     },
     {
       title: "CFO",
       description: "Giám Đốc Tài Chính – quản lý tài chính, kế toán",
+      roleName: "SUPER_ADMIN",
     },
     {
       title: "Trưởng Phòng",
       description: "Quản lý và điều hành hoạt động của phòng ban",
+      roleName: "DEPARTMENT_MANAGER",
     },
     {
       title: "Nhân Viên",
       description: "Thực hiện các công việc được giao",
+      roleName: "EMPLOYEE",
     },
     {
       title: "Thực Tập Sinh",
       description: "Học tập và thực hành trong môi trường làm việc thực tế",
+      roleName: "EMPLOYEE",
     },
   ];
 
-  let createdPositionsCount = 0;
   for (const positionData of positionsData) {
     try {
       await prisma.positions.create({
@@ -407,7 +423,6 @@ async function main() {
     },
   ];
 
-  let createdJobsCount = 0;
   for (const jobData of jobsData) {
     try {
       await prisma.jobs.create({
@@ -447,7 +462,6 @@ async function main() {
     },
   ];
 
-  let createdHolidaysCount = 0;
   for (const holidayData of holidaysData) {
     try {
       await prisma.holidays.create({
@@ -1259,7 +1273,6 @@ async function main() {
     },
   ];
   // Create employees one by one to handle any potential conflicts
-  let createdEmployeesCount = 0;
   for (const employeeData of employeesData) {
     try {
       await prisma.employees.create({
@@ -1275,6 +1288,40 @@ async function main() {
 
   // Seed User accounts for employees
   const createdEmployees = await prisma.employees.findMany();
+
+  console.log("🌱 Creating user accounts for employees...");
+
+  for (const employee of createdEmployees) {
+    try {
+      // Check if user already exists
+      const existingUser = await prisma.user.findUnique({
+        where: { email: employee.email },
+      });
+
+      if (!existingUser) {
+        // Create user account
+        const hashedPassword = await bcrypt.hash("123456", 12); // Default password
+
+        await prisma.user.create({
+          data: {
+            email: employee.email,
+            password: hashedPassword,
+            firstName: employee.firstName,
+            lastName: employee.lastName,
+            employeeId: employee.id,
+          },
+        });
+
+        createdUsersCount++;
+      }
+    } catch {
+      console.log(
+        `⚠️ Skipped user for ${employee.email} - might already exist`
+      );
+    }
+  }
+
+  console.log(`✅ Created ${createdUsersCount} user accounts`);
 
   // Seed Attendance records
   const attendanceData = [
@@ -1365,7 +1412,6 @@ async function main() {
     },
   ];
 
-  let createdAttendanceCount = 0;
   for (const attendanceRecord of attendanceData) {
     try {
       await prisma.attendance.create({
@@ -1380,7 +1426,7 @@ async function main() {
   console.log(`✅ Created ${createdJobsCount} jobs`);
   console.log(`✅ Created ${createdHolidaysCount} holidays`);
   console.log(`✅ Created ${createdEmployeesCount} employees`);
-  // console.log(`✅ Created ${createdUsersCount} users`);
+  console.log(`✅ Created ${createdUsersCount} users`);
   console.log(`✅ Created ${createdAttendanceCount} attendance records`);
   console.log("🎉 Database seeding completed successfully!");
 }

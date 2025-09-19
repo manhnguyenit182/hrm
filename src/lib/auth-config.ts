@@ -52,7 +52,6 @@ export const authOptions: NextAuthOptions = {
               user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-            role: user.role,
             employee: user.employee,
           };
         } catch (error) {

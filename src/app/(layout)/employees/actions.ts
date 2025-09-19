@@ -2,6 +2,7 @@
 // import { PrismaClient, Employees } from "@/db/prisma";
 import { PrismaClient } from "@/db/prisma";
 import { EmployeeWithRelations, Employees } from "./types";
+import { createMultipleEmployeeDocuments } from "./documentActions";
 
 const prisma = new PrismaClient();
 
@@ -108,13 +109,21 @@ const createEmployee = async (
       firstName: string;
       lastName: string;
       password: string;
-      role: string;
     };
+    documents?: Array<{
+      fileName: string;
+      fileUrl: string;
+      publicId: string;
+      fileSize: number;
+      documentType: string;
+      description?: string;
+      mimeType?: string;
+    }>;
   }
 ): Promise<{ employee: Employees; success: boolean; error?: string }> => {
   try {
-    // Tách riêng data cho employee (loại bỏ user data)
-    const { user, ...employeeData } = data;
+    // Tách riêng data cho employee (loại bỏ user data và documents)
+    const { user, documents, ...employeeData } = data;
 
     // Tạo employee trước
     const newEmployee = await prisma.employees.create({
@@ -129,9 +138,24 @@ const createEmployee = async (
         firstName: user.firstName,
         lastName: user.lastName,
         password: user.password,
-        role: user.role,
       },
     });
+
+    // Lưu documents nếu có
+    if (documents && documents.length > 0) {
+      const documentsData = documents.map((doc) => ({
+        documentType: doc.documentType,
+        fileName: doc.fileName,
+        fileUrl: doc.fileUrl,
+        publicId: doc.publicId,
+        fileSize: doc.fileSize,
+        mimeType: doc.mimeType || "application/pdf",
+        uploadedBy: user.email,
+        description: doc.description || null,
+      }));
+
+      await createMultipleEmployeeDocuments(newEmployee.id, documentsData);
+    }
 
     return {
       employee: newEmployee,

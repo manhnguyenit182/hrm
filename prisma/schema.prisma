@@ -24,8 +24,7 @@ model Employees {
   position      Positions?   @relation(fields: [positionId], references: [id])
   jobId           String?
   job          Jobs?       @relation(fields: [jobId], references: [id])
-  holidaysId     String?
-  holidays      Holidays?  @relation(fields: [holidaysId], references: [id])
+
   startDate     DateTime?
   endDate       DateTime?
   type          String?
@@ -49,6 +48,7 @@ model Employees {
 
 
   LeaveRequests LeaveRequests[]
+  Documents EmployeeDocuments[]
 }
 
 model Departments {
@@ -71,10 +71,10 @@ model Positions {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
+  roleName     String?
   Employees Employees[]
 
-  roleName     String?
+  
   // role       Roles? @relation(fields: [roleId], references: [id])
 
 }
@@ -113,7 +113,6 @@ model User {
   lastName  String?
   employeeId String? @unique
   employee   Employees? @relation(fields: [employeeId], references: [id])
-  role       String? // e.g., 'admin', 'user'
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
@@ -125,7 +124,6 @@ model Holidays {
   date        DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  Employees  Employees[]
 }
 
 model LeaveRequests {
@@ -141,4 +139,20 @@ model LeaveRequests {
   status      String? // e.g., 'pending', 'approved', 'rejected'
   createdAt   DateTime @default(now()) 
   updatedAt   DateTime @updatedAt
+}
+
+model EmployeeDocuments {
+  id            String   @id @default(cuid())
+  employeeId    String?
+  employee      Employees? @relation(fields: [employeeId], references: [id])
+  documentType  String?  // e.g., 'cv', 'contract', 'certificate', 'id_card', etc.
+  fileName      String?  // Original filename
+  fileUrl       String?  // Cloudinary URL
+  publicId      String?  // Cloudinary public ID for deletion
+  fileSize      Int?     // File size in bytes
+  mimeType      String?  // File MIME type
+  uploadedBy    String?  // User ID who uploaded
+  description   String?  // Optional description
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
