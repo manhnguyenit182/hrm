@@ -21,7 +21,7 @@ const pathToMenuMap: Record<string, string> = {
   "/payroll": "Lương",
   "/jobs": "Công việc",
   "/holidays": "Ngày nghỉ",
-  "/leaves": "Tiện ích",
+  "/leaves": "Đơn nghỉ phép",
   "/reports": "Báo cáo",
   "/settings": "Cài đặt",
   "/history": "Điểm danh",

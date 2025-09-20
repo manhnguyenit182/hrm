@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import {
   getLeaveRequestsByDepartment,
+  getLeaveRequestsByDepartmentById,
   updateLeaveRequestStatus,
 } from "./actions";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,7 +37,24 @@ function ManageLeavesPageComponent() {
   useEffect(() => {
     const fetchData = async () => {
       if (loading) return;
-      if (user?.employee?.departmentId) {
+
+      if (user) {
+        console.log("user", user);
+      }
+
+      if (user?.employee?.email === "ceo@company.com") {
+        const res = await getLeaveRequestsByDepartmentById(
+          "cmfqkdalc0045eyeex7k2p9nt"
+        );
+        setLeaveRequests(res);
+        setDataLoading(false);
+        return;
+      }
+
+      if (
+        user?.employee?.departmentId &&
+        user?.employee?.email !== "ceo@company.com"
+      ) {
         try {
           setDataLoading(true);
           const departmentId = user.employee.departmentId;

@@ -10,6 +10,14 @@ export async function getLeaveRequestsByDepartment(departmentId: string) {
   });
 }
 
+export async function getLeaveRequestsByDepartmentById(employeeId: string) {
+  return prisma.leaveRequests.findMany({
+    where: { employeeId },
+    include: { employee: true },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
 export async function updateLeaveRequestStatus(
   leaveRequestId: string,
   status: "approved" | "rejected"
