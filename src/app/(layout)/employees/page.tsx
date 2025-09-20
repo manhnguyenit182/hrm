@@ -275,9 +275,7 @@ function EmployeesPageComponent(): React.ReactElement {
                         <p className="font-semibold text-gray-800 text-base">
                           {rowData.fullName}
                         </p>
-                        <p className="text-sm text-gray-500">
-                          ID: #{rowData.id}
-                        </p>
+                        <p className="text-sm text-gray-500">Đang hoạt động</p>
                       </div>
                     </div>
                   )
@@ -380,7 +378,7 @@ function EmployeesPageComponent(): React.ReactElement {
   );
 }
 
-const EmployeesPage = withPermission(PERMISSIONS.EMPLOYEES.VIEW, {
+const EmployeesPage = withPermission(PERMISSIONS.EMPLOYEES.CREATE, {
   redirectToNotFound: true,
 })(EmployeesPageComponent);
 

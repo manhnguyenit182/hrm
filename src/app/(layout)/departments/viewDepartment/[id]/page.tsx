@@ -170,25 +170,25 @@ function ViewDepartmentPageComponent({
                   className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                     rowData.type === "Full-time"
                       ? "bg-green-100 text-green-800"
-                      : rowData.type === "part-time"
+                      : rowData.type === "Part-time"
                       ? "bg-red-100 text-red-800"
-                      : "bg-gray-100 text-gray-800"
+                      : "bg-green-100 text-green-800"
                   }`}
                 >
                   <div
                     className={`w-2 h-2 rounded-full mr-2 ${
                       rowData.type === "Full-time"
                         ? "bg-green-400"
-                        : rowData.type === "part-time"
+                        : rowData.type === "Part-time"
                         ? "bg-red-400"
-                        : "bg-gray-400"
+                        : "bg-green-400"
                     }`}
                   ></div>
                   {rowData.type === "Full-time"
                     ? "Toàn thời gian"
-                    : rowData.type === "part-time"
+                    : rowData.type === "Part-time"
                     ? "Bán thời gian"
-                    : "Chưa xác định"}
+                    : "Toàn thời gian"}
                 </span>
               </div>
             )}

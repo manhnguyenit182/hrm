@@ -94,14 +94,9 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.employee = user.employee;
       }
-      console.log("JWT callback - token:", token);
       return token;
     },
     async session({ session, token }) {
-      console.log(
-        "=== SESSION CALLBACK ===",
-        JSON.stringify({ session, token }, null, 2)
-      );
       // Send properties to the client
       if (token && session.user) {
         session.user.id = token.id;

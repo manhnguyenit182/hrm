@@ -277,6 +277,6 @@ function AttendancePageComponent(): React.ReactElement {
   );
 }
 
-export default withPermission(PERMISSIONS.ATTENDANCE.VIEW)(
+export default withPermission(PERMISSIONS.ATTENDANCE.CREATE)(
   AttendancePageComponent
 );

@@ -1,5 +1,8 @@
 "use client";
 
+import { PERMISSIONS } from "@/constants/permissions";
+import { withPermission } from "@/components/PermissionGuard";
+import SimpleFileUpload from "@/components/FileUpload";
 import { BriefcaseBusiness, FileText, User, Lock } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
@@ -17,9 +20,6 @@ import {
 import { Option } from "./types";
 import { Toast } from "primereact/toast";
 import bcrypt from "bcryptjs";
-import { PERMISSIONS } from "@/constants/permissions";
-import { withPermission } from "@/components/PermissionGuard";
-import SimpleFileUpload from "@/components/FileUpload";
 
 interface UploadedFile {
   id: string;
@@ -27,6 +27,10 @@ interface UploadedFile {
   fileUrl: string;
   publicId: string;
   uploadedAt: string;
+  fileSize?: number;
+  documentType?: string;
+  mimeType?: string;
+  description?: string;
 }
 
 function AddNewEmployeePageComponent(): React.JSX.Element {
@@ -44,37 +48,38 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
     []
   );
   const toast = useRef<Toast>(null);
-  const { control, handleSubmit, trigger } = useForm<NewEmployeeFormData>({
-    defaultValues: {
-      // field cho thong tin ca nhan
-      firstName: "",
-      lastName: "",
-      phone: "",
-      email: "",
-      birthday: null,
-      maritalStatus: null,
-      gender: null,
-      nationality: "",
-      address: "",
-      city: "",
-      state: "",
-      status: "",
-      // field cho thong tin nghe nghiep
-      departmentId: null,
-      positionId: null,
-      jobId: null,
-      startDate: null,
-      type: null,
-      // field cho tai lieu
-      // field cho quyen truy cap tai khoan
-      user: {
-        email: "",
+  const { control, handleSubmit, trigger, reset } =
+    useForm<NewEmployeeFormData>({
+      defaultValues: {
+        // field cho thong tin ca nhan
         firstName: "",
         lastName: "",
-        password: "",
+        phone: "",
+        email: "",
+        birthday: null,
+        maritalStatus: null,
+        gender: null,
+        nationality: "",
+        address: "",
+        city: "",
+        state: "",
+        status: "",
+        // field cho thong tin nghe nghiep
+        departmentId: null,
+        positionId: null,
+        jobId: null,
+        startDate: null,
+        type: null,
+        // field cho tai lieu
+        // field cho quyen truy cap tai khoan
+        user: {
+          email: "",
+          firstName: "",
+          lastName: "",
+          password: "",
+        },
       },
-    },
-  });
+    });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,18 +138,34 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
         lastName: data.user?.lastName || "",
         password: hashedPassword,
       },
+      documents: uploadedDocuments.map((doc) => ({
+        fileName: doc.fileName,
+        fileUrl: doc.fileUrl,
+        publicId: doc.publicId,
+        fileSize: doc.fileSize || 0,
+        documentType: doc.documentType || "PDF",
+        mimeType: doc.mimeType || "application/pdf",
+        description: doc.description || "",
+      })),
     };
-
     const result = await createEmployee(employeeData);
     console.log("🚨 Employee created!", result);
-    console.log("📁 Documents to save separately:", uploadedDocuments);
+    console.log(
+      "📁 Documents included in employee creation:",
+      uploadedDocuments
+    );
+
     if (result.success) {
       toast.current?.show({
         severity: "success",
         summary: "Thành công",
-        detail: "Nhân viên đã được tạo thành công",
+        detail: "Nhân viên và tài liệu đã được tạo thành công",
         life: 3000,
       });
+
+      // Reset form and documents
+      reset();
+      setUploadedDocuments([]);
     } else {
       toast.current?.show({
         severity: "error",

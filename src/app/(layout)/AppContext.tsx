@@ -24,7 +24,7 @@ const pathToMenuMap: Record<string, string> = {
   "/leaves": "Tiện ích",
   "/reports": "Báo cáo",
   "/settings": "Cài đặt",
-  "/history": "Lịch sử",
+  "/history": "Điểm danh",
   "/manageLeaves": "Duyệt phép",
 };
 

@@ -558,6 +558,7 @@ function ManageLeavesPageComponent() {
                 <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
                   Loại nghỉ phép
                 </label>
+                <div></div>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                   {selectedRequest.type}
                 </span>

@@ -15,9 +15,6 @@ import { Toast } from "primereact/toast";
 import { TabView, TabPanel } from "primereact/tabview";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { getAttendance } from "../attendance/actions";
-import { AttendanceWithEmployee } from "../attendance/types";
-import { Chip } from "primereact/chip";
 import { useCheckPermission } from "@/hooks/usePermission";
 import { LeaveRequests } from "@/db/prisma";
 
@@ -25,15 +22,11 @@ function EmployeeUtilitiesPageComponent() {
   const { user } = useAuth();
   const [visible, setVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [attendanceData, setAttendanceData] = useState<
-    AttendanceWithEmployee[]
-  >([]);
-  const [attendanceLoading, setAttendanceLoading] = useState<boolean>(true);
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequests[]>([]);
   const [leaveStats, setLeaveStats] = useState({
-    total: 12,
+    total: new Date().getMonth() + 1,
     used: 0,
-    remaining: 12,
+    remaining: new Date().getMonth() + 1,
   });
   const toast = useRef<Toast>(null);
 
@@ -58,11 +51,6 @@ function EmployeeUtilitiesPageComponent() {
 
       try {
         // Fetch attendance data if user has permission
-        if (canViewAttendance) {
-          setAttendanceLoading(true);
-          const attendanceData = await getAttendance();
-          setAttendanceData(attendanceData || []);
-        }
 
         // Fetch leave requests if user has permission
         if (canCreateLeave) {
@@ -92,9 +80,9 @@ function EmployeeUtilitiesPageComponent() {
           }, 0);
 
           setLeaveStats({
-            total: 12, // Default annual leave days
+            total: new Date().getMonth() + 1, // Default annual leave days
             used: usedDays,
-            remaining: 12 - usedDays,
+            remaining: new Date().getMonth() + 1 - usedDays,
           });
         }
       } catch (error) {
@@ -106,7 +94,6 @@ function EmployeeUtilitiesPageComponent() {
           life: 3000,
         });
       } finally {
-        setAttendanceLoading(false);
       }
     };
 
@@ -178,38 +165,6 @@ function EmployeeUtilitiesPageComponent() {
       setLoading(false);
     }
   };
-
-  const getAttendanceStatusSeverity = (status: string) => {
-    switch (status) {
-      case "present":
-        return "success";
-      case "absent":
-        return "danger";
-      case "late":
-        return "warning";
-      default:
-        return "info";
-    }
-  };
-
-  const getAttendanceStatusLabel = (status: string) => {
-    switch (status) {
-      case "present":
-        return "Có mặt";
-      case "absent":
-        return "Vắng mặt";
-      case "late":
-        return "Đi trễ";
-      default:
-        return status;
-    }
-  };
-
-  const currentDate = new Date().toLocaleDateString("vi-VN");
-  const todayAttendance = attendanceData.find(
-    (item) =>
-      new Date(item.date || "").toLocaleDateString("vi-VN") === currentDate
-  );
 
   return (
     <div className="space-y-6">
@@ -370,137 +325,6 @@ function EmployeeUtilitiesPageComponent() {
               </div>
             </TabPanel>
           )}
-
-          {canViewAttendance && (
-            <TabPanel header="Điểm danh" leftIcon="pi pi-users mr-2">
-              <div className="p-6 space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                  {/* Today's Attendance Status */}
-                  <div className="card-modern p-6">
-                    <div className="text-center">
-                      <div className="w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-                        <i
-                          className={`pi ${
-                            todayAttendance
-                              ? todayAttendance.status === "present"
-                                ? "pi-check-circle text-green-500"
-                                : todayAttendance.status === "late"
-                                ? "pi-clock text-yellow-500"
-                                : "pi-times-circle text-red-500"
-                              : "pi-question-circle text-gray-400"
-                          } text-3xl`}
-                        ></i>
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                        {todayAttendance
-                          ? getAttendanceStatusLabel(
-                              todayAttendance.status || ""
-                            )
-                          : "Chưa điểm danh"}
-                      </h3>
-                      <p className="text-gray-600 mb-3">{currentDate}</p>
-                      {todayAttendance?.clockIn && (
-                        <div className="bg-gray-50 rounded-lg p-3">
-                          <p className="text-sm text-gray-600">
-                            <strong>Giờ vào:</strong>{" "}
-                            {new Date(
-                              todayAttendance.clockIn
-                            ).toLocaleTimeString("vi-VN")}
-                          </p>
-                          {todayAttendance.clockOut && (
-                            <p className="text-sm text-gray-600 mt-1">
-                              <strong>Giờ ra:</strong>{" "}
-                              {new Date(
-                                todayAttendance.clockOut
-                              ).toLocaleTimeString("vi-VN")}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Attendance History */}
-                  <div className="lg:col-span-3 card-modern p-6">
-                    <div className="flex items-center space-x-3 mb-6">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i className="pi pi-clock text-blue-600"></i>
-                      </div>
-                      <h3 className="text-xl font-semibold text-gray-800">
-                        Lịch sử điểm danh
-                      </h3>
-                    </div>
-                    <DataTable
-                      value={attendanceData.slice(0, 10)}
-                      loading={attendanceLoading}
-                      emptyMessage="Không có dữ liệu điểm danh"
-                      paginator
-                      rows={5}
-                      className="modern-datatable"
-                    >
-                      <Column
-                        field="date"
-                        header="Ngày"
-                        body={(rowData) =>
-                          new Date(rowData.date || "").toLocaleDateString(
-                            "vi-VN"
-                          )
-                        }
-                      />
-                      <Column
-                        field="clockIn"
-                        header="Giờ vào"
-                        body={(rowData) =>
-                          rowData.clockIn
-                            ? new Date(rowData.clockIn).toLocaleTimeString(
-                                "vi-VN"
-                              )
-                            : "-"
-                        }
-                      />
-                      <Column
-                        field="clockOut"
-                        header="Giờ ra"
-                        body={(rowData) =>
-                          rowData.clockOut
-                            ? new Date(rowData.clockOut).toLocaleTimeString(
-                                "vi-VN"
-                              )
-                            : "-"
-                        }
-                      />
-                      <Column
-                        field="status"
-                        header="Trạng thái"
-                        body={(rowData) => (
-                          <Chip
-                            label={getAttendanceStatusLabel(
-                              rowData.status || ""
-                            )}
-                            className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                              getAttendanceStatusSeverity(
-                                rowData.status || ""
-                              ) === "success"
-                                ? "bg-green-100 text-green-700 border border-green-200"
-                                : getAttendanceStatusSeverity(
-                                    rowData.status || ""
-                                  ) === "danger"
-                                ? "bg-red-100 text-red-700 border border-red-200"
-                                : getAttendanceStatusSeverity(
-                                    rowData.status || ""
-                                  ) === "warning"
-                                ? "bg-yellow-100 text-yellow-700 border border-yellow-200"
-                                : "bg-blue-100 text-blue-700 border border-blue-200"
-                            }`}
-                          />
-                        )}
-                      />
-                    </DataTable>
-                  </div>
-                </div>
-              </div>
-            </TabPanel>
-          )}
         </TabView>
       </div>
 
@@ -581,10 +405,8 @@ function EmployeeUtilitiesPageComponent() {
                     value={field.value}
                     onChange={(e) => field.onChange(e.value)}
                     options={[
-                      { label: "Nghỉ phép thường niên", value: "annual" },
-                      { label: "Nghỉ ốm", value: "sick" },
-                      { label: "Nghỉ cá nhân", value: "personal" },
-                      { label: "Nghỉ khẩn cấp", value: "emergency" },
+                      { label: "Nghỉ phép năm", value: "Nghỉ phép năm" },
+                      { label: "Nghỉ cá nhân", value: "Nghỉ cá nhân" },
                     ]}
                     placeholder="Chọn loại nghỉ phép"
                     className="w-full"

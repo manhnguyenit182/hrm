@@ -2,10 +2,22 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { EmployeeWithRelations } from "../../types";
-import { getEmployeeById, updateEmployee, getPosition } from "../../actions";
+import {
+  getEmployeeById,
+  updateEmployee,
+  getPosition,
+  getUser,
+  updateUser,
+} from "../../actions";
 import { getDepartments } from "../../../departments/actions";
 import { getJobs } from "../../../jobs/actions";
-import { Departments, Jobs, Positions } from "@/db/prisma";
+import {
+  Departments,
+  Jobs,
+  Positions,
+  User,
+  EmployeeDocuments,
+} from "@/db/prisma";
 import { Avatar } from "primereact/avatar";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
@@ -14,20 +26,17 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import {
   BriefcaseBusiness,
-  CalendarCheck,
   FileText,
   Mail,
-  ScrollText,
-  SquareChartGantt,
   UserRound,
   Lock,
   Edit,
   Save,
   X,
 } from "lucide-react";
-import { classNames } from "primereact/utils";
 import { withPermission } from "@/components/PermissionGuard";
 import { PERMISSIONS } from "@/constants/permissions";
+import { getEmployeeDocuments } from "../../documentActions";
 
 interface EditEmployeePageProps {
   params: Promise<{
@@ -42,6 +51,12 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
   const [selectedMenuItem, setSelectedMenuItem] = useState<string>("userInfo");
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Partial<EmployeeWithRelations>>({});
+  const [editUserData, setEditUserData] = useState<{
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    password?: string;
+  }>({});
   const [saving, setSaving] = useState(false);
   const toast = useRef<Toast>(null);
 
@@ -49,6 +64,8 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
   const [departments, setDepartments] = useState<Departments[]>([]);
   const [jobs, setJobs] = useState<Jobs[]>([]);
   const [positions, setPositions] = useState<Positions[]>([]);
+  const [userAccount, setUserAccount] = useState<User | null>(null);
+  const [documents, setDocuments] = useState<EmployeeDocuments[]>([]);
 
   let fullName;
 
@@ -95,11 +112,18 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
   const handleEdit = () => {
     setIsEditing(true);
     setEditData({ ...employee });
+    setEditUserData({
+      email: userAccount?.email || "",
+      firstName: userAccount?.firstName || "",
+      lastName: userAccount?.lastName || "",
+      password: "",
+    });
   };
 
   const handleCancel = () => {
     setIsEditing(false);
     setEditData({});
+    setEditUserData({});
   };
 
   const handleSave = async () => {
@@ -107,7 +131,8 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
 
     setSaving(true);
     try {
-      const result = await updateEmployee(employee.id, {
+      // Cập nhật thông tin employee
+      const employeeResult = await updateEmployee(employee.id, {
         firstName: editData.firstName,
         lastName: editData.lastName,
         phone: editData.phone,
@@ -127,23 +152,74 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
         status: editData.status,
       });
 
-      if (result.success) {
+      // Cập nhật thông tin user nếu có
+      let userResult: { success: boolean; user?: User; error?: string } = {
+        success: true,
+      };
+      if (
+        userAccount &&
+        Object.keys(editUserData).some(
+          (key) => editUserData[key as keyof typeof editUserData]
+        )
+      ) {
+        const userUpdateData: {
+          email?: string;
+          firstName?: string;
+          lastName?: string;
+          password?: string;
+        } = {};
+
+        if (editUserData.email && editUserData.email !== userAccount.email) {
+          userUpdateData.email = editUserData.email;
+        }
+        if (
+          editUserData.firstName &&
+          editUserData.firstName !== userAccount.firstName
+        ) {
+          userUpdateData.firstName = editUserData.firstName;
+        }
+        if (
+          editUserData.lastName &&
+          editUserData.lastName !== userAccount.lastName
+        ) {
+          userUpdateData.lastName = editUserData.lastName;
+        }
+        if (editUserData.password && editUserData.password.trim() !== "") {
+          userUpdateData.password = editUserData.password;
+        }
+
+        if (Object.keys(userUpdateData).length > 0) {
+          userResult = await updateUser(employee.id, userUpdateData);
+        }
+      }
+
+      if (employeeResult.success && userResult.success) {
         toast.current?.show({
           severity: "success",
           summary: "Thành công",
-          detail: "Cập nhật thông tin nhân viên thành công",
+          detail: "Cập nhật thông tin nhân viên và tài khoản thành công",
           life: 3000,
         });
 
         // Update employee state
         setEmployee((prev) => (prev ? { ...prev, ...editData } : null));
+
+        // Update user account state if updated
+        if (userResult.user) {
+          setUserAccount(userResult.user);
+        }
+
         setIsEditing(false);
         setEditData({});
+        setEditUserData({});
       } else {
         toast.current?.show({
           severity: "error",
           summary: "Lỗi",
-          detail: result.error || "Không thể cập nhật thông tin",
+          detail:
+            employeeResult.error ||
+            userResult.error ||
+            "Không thể cập nhật thông tin",
           life: 5000,
         });
       }
@@ -159,45 +235,46 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
     }
   };
 
-  const menuItems = [
-    {
-      label: "Thông tin cá nhân",
-      icon: <UserRound />,
-      classNames: classNames(
-        "p-menuitem",
-        selectedMenuItem === "userInfo" ? "bg-gray-200" : ""
-      ),
-      command: () => {
-        setSelectedMenuItem("userInfo");
-      },
-    },
-    {
-      label: "Chấm công",
-      icon: <CalendarCheck />,
-      command: () => {
-        setSelectedMenuItem("attendance");
-      },
-    },
-    {
-      label: "Dự án",
-      icon: <ScrollText />,
-      command: () => {
-        setSelectedMenuItem("project");
-      },
-    },
-    {
-      label: "Nghỉ phép",
-      icon: <SquareChartGantt />,
-      command: () => {
-        setSelectedMenuItem("leave");
-      },
-    },
-  ];
+  // const menuItems = [
+  //   {
+  //     label: "Thông tin cá nhân",
+  //     icon: <UserRound />,
+  //     classNames: classNames(
+  //       "p-menuitem",
+  //       selectedMenuItem === "userInfo" ? "bg-gray-200" : ""
+  //     ),
+  //     command: () => {
+  //       setSelectedMenuItem("userInfo");
+  //     },
+  //   },
+  //   {
+  //     label: "Chấm công",
+  //     icon: <CalendarCheck />,
+  //     command: () => {
+  //       setSelectedMenuItem("attendance");
+  //     },
+  //   },
+  //   {
+  //     label: "Dự án",
+  //     icon: <ScrollText />,
+  //     command: () => {
+  //       setSelectedMenuItem("project");
+  //     },
+  //   },
+  //   {
+  //     label: "Nghỉ phép",
+  //     icon: <SquareChartGantt />,
+  //     command: () => {
+  //       setSelectedMenuItem("leave");
+  //     },
+  //   },
+  // ];
 
   // Đảm bảo userInfo được selected khi component mount
   useEffect(() => {
     setSelectedMenuItem("userInfo");
   }, []);
+
   const profileMenu = [
     {
       icon: <UserRound className="mr-2 text-[var(--color-primary-500)]" />,
@@ -229,14 +306,18 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
 
         // Sử dụng getEmployeeById action
         const foundEmployee = await getEmployeeById(employeeId);
-
+        const user = await getUser(employeeId);
+        const documentEmployee = await getEmployeeDocuments(employeeId);
         setEmployee(foundEmployee);
+        setUserAccount(user);
+        setDocuments(documentEmployee.documents || []);
       } catch (error) {
         console.error("Error fetching employee:", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchEmployee();
   }, [params]);
 
@@ -301,6 +382,9 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
     fullName = employee.firstName + " " + employee.lastName;
     console.log(employee);
   }
+  if (documents.length > 0) {
+    console.log("Documents:", documents);
+  }
 
   return (
     <div className="space-y-6">
@@ -350,20 +434,20 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
           <div className="flex items-center space-x-3">
             {!isEditing ? (
               <Button
-                icon={<Edit className="w-4 h-4" />}
+                icon={<Edit className="w-4 h-4 mr-2" />}
                 label="Chỉnh sửa"
                 onClick={handleEdit}
-                className="p-button-outlined p-button-primary"
+                className="p-button-outlined btn-primary"
                 size="small"
               />
             ) : (
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 gap-2">
                 <Button
                   icon={<Save className="w-4 h-4" />}
                   label="Lưu"
                   onClick={handleSave}
                   loading={saving}
-                  className="p-button-primary"
+                  className="btn-primary"
                   size="small"
                 />
                 <Button
@@ -381,7 +465,7 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
 
       {/* Navigation Tabs */}
       <div className="card-modern overflow-hidden">
-        <div className="flex border-b border-gray-200">
+        {/* <div className="flex border-b border-gray-200">
           {menuItems.map((item, index) => (
             <button
               key={index}
@@ -403,7 +487,7 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
               {item.label}
             </button>
           ))}
-        </div>
+        </div> */}
 
         <div className="p-6">
           {selectedMenuItem === "userInfo" && (
@@ -428,6 +512,7 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
 
               {/* Content */}
               <div className="mt-6">
+                {/* Thông tin cá nhân */}
                 {activeIndex === 0 && (
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -695,6 +780,8 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                     </div>
                   </div>
                 )}
+
+                {/* Thông tin nghề nghiệp */}
                 {activeIndex === 1 && (
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -740,7 +827,7 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                         ) : (
                           <div className="flex items-center">
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                              {employee.position?.roleName || "Chưa có chức vụ"}
+                              {employee.position?.title || "Chưa có chức vụ"}
                             </span>
                           </div>
                         )}
@@ -789,7 +876,11 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                         ) : (
                           <div className="flex items-center">
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
-                              {employee.type || "Chưa cập nhật"}
+                              {employee.type === "full-time"
+                                ? "Toàn thời gian"
+                                : employee.type === "part-time"
+                                ? "Bán thời gian"
+                                : "Chưa cập nhật"}
                             </span>
                           </div>
                         )}
@@ -861,36 +952,235 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
                     </div>
                   </div>
                 )}
+
+                {/* Tài liệu */}
                 {activeIndex === 2 && (
-                  <div className="text-center py-12">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <i className="pi pi-file text-gray-400 text-2xl"></i>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                      Quản lý tài liệu
-                    </h3>
-                    <p className="text-gray-500">
-                      Chức năng quản lý tài liệu sẽ được phát triển trong phiên
-                      bản sau
-                    </p>
+                  <div className="space-y-6">
+                    {documents.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {documents.map((doc) => (
+                          <div
+                            key={doc.id}
+                            className="border rounded-lg shadow-sm p-4 bg-white hover:shadow-md transition"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="font-semibold text-lg text-gray-800 truncate">
+                                {doc.fileName || "Tài liệu không tên"}
+                              </h3>
+                              <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded">
+                                {doc.documentType || "Không xác định"}
+                              </span>
+                            </div>
+
+                            <p className="text-sm text-gray-600 mb-1">
+                              <strong>Người tải lên:</strong>{" "}
+                              {doc.uploadedBy || "Không xác định"}
+                            </p>
+                            <p className="text-sm text-gray-600 mb-1">
+                              <strong>Định dạng:</strong>{" "}
+                              {doc.mimeType || "Không xác định"}
+                            </p>
+                            <p className="text-sm text-gray-600 mb-3">
+                              <strong>Ngày tạo:</strong>{" "}
+                              {doc.createdAt
+                                ? new Date(doc.createdAt).toLocaleString(
+                                    "vi-VN"
+                                  )
+                                : "Không xác định"}
+                            </p>
+
+                            <a
+                              href={doc.fileUrl || "#"}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block text-sm text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+                            >
+                              Xem tài liệu
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500">Không có tài liệu nào.</p>
+                    )}
                   </div>
                 )}
+
+                {/* Quyền truy cập tài khoản */}
                 {activeIndex === 3 && (
-                  <div className="text-center py-12">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <i className="pi pi-lock text-gray-400 text-2xl"></i>
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                      Quyền truy cập tài khoản
-                    </h3>
-                    <p className="text-gray-500">
-                      Thông tin về quyền truy cập và phân quyền tài khoản
-                    </p>
+                  <div className="space-y-6">
+                    {userAccount ? (
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                              Email đăng nhập
+                            </label>
+                            {isEditing ? (
+                              <InputText
+                                value={
+                                  editUserData.email || userAccount.email || ""
+                                }
+                                onChange={(e) =>
+                                  setEditUserData({
+                                    ...editUserData,
+                                    email: e.target.value,
+                                  })
+                                }
+                                className="w-full"
+                                placeholder="Nhập email đăng nhập"
+                              />
+                            ) : (
+                              <p className="text-lg font-medium text-gray-800">
+                                {userAccount.email}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                              Mật khẩu
+                            </label>
+                            {isEditing ? (
+                              <InputText
+                                type="password"
+                                value={editUserData.password || ""}
+                                onChange={(e) =>
+                                  setEditUserData({
+                                    ...editUserData,
+                                    password: e.target.value,
+                                  })
+                                }
+                                className="w-full"
+                                placeholder="Nhập mật khẩu mới (để trống nếu không đổi)"
+                              />
+                            ) : (
+                              <p className="text-lg font-medium text-gray-800">
+                                ••••••••
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <hr className="border-gray-200" />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                              Họ (Tài khoản)
+                            </label>
+                            {isEditing ? (
+                              <InputText
+                                value={
+                                  editUserData.firstName ||
+                                  userAccount.firstName ||
+                                  ""
+                                }
+                                onChange={(e) =>
+                                  setEditUserData({
+                                    ...editUserData,
+                                    firstName: e.target.value,
+                                  })
+                                }
+                                className="w-full"
+                                placeholder="Nhập họ"
+                              />
+                            ) : (
+                              <p className="text-lg font-medium text-gray-800">
+                                {userAccount.firstName || "Chưa cập nhật"}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                              Tên (Tài khoản)
+                            </label>
+                            {isEditing ? (
+                              <InputText
+                                value={
+                                  editUserData.lastName ||
+                                  userAccount.lastName ||
+                                  ""
+                                }
+                                onChange={(e) =>
+                                  setEditUserData({
+                                    ...editUserData,
+                                    lastName: e.target.value,
+                                  })
+                                }
+                                className="w-full"
+                                placeholder="Nhập tên"
+                              />
+                            ) : (
+                              <p className="text-lg font-medium text-gray-800">
+                                {userAccount.lastName || "Chưa cập nhật"}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <hr className="border-gray-200" />
+
+                        <div className="flex gap-32">
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                              Ngày tạo tài khoản
+                            </label>
+                            <p className="text-lg font-medium text-gray-800">
+                              {userAccount.createdAt
+                                ? new Date(
+                                    userAccount.createdAt
+                                  ).toLocaleDateString("vi-VN", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })
+                                : "Chưa có thông tin"}
+                            </p>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                              Cập nhật lần cuối
+                            </label>
+                            <p className="text-lg font-medium text-gray-800">
+                              {userAccount.updatedAt
+                                ? new Date(
+                                    userAccount.updatedAt
+                                  ).toLocaleDateString("vi-VN", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })
+                                : "Chưa có thông tin"}
+                            </p>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Lock className="text-gray-400 w-8 h-8" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                          Không có tài khoản truy cập
+                        </h3>
+                        <p className="text-gray-500">
+                          Nhân viên này chưa được cấp tài khoản đăng nhập hệ
+                          thống
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             </div>
           )}
+
           {selectedMenuItem === "attendance" && (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -904,6 +1194,7 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
               </p>
             </div>
           )}
+
           {selectedMenuItem === "project" && (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -917,6 +1208,7 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
               </p>
             </div>
           )}
+
           {selectedMenuItem === "leave" && (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">

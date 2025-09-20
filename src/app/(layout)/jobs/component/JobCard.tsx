@@ -96,7 +96,7 @@ export default function JobCard({
 
   return (
     <>
-      <Toast ref={toast} />
+      {/* <Toast ref={toast} /> */}
       <div className="flex flex-col overflow-hidden">
         <div className="flex flex-col overflow-auto space-y-4 p-4 max-h-96">
           {isLoading ? (

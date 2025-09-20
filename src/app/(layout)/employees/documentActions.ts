@@ -1,3 +1,4 @@
+"use server";
 import { PrismaClient, EmployeeDocuments } from "@/db/prisma";
 
 const prisma = new PrismaClient();

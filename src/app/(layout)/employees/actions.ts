@@ -140,7 +140,7 @@ const createEmployee = async (
         password: user.password,
       },
     });
-
+    console.log("newEmployee", newEmployee);
     // Lưu documents nếu có
     if (documents && documents.length > 0) {
       const documentsData = documents.map((doc) => ({
@@ -153,7 +153,7 @@ const createEmployee = async (
         uploadedBy: user.email,
         description: doc.description || null,
       }));
-
+      console.log("documentsData", documentsData);
       await createMultipleEmployeeDocuments(newEmployee.id, documentsData);
     }
 
@@ -224,6 +224,46 @@ const updateEmployee = async (
     };
   }
 };
+const getUser = async (employeeId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { employeeId },
+  });
+  return user;
+};
+
+const updateUser = async (
+  employeeId: string,
+  userData: {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    password?: string;
+  }
+) => {
+  try {
+    const updateData: {
+      email?: string;
+      firstName?: string;
+      lastName?: string;
+      password?: string;
+    } = {};
+
+    if (userData.email) updateData.email = userData.email;
+    if (userData.firstName) updateData.firstName = userData.firstName;
+    if (userData.lastName) updateData.lastName = userData.lastName;
+    if (userData.password) updateData.password = userData.password;
+
+    const updatedUser = await prisma.user.update({
+      where: { employeeId },
+      data: updateData,
+    });
+
+    return { success: true, user: updatedUser };
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return { success: false, error: "Không thể cập nhật thông tin tài khoản" };
+  }
+};
 
 export {
   getEmployees,
@@ -232,4 +272,6 @@ export {
   updateEmployee,
   deleteEmployee,
   getPosition,
+  getUser,
+  updateUser,
 };

@@ -14,7 +14,7 @@ interface TopbarProps {
   className?: string;
 }
 
-const Topbar: React.FC<TopbarProps> = ({ className = "" }) => {
+const Topbar: React.FC<TopbarProps> = () => {
   const { selectedItem } = useAppContext();
   const { user, logout } = useAuth();
   const [job, setJob] = useState<Jobs | null>(null);

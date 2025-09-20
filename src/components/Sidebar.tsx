@@ -8,9 +8,9 @@ import {
   CircleDollarSign,
   BriefcaseBusiness,
   CalendarDays,
-  Settings,
   FileCheck,
   History,
+  CalendarOff,
 } from "lucide-react";
 import React from "react";
 import Image from "next/image";
@@ -48,7 +48,7 @@ const menuGroups: MenuGroup[] = [
         href: "/employees",
         label: "Nhân viên",
         icon: <Users className="inline w-4 h-4 mr-2" />,
-        permission: PERMISSIONS.EMPLOYEES.VIEW,
+        permission: PERMISSIONS.EMPLOYEES.CREATE,
       },
       {
         href: "/departments",
@@ -71,7 +71,7 @@ const menuGroups: MenuGroup[] = [
         href: "/attendance",
         label: "Chấm công",
         icon: <CalendarCheck className="inline w-4 h-4 mr-2" />,
-        permission: PERMISSIONS.ATTENDANCE.VIEW,
+        permission: PERMISSIONS.ATTENDANCE.CREATE,
       },
       {
         href: "/payroll",
@@ -98,8 +98,8 @@ const menuGroups: MenuGroup[] = [
       },
       {
         href: "/leaves",
-        label: "Tiện ích",
-        icon: <Settings className="inline w-4 h-4 mr-2" />,
+        label: "Đơn nghỉ phép",
+        icon: <CalendarOff className="inline w-4 h-4 mr-2" />,
         permission: PERMISSIONS.LEAVES.VIEW_OWN,
       },
     ],
@@ -109,7 +109,7 @@ const menuGroups: MenuGroup[] = [
     items: [
       {
         href: "/history",
-        label: "Lịch sử",
+        label: "Điểm danh",
         icon: <History className="inline w-4 h-4 mr-2" />,
         permission: PERMISSIONS.HISTORY.VIEW,
       },
