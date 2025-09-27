@@ -185,9 +185,6 @@ export default function Login() {
 
           {/* Footer */}
           <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-            <p className="text-sm text-gray-500">
-              © 2025 HRM System. All rights reserved.
-            </p>
             <div className="mt-2 flex justify-center space-x-4 text-xs text-gray-400">
               <span>Bảo mật</span>
               <span>•</span>

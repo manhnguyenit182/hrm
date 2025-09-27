@@ -213,14 +213,6 @@ export default function Sidebar(): React.JSX.Element {
             ))}
           </nav>
         </div>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-gray-100">
-          <div className="text-xs text-gray-400 text-center">
-            <p>© 2025 HRM System</p>
-            <p>Version 1.0.0</p>
-          </div>
-        </div>
       </div>
     </div>
   );

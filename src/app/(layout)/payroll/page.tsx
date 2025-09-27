@@ -16,11 +16,17 @@ import { employeesTableMapping } from "../employees/helpers";
 import { DataTableEmployee } from "../employees/types";
 import { withPermission } from "@/components/PermissionGuard";
 import { PERMISSIONS } from "@/constants/permissions";
+import { updatePayrollStatus } from "./actions";
+import PayrollStatusDialog from "./PayrollStatusDialog";
 
 const PayrollPageComponent: React.FC = () => {
   const [employees, setEmployees] = useState<DataTableEmployee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [dialogVisible, setDialogVisible] = useState<boolean>(false);
+  const [selectedEmployee, setSelectedEmployee] =
+    useState<DataTableEmployee | null>(null);
+  const [updating, setUpdating] = useState<boolean>(false);
   const toast = useRef<Toast>(null);
   // Calculate rows per page based on screen size
 
@@ -86,6 +92,61 @@ const PayrollPageComponent: React.FC = () => {
     []
   );
 
+  // Xử lý khi nhấp vào hàng trong bảng
+  const handleRowClick = (employee: DataTableEmployee) => {
+    setSelectedEmployee(employee);
+    setDialogVisible(true);
+  };
+
+  // Đóng dialog
+  const handleCloseDialog = () => {
+    setDialogVisible(false);
+    setSelectedEmployee(null);
+  };
+
+  // Cập nhật trạng thái lương
+  const handleUpdatePayrollStatus = async (employeeId: string) => {
+    setUpdating(true);
+    try {
+      const result = await updatePayrollStatus(employeeId, "Đã hoàn thành");
+
+      if (result.success) {
+        // Cập nhật trạng thái nhân viên trong state
+        setEmployees((prev) =>
+          prev.map((emp) =>
+            emp.id === employeeId ? { ...emp, status: "Đã hoàn thành" } : emp
+          )
+        );
+
+        toast.current?.show({
+          severity: "success",
+          summary: "Thành công",
+          detail: "Đã cập nhật trạng thái lương thành công",
+          life: 3000,
+        });
+
+        handleCloseDialog();
+      } else {
+        toast.current?.show({
+          severity: "error",
+          summary: "Lỗi",
+          detail: result.error || "Không thể cập nhật trạng thái lương",
+          life: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating payroll status:", error);
+      toast.current?.show({
+        severity: "error",
+        summary: "Lỗi",
+        detail: "Đã xảy ra lỗi khi cập nhật trạng thái lương",
+        life: 3000,
+      });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   useEffect(() => {
     // Fetch employee data from API or database
     const fetchEmployees = async () => {
@@ -150,9 +211,14 @@ const PayrollPageComponent: React.FC = () => {
             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
               <i className="pi pi-table text-blue-600"></i>
             </div>
-            <h3 className="text-xl font-semibold text-gray-800">
-              Bảng lương chi tiết
-            </h3>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Bảng lương chi tiết
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                Nhấp vào nhân viên để cập nhật trạng thái lương
+              </p>
+            </div>
           </div>
         </div>
 
@@ -165,6 +231,16 @@ const PayrollPageComponent: React.FC = () => {
           loading={false}
           paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
           currentPageReportTemplate="Hiển thị {first} đến {last} trong tổng số {totalRecords} nhân viên"
+          onRowClick={(e) =>
+            !loading && handleRowClick(e.data as DataTableEmployee)
+          }
+          rowClassName={(rowData) => {
+            if (loading) return "";
+            const employee = rowData as unknown as DataTableEmployee;
+            return employee.status === "Đang chờ"
+              ? "cursor-pointer hover:bg-gray-50"
+              : "cursor-pointer";
+          }}
         >
           <Column
             header="Nhân viên"
@@ -192,7 +268,7 @@ const PayrollPageComponent: React.FC = () => {
                           {rowData.fullName}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {rowData.job?.title || "Chưa có chức vụ"}
+                          {rowData.job?.job || "Nhân viên"}
                         </p>
                       </div>
                     </div>
@@ -306,6 +382,14 @@ const PayrollPageComponent: React.FC = () => {
           />
         </DataTable>
       </div>
+
+      <PayrollStatusDialog
+        visible={dialogVisible}
+        onHide={handleCloseDialog}
+        employee={selectedEmployee}
+        onConfirm={handleUpdatePayrollStatus}
+        loading={updating}
+      />
 
       <Toast ref={toast} />
       <ConfirmDialog />

@@ -44,7 +44,7 @@ function ManageLeavesPageComponent() {
 
       if (user?.employee?.email === "ceo@company.com") {
         const res = await getLeaveRequestsByDepartmentById(
-          "cmfqkdalc0045eyeex7k2p9nt"
+          "cmg28h7vp0045iaea6zy5fjev"
         );
         setLeaveRequests(res);
         setDataLoading(false);
@@ -438,7 +438,7 @@ function ManageLeavesPageComponent() {
                 : (rowData: LeaveRequestWithEmployee) => {
                     const isPending = rowData.status === "pending";
                     return (
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 gap-1">
                         <Button
                           icon="pi pi-eye"
                           className="!p-2 !bg-blue-500 hover:!bg-blue-600 !text-white !border-blue-500 !rounded-lg transition-all duration-200"
