@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { EmployeeWithRelations, Employees } from "./types";
 import { createMultipleEmployeeDocuments } from "./documentActions";
+import bcrypt from "bcryptjs";
 
 const getEmployees = async (
   query?: string
@@ -122,37 +123,44 @@ const createEmployee = async (
     // Tách riêng data cho employee (loại bỏ user data và documents)
     const { user, documents, ...employeeData } = data;
 
-    // Tạo employee trước
-    const newEmployee = await prisma.employees.create({
-      data: employeeData,
-    });
+    // Hash password trước khi lưu
+    const hashedPassword = await bcrypt.hash(user.password, 12);
 
-    // Sau đó tạo user với employeeId từ employee vừa tạo
-    await prisma.user.create({
-      data: {
-        employeeId: newEmployee.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        password: user.password,
-      },
+    // Sử dụng transaction để đảm bảo data consistency
+    const newEmployee = await prisma.$transaction(async (tx) => {
+      // Tạo employee trước
+      const employee = await tx.employees.create({
+        data: employeeData,
+      });
+
+      // Sau đó tạo user với employeeId từ employee vừa tạo
+      await tx.user.create({
+        data: {
+          employeeId: employee.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          password: hashedPassword,
+        },
+      });
+
+      // Lưu documents nếu có
+      if (documents && documents.length > 0) {
+        const documentsData = documents.map((doc) => ({
+          documentType: doc.documentType,
+          fileName: doc.fileName,
+          fileUrl: doc.fileUrl,
+          publicId: doc.publicId,
+          fileSize: doc.fileSize,
+          mimeType: doc.mimeType || "application/pdf",
+          uploadedBy: user.email,
+          description: doc.description || null,
+        }));
+        await createMultipleEmployeeDocuments(employee.id, documentsData);
+      }
+
+      return employee;
     });
-    console.log("newEmployee", newEmployee);
-    // Lưu documents nếu có
-    if (documents && documents.length > 0) {
-      const documentsData = documents.map((doc) => ({
-        documentType: doc.documentType,
-        fileName: doc.fileName,
-        fileUrl: doc.fileUrl,
-        publicId: doc.publicId,
-        fileSize: doc.fileSize,
-        mimeType: doc.mimeType || "application/pdf",
-        uploadedBy: user.email,
-        description: doc.description || null,
-      }));
-      console.log("documentsData", documentsData);
-      await createMultipleEmployeeDocuments(newEmployee.id, documentsData);
-    }
 
     return {
       employee: newEmployee,
