@@ -46,7 +46,6 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!currentMenuItem) {
       // Check for dynamic employee view route
       if (pathname.startsWith("/employees/viewEmployee/")) {
-        console.log("Matched dynamic employee view route");
         currentMenuItem = "Nhân viên";
       }
       // Check for dynamic department view route

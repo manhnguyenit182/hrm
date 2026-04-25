@@ -33,7 +33,6 @@ function EmployeesPageComponent(): React.ReactElement {
     // Estimate available height for table (subtract header, padding, pagination)
     const availableHeight = screenHeight - 300; // Reserve space for header, pagination, etc.
     const rowHeight = 50; // Approximate row height in px
-    console.log("Screen width:", screenWidth);
     // Base calculation on screen height
     let calculatedRows = Math.floor(availableHeight / rowHeight - 1);
 
@@ -74,7 +73,6 @@ function EmployeesPageComponent(): React.ReactElement {
 
   // Handle view action
   const handleView = (employee: EmployeeWithRelations) => {
-    console.log("View employee:", employee);
     router.push(`/employees/viewEmployee/${employee.id}`);
   };
 
@@ -132,7 +130,6 @@ function EmployeesPageComponent(): React.ReactElement {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const searchTerm = e.target.value.toLowerCase();
       if (debounceRef.current) {
-        console.log("haha");
         clearTimeout(debounceRef.current);
       }
       debounceRef.current = setTimeout(async () => {

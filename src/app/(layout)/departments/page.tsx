@@ -49,7 +49,6 @@ function DepartmentsPageComponent(): React.JSX.Element {
   const onSubmit = async (data: { name: string; location: string }) => {
     try {
       const result = await createDepartment(data);
-      console.log("Created department:", result);
       // Show success toast
       toast.current?.show({
         severity: "success",

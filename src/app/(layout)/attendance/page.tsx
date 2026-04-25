@@ -74,7 +74,6 @@ function AttendancePageComponent(): React.ReactElement {
       try {
         setLoading(true);
         const data = await getAttendance();
-        console.log("Attendance data:", data);
         setEmployees(data);
       } catch (error) {
         console.error("Error fetching employees:", error);

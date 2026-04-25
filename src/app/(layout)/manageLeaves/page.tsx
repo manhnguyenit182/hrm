@@ -39,7 +39,6 @@ function ManageLeavesPageComponent() {
       if (loading) return;
 
       if (user) {
-        console.log("user", user);
       }
 
       if (user?.employee?.email === "ceo@company.com") {
@@ -58,10 +57,8 @@ function ManageLeavesPageComponent() {
         try {
           setDataLoading(true);
           const departmentId = user.employee.departmentId;
-          console.log("departmentId", departmentId);
           const res = await getLeaveRequestsByDepartment(departmentId);
           setLeaveRequests(res);
-          console.log("leave requests", res);
         } catch (error) {
           console.error("Error fetching leave requests:", error);
           toast.current?.show({

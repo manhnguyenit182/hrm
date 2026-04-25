@@ -81,7 +81,6 @@ const PayrollPageComponent: React.FC = () => {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const searchTerm = e.target.value.toLowerCase();
       if (debounceRef.current) {
-        console.log("haha");
         clearTimeout(debounceRef.current);
       }
       debounceRef.current = setTimeout(async () => {

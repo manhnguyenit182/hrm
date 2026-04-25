@@ -32,7 +32,6 @@ export function useAuth(): AuthContextType {
         redirect: false,
       });
 
-      console.log("SignIn result:", result);
 
       if (result?.error) {
         console.error("Login failed with error:", result.error);
@@ -40,7 +39,6 @@ export function useAuth(): AuthContextType {
       }
 
       if (result?.ok) {
-        console.log("Login successful, redirecting...");
         // Small delay to ensure session is updated, then redirect
         setTimeout(() => {
           window.location.href = "/";

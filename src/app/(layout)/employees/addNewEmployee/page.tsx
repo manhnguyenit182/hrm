@@ -86,8 +86,6 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
       const departments = await getDepartmentOptions();
       const positions = await getPositionOptions();
       const jobs = await getJobOptions();
-      console.log(jobs);
-      console.log(departments);
 
       setDepartmentOptions(departments);
       setPositionOptions(positions);
@@ -121,11 +119,9 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
     return `https://i.pravatar.cc/150?img=${randomNum}`;
   }
   const onSubmit = async (data: NewEmployeeFormData) => {
-    console.log("🚨 Form submitted!", { activeIndex, data }); // Debug log
     data.status = "Đang chờ";
     data.image = getRandomAvatar();
     const positions = await getPosition(data.positionId || undefined);
-    console.log(positions);
 
     const hashedPassword = await bcrypt.hash(data.user?.password || "", 12);
     // Ensure user object is properly structured
@@ -149,8 +145,6 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
       })),
     };
     const result = await createEmployee(employeeData);
-    console.log("🚨 Employee created!", result);
-    console.log(
       "📁 Documents included in employee creation:",
       uploadedDocuments
     );
@@ -627,7 +621,6 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
                           {...field}
                           options={departmentOptions}
                           onBlur={() => {
-                            console.log(field.value);
                             return setDepartmentSelected(field.value);
                           }}
                           placeholder="Chọn phòng ban..."
@@ -769,7 +762,6 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
               existingDocuments={uploadedDocuments}
               onDocumentsChange={(documents: UploadedFile[]) => {
                 setUploadedDocuments(documents);
-                console.log("Documents updated:", documents);
               }}
             />
           )}

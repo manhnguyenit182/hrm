@@ -88,18 +88,13 @@ export default function Dashboard() {
 
   // Functions để handle expand/collapse
   const toggleNodeExpansion = (nodeId: string) => {
-    console.log("Toggling node:", nodeId);
-    console.log("Current expanded nodes:", Array.from(expandedNodes));
     setExpandedNodes((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(nodeId)) {
-        console.log("Collapsing node:", nodeId);
         newSet.delete(nodeId);
       } else {
-        console.log("Expanding node:", nodeId);
         newSet.add(nodeId);
       }
-      console.log("New expanded nodes:", Array.from(newSet));
       return newSet;
     });
   };

@@ -34,7 +34,6 @@ function JobsPageComponent(): React.JSX.Element {
   useEffect(() => {
     fetchJobData();
   }, []);
-  console.log("jobdata", jobData);
 
   const handleCreateJob = async (data: JobFormData) => {
     try {

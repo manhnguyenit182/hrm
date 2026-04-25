@@ -30,7 +30,6 @@ function ViewDepartmentPageComponent({
         setLoading(true);
         const { id } = await params;
         const data = await getDepartmentsById(id);
-        console.log("Fetched department data:", data);
         if (data) {
           setEmployees(data.Employees);
         }

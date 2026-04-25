@@ -42,7 +42,6 @@ const Topbar: React.FC<TopbarProps> = () => {
   useEffect(() => {
     // Chỉ fetch job khi user đã load và có data
     if (!user) {
-      console.log("User not loaded yet, skipping job fetch");
       return;
     }
 
@@ -55,7 +54,6 @@ const Topbar: React.FC<TopbarProps> = () => {
           console.error("Error fetching job:", error);
         }
       } else {
-        console.log("User has no jobId");
       }
     };
 

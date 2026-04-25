@@ -380,10 +380,8 @@ function ViewEmployeePageComponent({ params }: EditEmployeePageProps) {
     );
   } else {
     fullName = employee.firstName + " " + employee.lastName;
-    console.log(employee);
   }
   if (documents.length > 0) {
-    console.log("Documents:", documents);
   }
 
   return (
