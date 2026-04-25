@@ -145,9 +145,6 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
       })),
     };
     const result = await createEmployee(employeeData);
-      "📁 Documents included in employee creation:",
-      uploadedDocuments
-    );
 
     if (result.success) {
       toast.current?.show({

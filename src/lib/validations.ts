@@ -103,9 +103,7 @@ export const jobFormSchema = z.object({
 });
 
 export const jobStatusSchema = z.object({
-  status: z.enum(["Active", "Ended", "Completed"], {
-    errorMap: () => ({ message: "Trạng thái không hợp lệ" }),
-  }),
+  status: z.enum(["Active", "Ended", "Completed"]),
 });
 
 // =============================================
@@ -114,7 +112,7 @@ export const jobStatusSchema = z.object({
 
 export const holidaySchema = z.object({
   name: z.string().min(1, "Tên ngày lễ không được để trống").max(200).nullable(),
-  date: z.coerce.date({ errorMap: () => ({ message: "Ngày không hợp lệ" }) }),
+  date: z.coerce.date(),
   day: z.string().nullable().optional(),
 });
 

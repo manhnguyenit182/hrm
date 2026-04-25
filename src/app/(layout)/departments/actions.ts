@@ -44,7 +44,7 @@ export const createDepartment = async (
   try {
     const parsed = createDepartmentSchema.safeParse(data);
     if (!parsed.success) {
-      throw new Error(parsed.error.errors.map((e) => e.message).join(", "));
+      throw new Error(parsed.error.issues.map((e: any) => e.message).join(", "));
     }
 
     const authCheck = await requirePermission(PERMISSIONS.DEPARTMENTS.CREATE);

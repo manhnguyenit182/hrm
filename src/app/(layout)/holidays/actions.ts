@@ -10,7 +10,7 @@ export const addHoliday = async (holidayData: Holidays) => {
   try {
     const parsed = holidaySchema.safeParse(holidayData);
     if (!parsed.success) {
-      throw new Error(parsed.error.errors.map((e) => e.message).join(", "));
+      throw new Error(parsed.error.issues.map((e: any) => e.message).join(", "));
     }
 
     const authCheck = await requirePermission(PERMISSIONS.HOLIDAYS.CREATE);

@@ -10,7 +10,7 @@ export async function createJob(data: JobFormData) {
   try {
     const parsed = jobFormSchema.safeParse(data);
     if (!parsed.success) {
-      return { success: false, error: parsed.error.errors.map((e) => e.message).join(", ") };
+      return { success: false, error: parsed.error.issues.map((e: any) => e.message).join(", ") };
     }
 
     const authCheck = await requirePermission(PERMISSIONS.JOBS.CREATE);
@@ -69,7 +69,7 @@ export async function updateJob(id: string, data: JobFormData) {
 
     const parsed = jobFormSchema.safeParse(data);
     if (!parsed.success) {
-      return { success: false, error: parsed.error.errors.map((e) => e.message).join(", ") };
+      return { success: false, error: parsed.error.issues.map((e: any) => e.message).join(", ") };
     }
 
     const authCheck = await requirePermission(PERMISSIONS.JOBS.UPDATE);
@@ -102,7 +102,7 @@ export async function updateJobStatus(
 
     const parsed = jobStatusSchema.safeParse({ status });
     if (!parsed.success) {
-      return { success: false, error: parsed.error.errors.map((e) => e.message).join(", ") };
+      return { success: false, error: parsed.error.issues.map((e: any) => e.message).join(", ") };
     }
 
     const authCheck = await requirePermission(PERMISSIONS.JOBS.UPDATE);

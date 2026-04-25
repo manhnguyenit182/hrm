@@ -1,7 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 
-export async function createLeaveRequest(data: CreateLeaveRequest) {
+export async function createLeaveRequest(data: any) {
   const leaveRequest = await prisma.leaveRequests.create({ data });
   return leaveRequest;
 }
