@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
@@ -76,17 +77,12 @@ const PayrollPageComponent: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 400);
+
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const searchTerm = e.target.value.toLowerCase();
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-      debounceRef.current = setTimeout(async () => {
-        const data = await getEmployees(searchTerm);
-        setEmployees(employeesTableMapping(data));
-      }, 400); // 400ms debounce
+      setSearchTerm(e.target.value.toLowerCase());
     },
     []
   );
@@ -147,12 +143,10 @@ const PayrollPageComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    // Fetch employee data from API or database
-    const fetchEmployees = async () => {
+    const fetchSearchedEmployees = async () => {
       try {
         setLoading(true);
-        const data = await getEmployees();
-
+        const data = await getEmployees(debouncedSearchTerm);
         setEmployees(employeesTableMapping(data));
       } catch (error) {
         console.error("Error fetching employees:", error);
@@ -160,8 +154,8 @@ const PayrollPageComponent: React.FC = () => {
         setLoading(false);
       }
     };
-    fetchEmployees();
-  }, []);
+    fetchSearchedEmployees();
+  }, [debouncedSearchTerm]);
 
   // Create skeleton data for loading state
   const skeletonItems = Array.from({ length: rowsPerPage }, (_, i) => ({

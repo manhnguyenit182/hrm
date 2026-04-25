@@ -4,7 +4,8 @@ import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 import { getDepartmentsById } from "../../actions";
 import React from "react";
 import { DepartmentWithEmployees } from "../../type";
@@ -23,13 +24,15 @@ function ViewDepartmentPageComponent({
     DepartmentWithEmployees["Employees"]
   >([]);
   const [loading, setLoading] = React.useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 400);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const { id } = await params;
-        const data = await getDepartmentsById(id);
+        const data = await getDepartmentsById(id, debouncedSearchTerm);
         if (data) {
           setEmployees(data.Employees);
         }
@@ -40,24 +43,13 @@ function ViewDepartmentPageComponent({
       }
     };
     fetchData();
-  }, [params]);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  }, [params, debouncedSearchTerm]);
+
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const searchTerm = e.target.value.toLowerCase();
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-
-      debounceRef.current = setTimeout(async () => {
-        const { id } = await params;
-        const data = await getDepartmentsById(id, searchTerm);
-        if (data) {
-          setEmployees(data.Employees);
-        }
-      }, 400);
+      setSearchTerm(e.target.value.toLowerCase());
     },
-    [params]
+    []
   );
   return (
     <div className="space-y-6">
