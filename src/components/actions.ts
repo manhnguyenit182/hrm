@@ -5,13 +5,8 @@ import { prisma } from "@/lib/prisma";
 
 export const getOrganizationChart = async () => {
   try {
-    // Lấy CEO
-    const ceo = await prisma.employees.findFirst({
-      where: {
-        position: {
-          title: "CEO",
-        },
-      },
+    // Single query to fetch all employees with their relations
+    const allEmployees = await prisma.employees.findMany({
       include: {
         position: true,
         job: true,
@@ -19,56 +14,24 @@ export const getOrganizationChart = async () => {
       },
     });
 
-    // Lấy các C-level executives (COO, CTO, CFO)
-    const executives = await prisma.employees.findMany({
-      where: {
-        position: {
-          title: {
-            in: ["COO", "CTO", "CFO", "CPO"],
-          },
-        },
-      },
-      include: {
-        position: true,
-        job: true,
-        department: true,
-      },
-    });
+    // Group in application layer
+    const ceo = allEmployees.find((e) => e.position?.title === "CEO") || null;
 
-    // Lấy các trưởng phòng
-    const departmentHeads = await prisma.employees.findMany({
-      where: {
-        position: {
-          title: "Trưởng Phòng",
-        },
-        NOT: {
-          department: {
-            name: "Ban Giám Đốc",
-          },
-        },
-      },
-      include: {
-        position: true,
-        job: true,
-        department: true,
-      },
-    });
+    const executiveTitles = ["COO", "CTO", "CFO", "CPO"];
+    const executives = allEmployees.filter((e) =>
+      executiveTitles.includes(e.position?.title || "")
+    );
 
-    // Lấy nhân viên khác
-    const otherEmployees = await prisma.employees.findMany({
-      where: {
-        position: {
-          title: {
-            notIn: ["CEO", "COO", "CTO", "CFO", "CPO", "Trưởng Phòng"],
-          },
-        },
-      },
-      include: {
-        position: true,
-        job: true,
-        department: true,
-      },
-    });
+    const departmentHeads = allEmployees.filter(
+      (e) =>
+        e.position?.title === "Trưởng Phòng" &&
+        e.department?.name !== "Ban Giám Đốc"
+    );
+
+    const excludedTitles = [...executiveTitles, "CEO", "Trưởng Phòng"];
+    const otherEmployees = allEmployees.filter(
+      (e) => !excludedTitles.includes(e.position?.title || "")
+    );
 
     return {
       ceo,

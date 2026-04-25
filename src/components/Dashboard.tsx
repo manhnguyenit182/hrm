@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import Tree from "react-d3-tree";
 import { getOrganizationChart } from "./actions";
 import { Avatar } from "primereact/avatar";
@@ -386,8 +386,11 @@ export default function Dashboard() {
     );
   }
 
-  const chartData = buildOrganizationChart();
-  const filteredChartData = filterChildrenByExpandState(chartData);
+  const chartData = useMemo(() => buildOrganizationChart(), [data]);
+  const filteredChartData = useMemo(
+    () => filterChildrenByExpandState(chartData),
+    [chartData, expandedNodes]
+  );
 
   return (
     <div>
