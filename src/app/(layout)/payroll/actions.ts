@@ -2,10 +2,15 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { requirePermission } from "@/lib/auth";
+import { PERMISSIONS } from "@/constants/permissions";
 
 // Cập nhật trạng thái lương của nhân viên
 export async function updatePayrollStatus(employeeId: string, status: string) {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.PAYROLL.UPDATE);
+    if (!authCheck.authorized) return { success: false, error: authCheck.error };
+
     const updatedEmployee = await prisma.employees.update({
       where: {
         id: employeeId,

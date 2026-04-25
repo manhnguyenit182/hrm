@@ -52,20 +52,6 @@ export async function verifyAuth(): Promise<{
 }
 
 /**
- * Get user from request (for API routes)
- * @deprecated Use verifyAuth() directly in API routes
- */
-export async function getUserFromRequest(): Promise<{
-  isValid: boolean;
-  user?: AuthUser;
-  error?: string;
-}> {
-  // For API routes, we can use the same verifyAuth function
-  // since getServerSession works in API routes too
-  return await verifyAuth();
-}
-
-/**
  * Require authentication for server components/pages
  * Throws error if not authenticated (should be caught by error boundary)
  */
@@ -77,4 +63,25 @@ export async function requireAuth(): Promise<AuthUser> {
   }
 
   return user;
+}
+
+/**
+ * Require authentication AND specific permission for server actions
+ * Returns { authorized: false, error } if check fails, so callers can
+ * return a safe error response instead of throwing.
+ */
+export async function requirePermission(
+  permission: string
+): Promise<{ authorized: true; user: AuthUser } | { authorized: false; error: string }> {
+  const { isValid, user } = await verifyAuth();
+
+  if (!isValid || !user) {
+    return { authorized: false, error: "Authentication required" };
+  }
+
+  if (!user.permissions.includes(permission)) {
+    return { authorized: false, error: "Insufficient permissions" };
+  }
+
+  return { authorized: true, user };
 }

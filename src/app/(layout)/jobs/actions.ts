@@ -2,9 +2,13 @@
 
 import { prisma } from "@/lib/prisma";
 import { JobFormData, Jobs } from "./types";
+import { requirePermission } from "@/lib/auth";
+import { PERMISSIONS } from "@/constants/permissions";
 
 export async function createJob(data: JobFormData) {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.JOBS.CREATE);
+    if (!authCheck.authorized) return { success: false, error: authCheck.error };
     const newJob = await prisma.jobs.create({
       data: {
         job: data.job,
@@ -54,6 +58,8 @@ export async function getJobById(id: string): Promise<Jobs | null> {
 // Function để update job
 export async function updateJob(id: string, data: JobFormData) {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.JOBS.UPDATE);
+    if (!authCheck.authorized) return { success: false, error: authCheck.error };
     const updatedJob = await prisma.jobs.update({
       where: { id },
       data: {
@@ -77,6 +83,9 @@ export async function updateJobStatus(
   status: "Active" | "Ended" | "Completed"
 ) {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.JOBS.UPDATE);
+    if (!authCheck.authorized) return { success: false, error: authCheck.error };
+
     const updatedJob = await prisma.jobs.update({
       where: { id },
       data: {
@@ -93,6 +102,8 @@ export async function updateJobStatus(
 // Function để delete job
 export async function deleteJob(id: string) {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.JOBS.DELETE);
+    if (!authCheck.authorized) return { success: false, error: authCheck.error };
     await prisma.jobs.delete({
       where: { id },
     });

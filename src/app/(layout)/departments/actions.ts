@@ -1,6 +1,8 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { Departments, CreateDepartment, DepartmentWithEmployees } from "./type";
+import { requirePermission } from "@/lib/auth";
+import { PERMISSIONS } from "@/constants/permissions";
 
 export const getDepartments = async (): Promise<DepartmentWithEmployees[]> => {
   try {
@@ -38,6 +40,11 @@ export const createDepartment = async (
   data: CreateDepartment
 ): Promise<Departments> => {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.DEPARTMENTS.CREATE);
+    if (!authCheck.authorized) {
+      throw new Error(authCheck.error);
+    }
+
     const department = await prisma.departments.create({
       data,
     });

@@ -2,6 +2,8 @@
 import { prisma } from "@/lib/prisma";
 import { EmployeeWithRelations, Employees } from "./types";
 import { createMultipleEmployeeDocuments } from "./documentActions";
+import { requirePermission } from "@/lib/auth";
+import { PERMISSIONS } from "@/constants/permissions";
 import bcrypt from "bcryptjs";
 
 const getEmployees = async (
@@ -120,6 +122,11 @@ const createEmployee = async (
   }
 ): Promise<{ employee: Employees; success: boolean; error?: string }> => {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.EMPLOYEES.CREATE);
+    if (!authCheck.authorized) {
+      return { employee: {} as Employees, success: false, error: authCheck.error };
+    }
+
     // Tách riêng data cho employee (loại bỏ user data và documents)
     const { user, documents, ...employeeData } = data;
 
@@ -179,8 +186,13 @@ const createEmployee = async (
 
 const deleteEmployee = async (
   id: string
-): Promise<{ success: boolean; employee: Employees | null }> => {
+): Promise<{ success: boolean; employee: Employees | null; error?: string }> => {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.EMPLOYEES.DELETE);
+    if (!authCheck.authorized) {
+      return { success: false, employee: null, error: authCheck.error };
+    }
+
     const employee = await prisma.employees.delete({
       where: { id },
     });
@@ -215,6 +227,11 @@ const updateEmployee = async (
   data: Partial<Employees>
 ): Promise<{ success: boolean; employee?: Employees; error?: string }> => {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.EMPLOYEES.UPDATE);
+    if (!authCheck.authorized) {
+      return { success: false, error: authCheck.error };
+    }
+
     const updatedEmployee = await prisma.employees.update({
       where: { id },
       data,

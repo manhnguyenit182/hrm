@@ -2,9 +2,14 @@
 
 import { prisma } from "@/lib/prisma";
 import { Holidays } from "./types";
+import { requirePermission } from "@/lib/auth";
+import { PERMISSIONS } from "@/constants/permissions";
 
 export const addHoliday = async (holidayData: Holidays) => {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.HOLIDAYS.CREATE);
+    if (!authCheck.authorized) throw new Error(authCheck.error);
+
     const holiday = await prisma.holidays.create({
       data: holidayData,
     });

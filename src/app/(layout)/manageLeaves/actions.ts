@@ -1,5 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
+import { requirePermission } from "@/lib/auth";
+import { PERMISSIONS } from "@/constants/permissions";
 
 export async function getLeaveRequestsByDepartment(departmentId: string) {
   return prisma.leaveRequests.findMany({
@@ -22,6 +24,9 @@ export async function updateLeaveRequestStatus(
   status: "approved" | "rejected"
 ) {
   try {
+    const authCheck = await requirePermission(PERMISSIONS.LEAVES.APPROVE);
+    if (!authCheck.authorized) return { success: false, error: authCheck.error };
+
     const updatedRequest = await prisma.leaveRequests.update({
       where: { id: leaveRequestId },
       data: {
