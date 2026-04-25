@@ -1,41 +1,26 @@
-// "use client";
-import "./globals.css";
-import type { Metadata } from "next";
 import Topbar from "@/components/Topbar";
 import Sidebar from "@/components/Sidebar";
 import { PrimeReactProvider } from "primereact/api";
-
 import { AppContextProvider } from "./AppContext";
-import { NextAuthProvider } from "@/components/NextAuthProvider";
-export const metadata: Metadata = {
-  title: "HRM - Hệ thống Quản lý Nhân sự",
-  description: "Hệ thống quản lý nhân sự, chấm công, lương và nghỉ phép",
-};
 
-export default function RootLayout({
+export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <PrimeReactProvider>
-      <NextAuthProvider>
-        <AppContextProvider>
-          <html lang="en" className="h-full">
-            <body className="h-full bg-gray-50">
-              <div className="flex h-full">
-                <Sidebar />
-                <div className="flex flex-col flex-1 min-h-0 h-screen">
-                  <Topbar />
-                  <main className="flex-1 overflow-auto p-6 bg-gray-50">
-                    <div className="max-w-full mx-auto">{children}</div>
-                  </main>
-                </div>
-              </div>
-            </body>
-          </html>
-        </AppContextProvider>
-      </NextAuthProvider>
+      <AppContextProvider>
+        <div className="flex h-full">
+          <Sidebar />
+          <div className="flex flex-col flex-1 min-h-0 h-screen">
+            <Topbar />
+            <main className="flex-1 overflow-auto p-6 bg-gray-50">
+              <div className="max-w-full mx-auto">{children}</div>
+            </main>
+          </div>
+        </div>
+      </AppContextProvider>
     </PrimeReactProvider>
   );
 }
