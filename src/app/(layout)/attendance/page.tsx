@@ -73,8 +73,8 @@ function AttendancePageComponent(): React.ReactElement {
     const fetchEmployees = async () => {
       try {
         setLoading(true);
-        const data = await getAttendance();
-        setEmployees(data);
+        const result = await getAttendance();
+        setEmployees(result.data);
       } catch (error) {
         console.error("Error fetching employees:", error);
       } finally {
