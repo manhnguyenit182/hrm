@@ -4,9 +4,15 @@ import { prisma } from "@/lib/prisma";
 import { JobFormData, Jobs } from "./types";
 import { requirePermission } from "@/lib/auth";
 import { PERMISSIONS } from "@/constants/permissions";
+import { jobFormSchema, jobStatusSchema, idSchema } from "@/lib/validations";
 
 export async function createJob(data: JobFormData) {
   try {
+    const parsed = jobFormSchema.safeParse(data);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.errors.map((e) => e.message).join(", ") };
+    }
+
     const authCheck = await requirePermission(PERMISSIONS.JOBS.CREATE);
     if (!authCheck.authorized) return { success: false, error: authCheck.error };
     const newJob = await prisma.jobs.create({
@@ -58,6 +64,14 @@ export async function getJobById(id: string): Promise<Jobs | null> {
 // Function để update job
 export async function updateJob(id: string, data: JobFormData) {
   try {
+    const idResult = idSchema.safeParse(id);
+    if (!idResult.success) return { success: false, error: "ID không hợp lệ" };
+
+    const parsed = jobFormSchema.safeParse(data);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.errors.map((e) => e.message).join(", ") };
+    }
+
     const authCheck = await requirePermission(PERMISSIONS.JOBS.UPDATE);
     if (!authCheck.authorized) return { success: false, error: authCheck.error };
     const updatedJob = await prisma.jobs.update({
@@ -83,6 +97,14 @@ export async function updateJobStatus(
   status: "Active" | "Ended" | "Completed"
 ) {
   try {
+    const idResult = idSchema.safeParse(id);
+    if (!idResult.success) return { success: false, error: "ID không hợp lệ" };
+
+    const parsed = jobStatusSchema.safeParse({ status });
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.errors.map((e) => e.message).join(", ") };
+    }
+
     const authCheck = await requirePermission(PERMISSIONS.JOBS.UPDATE);
     if (!authCheck.authorized) return { success: false, error: authCheck.error };
 
@@ -102,6 +124,9 @@ export async function updateJobStatus(
 // Function để delete job
 export async function deleteJob(id: string) {
   try {
+    const idResult = idSchema.safeParse(id);
+    if (!idResult.success) return { success: false, error: "ID không hợp lệ" };
+
     const authCheck = await requirePermission(PERMISSIONS.JOBS.DELETE);
     if (!authCheck.authorized) return { success: false, error: authCheck.error };
     await prisma.jobs.delete({

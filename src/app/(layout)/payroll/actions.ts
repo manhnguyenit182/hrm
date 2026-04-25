@@ -4,10 +4,16 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { requirePermission } from "@/lib/auth";
 import { PERMISSIONS } from "@/constants/permissions";
+import { payrollStatusSchema } from "@/lib/validations";
 
 // Cập nhật trạng thái lương của nhân viên
 export async function updatePayrollStatus(employeeId: string, status: string) {
   try {
+    const parsed = payrollStatusSchema.safeParse({ employeeId, status });
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.errors.map((e) => e.message).join(", ") };
+    }
+
     const authCheck = await requirePermission(PERMISSIONS.PAYROLL.UPDATE);
     if (!authCheck.authorized) return { success: false, error: authCheck.error };
 

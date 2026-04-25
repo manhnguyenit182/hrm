@@ -30,7 +30,8 @@
     "react-d3-tree": "^3.6.6",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

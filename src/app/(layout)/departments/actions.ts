@@ -4,6 +4,7 @@ import { Departments, CreateDepartment, DepartmentWithEmployees } from "./type";
 import { requirePermission } from "@/lib/auth";
 import { PERMISSIONS } from "@/constants/permissions";
 import { buildNameSearchCondition } from "@/lib/search-helpers";
+import { createDepartmentSchema } from "@/lib/validations";
 
 export const getDepartments = async (): Promise<DepartmentWithEmployees[]> => {
   try {
@@ -41,6 +42,11 @@ export const createDepartment = async (
   data: CreateDepartment
 ): Promise<Departments> => {
   try {
+    const parsed = createDepartmentSchema.safeParse(data);
+    if (!parsed.success) {
+      throw new Error(parsed.error.errors.map((e) => e.message).join(", "));
+    }
+
     const authCheck = await requirePermission(PERMISSIONS.DEPARTMENTS.CREATE);
     if (!authCheck.authorized) {
       throw new Error(authCheck.error);

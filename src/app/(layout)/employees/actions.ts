@@ -5,6 +5,7 @@ import { createMultipleEmployeeDocuments } from "./documentActions";
 import { requirePermission } from "@/lib/auth";
 import { PERMISSIONS } from "@/constants/permissions";
 import { buildNameSearchCondition } from "@/lib/search-helpers";
+import { createEmployeeSchema, updateEmployeeSchema, updateUserSchema, idSchema } from "@/lib/validations";
 import bcrypt from "bcryptjs";
 
 const getEmployees = async (
@@ -75,8 +76,17 @@ const createEmployee = async (
       return { employee: {} as Employees, success: false, error: authCheck.error };
     }
 
-    // Tách riêng data cho employee (loại bỏ user data và documents)
     const { user, documents, ...employeeData } = data;
+
+    // Validate input
+    const parsed = createEmployeeSchema.safeParse(data);
+    if (!parsed.success) {
+      return {
+        employee: {} as Employees,
+        success: false,
+        error: parsed.error.errors.map((e) => e.message).join(", "),
+      };
+    }
 
     // Hash password trước khi lưu
     const hashedPassword = await bcrypt.hash(user.password, 12);
@@ -136,6 +146,11 @@ const deleteEmployee = async (
   id: string
 ): Promise<{ success: boolean; employee: Employees | null; error?: string }> => {
   try {
+    const idResult = idSchema.safeParse(id);
+    if (!idResult.success) {
+      return { success: false, employee: null, error: "ID không hợp lệ" };
+    }
+
     const authCheck = await requirePermission(PERMISSIONS.EMPLOYEES.DELETE);
     if (!authCheck.authorized) {
       return { success: false, employee: null, error: authCheck.error };
@@ -175,6 +190,19 @@ const updateEmployee = async (
   data: Partial<Employees>
 ): Promise<{ success: boolean; employee?: Employees; error?: string }> => {
   try {
+    const idResult = idSchema.safeParse(id);
+    if (!idResult.success) {
+      return { success: false, error: "ID không hợp lệ" };
+    }
+
+    const parsed = updateEmployeeSchema.safeParse(data);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.errors.map((e) => e.message).join(", "),
+      };
+    }
+
     const authCheck = await requirePermission(PERMISSIONS.EMPLOYEES.UPDATE);
     if (!authCheck.authorized) {
       return { success: false, error: authCheck.error };
@@ -211,6 +239,14 @@ const updateUser = async (
   }
 ) => {
   try {
+    const parsed = updateUserSchema.safeParse(userData);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.errors.map((e) => e.message).join(", "),
+      };
+    }
+
     const updateData: {
       email?: string;
       firstName?: string;
