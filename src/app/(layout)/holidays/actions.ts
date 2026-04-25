@@ -1,9 +1,7 @@
 "use server";
 
-import { PrismaClient } from "@/db/prisma";
+import { prisma } from "@/lib/prisma";
 import { Holidays } from "./types";
-
-const prisma = new PrismaClient();
 
 export const addHoliday = async (holidayData: Holidays) => {
   try {

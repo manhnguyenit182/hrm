@@ -1,10 +1,7 @@
 "use server";
-// import { PrismaClient, Employees } from "@/db/prisma";
-import { PrismaClient } from "@/db/prisma";
+import { prisma } from "@/lib/prisma";
 import { EmployeeWithRelations, Employees } from "./types";
 import { createMultipleEmployeeDocuments } from "./documentActions";
-
-const prisma = new PrismaClient();
 
 const getEmployees = async (
   query?: string

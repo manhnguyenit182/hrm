@@ -1,6 +1,5 @@
 "use server";
-import { PrismaClient } from "@/db/prisma";
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function getLeaveRequestsByDepartment(departmentId: string) {
   return prisma.leaveRequests.findMany({

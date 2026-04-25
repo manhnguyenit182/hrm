@@ -1,8 +1,7 @@
 "use server";
 
-import { PrismaClient } from "@/db/prisma";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 
 export const getOrganizationChart = async () => {
   try {

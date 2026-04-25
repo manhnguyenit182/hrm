@@ -1,9 +1,7 @@
 "use server";
 
-import { PrismaClient } from "@/db/prisma";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-
-const prisma = new PrismaClient();
 
 // Cập nhật trạng thái lương của nhân viên
 export async function updatePayrollStatus(employeeId: string, status: string) {

@@ -1,8 +1,5 @@
 "use server";
-import { PrismaClient } from "@/db/prisma";
-import { CreateLeaveRequest } from "./types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function createLeaveRequest(data: CreateLeaveRequest) {
   const leaveRequest = await prisma.leaveRequests.create({ data });

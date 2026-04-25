@@ -1,7 +1,6 @@
 "use server";
-import { PrismaClient } from "@/db/prisma";
+import { prisma } from "@/lib/prisma";
 import { Departments, CreateDepartment, DepartmentWithEmployees } from "./type";
-const prisma = new PrismaClient();
 
 export const getDepartments = async (): Promise<DepartmentWithEmployees[]> => {
   try {

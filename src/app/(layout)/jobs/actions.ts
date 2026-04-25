@@ -1,8 +1,7 @@
 "use server";
 
-import { PrismaClient } from "@/db/prisma";
+import { prisma } from "@/lib/prisma";
 import { JobFormData, Jobs } from "./types";
-const prisma = new PrismaClient();
 
 export async function createJob(data: JobFormData) {
   try {

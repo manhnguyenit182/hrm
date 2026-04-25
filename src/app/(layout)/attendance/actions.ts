@@ -1,8 +1,6 @@
 "use server";
 
-import { PrismaClient } from "@/db/prisma";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 export const getAttendance = async () => {
   try {
     const attendance = await prisma.attendance.findMany({

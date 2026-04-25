@@ -1,8 +1,6 @@
 "use server";
 
-import { PrismaClient } from "@/db/prisma";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 // Lấy danh sách nhân viên theo departmentId
 export const getEmployeesByDepartmentId = async (departmentId: string) => {

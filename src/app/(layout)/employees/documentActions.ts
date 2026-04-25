@@ -1,7 +1,6 @@
 "use server";
-import { PrismaClient, EmployeeDocuments } from "@/db/prisma";
-
-const prisma = new PrismaClient();
+import { EmployeeDocuments } from "@/db/prisma";
+import { prisma } from "@/lib/prisma";
 
 // Update Cloudinary folder after employee creation
 export const updateDocumentFolders = async (

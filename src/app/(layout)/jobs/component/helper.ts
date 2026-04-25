@@ -1,9 +1,8 @@
 "use server";
-import { PrismaClient } from "@/db/prisma";
+import { prisma } from "@/lib/prisma";
 import { getDepartments } from "../../departments/actions";
 import { OptionsType, JobData } from "./type";
 
-const prisma = new PrismaClient();
 export const getDepartmentOptions = async (): Promise<OptionsType[]> => {
   const departments = await getDepartments();
 
