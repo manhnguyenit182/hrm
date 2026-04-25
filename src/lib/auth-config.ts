@@ -66,25 +66,7 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      // console.log(
-      //   "=== JWT CALLBACK ===",
-      //   JSON.stringify({ token, user }, null, 2)
-      // );
-      const positionId = user?.employee?.positionId || null;
-      if (positionId) {
-        const userPosition = await prisma.positions.findUnique({
-          where: { id: positionId },
-        });
-        token.position = userPosition;
-        if (userPosition) {
-          const permissions =
-            PERMISSION_GROUPS[
-              userPosition.roleName as keyof typeof PERMISSION_GROUPS
-            ] || [];
-          token.permissions = Array.from(permissions);
-        }
-      }
-      // Persist user data to token
+      // Only fetch position/permissions on initial login (user is only present then)
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -92,6 +74,21 @@ export const authOptions: NextAuthOptions = {
         token.lastName = user.lastName;
         token.role = user.role;
         token.employee = user.employee;
+
+        const positionId = user.employee?.positionId || null;
+        if (positionId) {
+          const userPosition = await prisma.positions.findUnique({
+            where: { id: positionId },
+          });
+          token.position = userPosition;
+          if (userPosition) {
+            const permissions =
+              PERMISSION_GROUPS[
+                userPosition.roleName as keyof typeof PERMISSION_GROUPS
+              ] || [];
+            token.permissions = Array.from(permissions);
+          }
+        }
       }
       return token;
     },
