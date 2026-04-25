@@ -113,6 +113,13 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
-  secret:
-    process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET || "your-secret-key",
+  secret: (() => {
+    const secret = process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error(
+        "NEXTAUTH_SECRET or JWT_SECRET environment variable must be set"
+      );
+    }
+    return secret;
+  })(),
 };
