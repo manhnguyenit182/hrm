@@ -81,6 +81,7 @@ export default function Dashboard() {
 
   // Custom node renderer using the extracted component
   const renderCustomNode = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ({ nodeDatum }: { nodeDatum: any }) => (
       <OrgChartNode
         nodeDatum={nodeDatum}

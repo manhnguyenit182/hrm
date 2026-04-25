@@ -84,7 +84,7 @@ const createEmployee = async (
       return {
         employee: {} as Employees,
         success: false,
-        error: parsed.error.issues.map((e: any) => e.message).join(", "),
+        error: parsed.error.issues.map((e: { message: string }) => e.message).join(", "),
       };
     }
 
@@ -199,7 +199,7 @@ const updateEmployee = async (
     if (!parsed.success) {
       return {
         success: false,
-        error: parsed.error.issues.map((e: any) => e.message).join(", "),
+        error: parsed.error.issues.map((e: { message: string }) => e.message).join(", "),
       };
     }
 
@@ -243,7 +243,7 @@ const updateUser = async (
     if (!parsed.success) {
       return {
         success: false,
-        error: parsed.error.issues.map((e: any) => e.message).join(", "),
+        error: parsed.error.issues.map((e: { message: string }) => e.message).join(", "),
       };
     }
 

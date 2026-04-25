@@ -11,7 +11,7 @@ export async function updatePayrollStatus(employeeId: string, status: string) {
   try {
     const parsed = payrollStatusSchema.safeParse({ employeeId, status });
     if (!parsed.success) {
-      return { success: false, error: parsed.error.issues.map((e: any) => e.message).join(", ") };
+      return { success: false, error: parsed.error.issues.map((e: { message: string }) => e.message).join(", ") };
     }
 
     const authCheck = await requirePermission(PERMISSIONS.PAYROLL.UPDATE);

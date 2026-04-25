@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createLeaveRequest(data: any) {
   const leaveRequest = await prisma.leaveRequests.create({ data });
   return leaveRequest;

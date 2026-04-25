@@ -7,7 +7,7 @@ import { BriefcaseBusiness, FileText, User, Lock } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { NewEmployeeFormData } from "../types";
-import { createEmployee, getPosition } from "../actions";
+import { createEmployee } from "../actions";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { MenuItem } from "primereact/menuitem";
@@ -121,7 +121,7 @@ function AddNewEmployeePageComponent(): React.JSX.Element {
   const onSubmit = async (data: NewEmployeeFormData) => {
     data.status = "Đang chờ";
     data.image = getRandomAvatar();
-    const positions = await getPosition(data.positionId || undefined);
+
 
     const hashedPassword = await bcrypt.hash(data.user?.password || "", 12);
     // Ensure user object is properly structured
