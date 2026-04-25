@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Departments, CreateDepartment, DepartmentWithEmployees } from "./type";
 import { requirePermission } from "@/lib/auth";
 import { PERMISSIONS } from "@/constants/permissions";
+import { buildNameSearchCondition } from "@/lib/search-helpers";
 
 export const getDepartments = async (): Promise<DepartmentWithEmployees[]> => {
   try {
@@ -62,60 +63,7 @@ export const getDepartmentsById = async (
   try {
     // Build where condition for employees search
     const employeesWhere = query
-      ? {
-          OR: [
-            // Search trong firstName
-            { firstName: { contains: query, mode: "insensitive" as const } },
-            // Search trong lastName
-            { lastName: { contains: query, mode: "insensitive" as const } },
-            // Search trong phone
-            { phone: { contains: query, mode: "insensitive" as const } },
-            ...(query.includes(" ")
-              ? (() => {
-                  const nameParts = query.trim().split(/\s+/);
-                  if (nameParts.length >= 2) {
-                    return [
-                      // Trường hợp "firstName lastName"
-                      {
-                        AND: [
-                          {
-                            firstName: {
-                              contains: nameParts[0],
-                              mode: "insensitive" as const,
-                            },
-                          },
-                          {
-                            lastName: {
-                              contains: nameParts[1],
-                              mode: "insensitive" as const,
-                            },
-                          },
-                        ],
-                      },
-                      // Trường hợp "lastName firstName"
-                      {
-                        AND: [
-                          {
-                            lastName: {
-                              contains: nameParts[0],
-                              mode: "insensitive" as const,
-                            },
-                          },
-                          {
-                            firstName: {
-                              contains: nameParts[1],
-                              mode: "insensitive" as const,
-                            },
-                          },
-                        ],
-                      },
-                    ];
-                  }
-                  return [];
-                })()
-              : []),
-          ],
-        }
+      ? buildNameSearchCondition(query)
       : {};
 
     const department = await prisma.departments.findUnique({
