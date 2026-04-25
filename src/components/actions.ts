@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-
+import { getHierarchyLevel } from "@/constants/org-chart";
 
 export const getOrganizationChart = async () => {
   try {
@@ -14,23 +14,21 @@ export const getOrganizationChart = async () => {
       },
     });
 
-    // Group in application layer
-    const ceo = allEmployees.find((e) => e.position?.title === "CEO") || null;
+    // Group in application layer using centralized hierarchy mapping
+    const ceo = allEmployees.find((e) => getHierarchyLevel(e.position?.title) === 1) || null;
 
-    const executiveTitles = ["COO", "CTO", "CFO", "CPO"];
-    const executives = allEmployees.filter((e) =>
-      executiveTitles.includes(e.position?.title || "")
+    const executives = allEmployees.filter(
+      (e) => getHierarchyLevel(e.position?.title) === 2
     );
 
     const departmentHeads = allEmployees.filter(
       (e) =>
-        e.position?.title === "Trưởng Phòng" &&
-        e.department?.name !== "Ban Giám Đốc"
+        getHierarchyLevel(e.position?.title) === 3 &&
+        e.department?.name !== "Ban Giám Đốc" // Optional: preserve existing business rule
     );
 
-    const excludedTitles = [...executiveTitles, "CEO", "Trưởng Phòng"];
     const otherEmployees = allEmployees.filter(
-      (e) => !excludedTitles.includes(e.position?.title || "")
+      (e) => getHierarchyLevel(e.position?.title) === 4
     );
 
     return {
