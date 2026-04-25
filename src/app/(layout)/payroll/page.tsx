@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useResponsiveRows } from "@/hooks/useResponsiveRows";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
@@ -23,59 +24,12 @@ import PayrollStatusDialog from "./PayrollStatusDialog";
 const PayrollPageComponent: React.FC = () => {
   const [employees, setEmployees] = useState<DataTableEmployee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const rowsPerPage = useResponsiveRows();
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
   const [selectedEmployee, setSelectedEmployee] =
     useState<DataTableEmployee | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
   const toast = useRef<Toast>(null);
-  // Calculate rows per page based on screen size
-
-  const calculateRowsPerPage = () => {
-    const screenHeight = window.innerHeight;
-    const screenWidth = window.innerWidth;
-
-    // Estimate available height for table (subtract header, padding, pagination)
-    const availableHeight = screenHeight - 300; // Reserve space for header, pagination, etc.
-    const rowHeight = 50; // Approximate row height in px
-
-    // Base calculation on screen height
-    let calculatedRows = Math.floor(availableHeight / rowHeight - 1);
-
-    // Adjust based on screen size breakpoints
-    if (screenWidth >= 1920) {
-      // 24+ inch monitors
-      calculatedRows = Math.min(calculatedRows, 15);
-    } else if (screenWidth >= 1440) {
-      // Laptop/desktop
-      calculatedRows = Math.min(calculatedRows, 10);
-    } else if (screenWidth >= 1024) {
-      // Tablets in landscape
-      calculatedRows = Math.min(calculatedRows, 8);
-    } else {
-      // Mobile/small screens
-      calculatedRows = Math.min(calculatedRows, 5);
-    }
-
-    // Ensure minimum rows
-    return Math.max(calculatedRows, 4);
-  };
-
-  // Update rows per page on window resize
-  useEffect(() => {
-    const handleResize = () => {
-      setRowsPerPage(calculateRowsPerPage());
-    };
-
-    // Set initial value
-    handleResize();
-
-    // Add event listener
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 400);
