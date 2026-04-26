@@ -2,6 +2,18 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth-config";
 import { Employees } from "@/db/prisma";
 
+const DYNAMIC_SERVER_USAGE_DIGEST = "DYNAMIC_SERVER_USAGE";
+
+function isDynamicServerUsageError(error: unknown): boolean {
+  if (typeof error !== "object" || error === null || !("digest" in error)) {
+    return false;
+  }
+
+  return (
+    (error as { digest?: unknown }).digest === DYNAMIC_SERVER_USAGE_DIGEST
+  );
+}
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -43,6 +55,11 @@ export async function verifyAuth(): Promise<{
       },
     };
   } catch (error) {
+    // Let Next.js handle this internal control-flow signal during pre-render.
+    if (isDynamicServerUsageError(error)) {
+      throw error;
+    }
+
     console.error("Session verification error:", error);
     return {
       isValid: false,

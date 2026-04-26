@@ -3,6 +3,8 @@ import Sidebar from "@/components/Sidebar";
 import { PrimeReactProvider } from "primereact/api";
 import { AppContextProvider } from "./AppContext";
 
+export const dynamic = "force-dynamic";
+
 export default function AppLayout({
   children,
 }: {
