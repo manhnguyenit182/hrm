@@ -7,9 +7,9 @@ import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { useCallback, useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { getDepartmentsById } from "../actions";
+import { getDepartmentsById } from "../../../actions";
 import React from "react";
-import { DepartmentWithEmployees } from "../type";
+import { DepartmentWithEmployees } from "../../../type";
 import { Avatar } from "primereact/avatar";
 
 interface ViewDepartmentClientProps {
