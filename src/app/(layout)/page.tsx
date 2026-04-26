@@ -1,6 +1,7 @@
 import Dashboard from "@/components/Dashboard";
 import { verifyAuth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getOrganizationChart } from "@/components/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -13,5 +14,7 @@ export default async function Home() {
     redirect("/login");
   }
 
-  return <Dashboard />;
+  const initialData = await getOrganizationChart();
+
+  return <Dashboard initialData={initialData} />;
 }

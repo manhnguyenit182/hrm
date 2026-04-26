@@ -12,12 +12,17 @@ import {
   collectAllIds,
 } from "./org-chart-utils";
 
-export default function Dashboard() {
-  const [data, setData] = useState<OrganizationData | null>(null);
-  const [loading, setLoading] = useState(true);
+interface DashboardProps {
+  initialData: OrganizationData | null;
+}
+
+export default function Dashboard({ initialData }: DashboardProps) {
+  const [data, setData] = useState<OrganizationData | null>(initialData);
+  const [loading, setLoading] = useState(!initialData);
   const treeContainer = useRef<HTMLDivElement>(null);
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   // Set default expanded state for CEO when data loads
   useEffect(() => {
@@ -27,6 +32,11 @@ export default function Dashboard() {
   }, [data, expandedNodes]);
 
   useEffect(() => {
+    if (isFirstRender) {
+      setIsFirstRender(false);
+      return;
+    }
+    
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -39,8 +49,10 @@ export default function Dashboard() {
         setLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    if (!initialData) {
+      fetchData();
+    }
+  }, [initialData, isFirstRender]);
 
   // Node expansion handlers
   const toggleNodeExpansion = useCallback((nodeId: string) => {
