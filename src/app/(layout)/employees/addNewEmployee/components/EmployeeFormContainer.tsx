@@ -95,7 +95,7 @@ export const EmployeeFormContainer: React.FC<EmployeeFormContainerProps> = ({
         fileName: doc.fileName,
         fileUrl: doc.fileUrl,
         publicId: doc.publicId,
-        fileSize: doc.fileSize || 0,
+        fileSize: doc.fileSize || 1,
         documentType: doc.documentType || "PDF",
         mimeType: doc.mimeType || "application/pdf",
         description: doc.description || "",
@@ -119,7 +119,7 @@ export const EmployeeFormContainer: React.FC<EmployeeFormContainerProps> = ({
       toast.current?.show({
         severity: "error",
         summary: "Lỗi",
-        detail: "Không thể tạo nhân viên",
+        detail: result.error || "Không thể tạo nhân viên",
         life: 5000,
       });
     }
