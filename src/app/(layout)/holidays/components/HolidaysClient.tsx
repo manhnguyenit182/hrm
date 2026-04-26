@@ -1,18 +1,27 @@
-"use client";
+'use client';
 
-import { Holidays } from "../types";
-import { Button } from "primereact/button";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import { InputText } from "primereact/inputtext";
-import { useEffect, useRef, useState } from "react";
-import { addHoliday, getHolidays } from "../actions";
-import { useForm, Controller } from "react-hook-form";
-import { Dialog } from "primereact/dialog";
-import { Toast } from "primereact/toast";
-import { Calendar } from "primereact/calendar";
-import { useCheckPermission } from "@/hooks/usePermission";
-import { PERMISSIONS } from "@/constants/permissions";
+import { Holidays } from '../types';
+import { Button } from 'primereact/button';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import { InputText } from 'primereact/inputtext';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { addHoliday, getHolidays } from '../actions';
+import { useForm, Controller } from 'react-hook-form';
+import { Dialog } from 'primereact/dialog';
+import { Toast } from 'primereact/toast';
+import { Calendar } from 'primereact/calendar';
+import { useCheckPermission } from '@/hooks/usePermission';
+import { PERMISSIONS } from '@/constants/permissions';
+
+const HOLIDAY_TABLE_FOOTER = (
+  <div className="flex gap-4 items-center">
+    <div className="w-4 h-4 rounded-full bg-[color:var(--color-primary-500)]"></div>
+    <span className="font-bold">Sắp tới</span>
+    <div className="w-4 h-4 rounded-full bg-[color:var(--color-muted)]"></div>
+    <span className="font-bold">Ngày nghỉ đã qua</span>
+  </div>
+);
 
 interface HolidaysClientProps {
   initialHolidays: Holidays[];
@@ -24,13 +33,22 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
   const [visible, setVisible] = useState<boolean>(false);
   const { control, handleSubmit, reset } = useForm<Holidays>({
     defaultValues: {
-      title: "",
+      title: '',
       date: null,
     },
   });
-  const dateToday = new Date();
+  const nowTime = Date.now();
   const toast = useRef<Toast>(null);
   const [isFirstRender, setIsFirstRender] = useState(true);
+
+  const upcomingHolidaysCount = useMemo(
+    () =>
+      holidays.reduce((count, holiday) => {
+        const isUpcoming = holiday.date !== null && nowTime < new Date(holiday.date).getTime();
+        return isUpcoming ? count + 1 : count;
+      }, 0),
+    [holidays, nowTime],
+  );
 
   useEffect(() => {
     if (isFirstRender) {
@@ -48,17 +66,6 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
     fetchHolidays();
   }, [isFirstRender]);
 
-  const DataTableFooter = () => {
-    return (
-      <div className="flex gap-4 items-center">
-        <div className="w-4 h-4 rounded-full bg-[color:var(--color-primary-500)]"></div>
-        <span className="font-bold">Sắp tới</span>
-        <div className="w-4 h-4 rounded-full bg-[color:var(--color-muted)]"></div>
-        <span className="font-bold">Ngày nghỉ đã qua</span>
-      </div>
-    );
-  };
-
   const canCreateHoliday = useCheckPermission(PERMISSIONS.HOLIDAYS.CREATE);
 
   const onSubmit = async (data: Holidays) => {
@@ -68,7 +75,7 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
       setVisible(false);
       reset();
     } catch (error) {
-      console.error("Error adding holiday:", error);
+      console.error('Error adding holiday:', error);
     }
   };
 
@@ -77,31 +84,16 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
       <div className="bg-gradient-surface rounded-2xl shadow-lg p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div>
-            <h1 className="text-3xl font-bold text-gradient mb-2">
-              Quản lý ngày nghỉ lễ
-            </h1>
-            <p className="text-gray-600">
-              Thiết lập và quản lý các ngày nghỉ lễ trong năm
-            </p>
+            <h1 className="text-3xl font-bold text-gradient mb-2">Quản lý ngày nghỉ lễ</h1>
+            <p className="text-gray-600">Thiết lập và quản lý các ngày nghỉ lễ trong năm</p>
             <div className="flex items-center space-x-6 mt-3">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                <span className="text-sm text-gray-600">
-                  {holidays.length} ngày nghỉ lễ
-                </span>
+                <span className="text-sm text-gray-600">{holidays.length} ngày nghỉ lễ</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-600">
-                  {
-                    holidays.filter(
-                      (h) =>
-                        h.date &&
-                        dateToday.getTime() < new Date(h.date).getTime()
-                    ).length
-                  }{" "}
-                  sắp tới
-                </span>
+                <span className="text-sm text-gray-600">{upcomingHolidaysCount} sắp tới</span>
               </div>
             </div>
           </div>
@@ -124,16 +116,14 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
               <i className="pi pi-calendar text-blue-600"></i>
             </div>
-            <h3 className="text-xl font-semibold text-gray-800">
-              Danh sách ngày nghỉ lễ
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-800">Danh sách ngày nghỉ lễ</h3>
           </div>
         </div>
 
         <DataTable
           value={holidays}
           loading={loading}
-          footer={<DataTableFooter />}
+          footer={HOLIDAY_TABLE_FOOTER}
           className="modern-datatable"
           emptyMessage="Không tìm thấy ngày nghỉ lễ nào"
           rows={10}
@@ -144,45 +134,39 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
               <div className="flex items-center space-x-3">
                 <div
                   className={`w-1 h-12 rounded-full ${
-                    rowData.date &&
-                    dateToday.getTime() < new Date(rowData.date).getTime()
-                      ? "bg-blue-500"
-                      : "bg-gray-300"
+                    rowData.date && nowTime < new Date(rowData.date).getTime() ? 'bg-blue-500' : 'bg-gray-300'
                   }`}
                 />
                 <div>
                   <p className="font-semibold text-gray-800">
                     {rowData.date
-                      ? new Date(rowData.date).toLocaleDateString("vi-VN", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
+                      ? new Date(rowData.date).toLocaleDateString('vi-VN', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
                         })
-                      : "N/A"}
+                      : 'N/A'}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {rowData.date &&
-                    dateToday.getTime() < new Date(rowData.date).getTime()
-                      ? "Sắp tới"
-                      : "Đã qua"}
+                    {rowData.date && nowTime < new Date(rowData.date).getTime() ? 'Sắp tới' : 'Đã qua'}
                   </p>
                 </div>
               </div>
             )}
-            style={{ minWidth: "200px" }}
+            style={{ minWidth: '200px' }}
           />
           <Column
             header="Thứ"
             body={(rowData) => (
               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
                 {rowData.date
-                  ? new Date(rowData.date).toLocaleDateString("vi-VN", {
-                      weekday: "long",
+                  ? new Date(rowData.date).toLocaleDateString('vi-VN', {
+                      weekday: 'long',
                     })
-                  : "N/A"}
+                  : 'N/A'}
               </span>
             )}
-            style={{ minWidth: "150px" }}
+            style={{ minWidth: '150px' }}
           />
           <Column
             field="title"
@@ -192,7 +176,7 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
                 <p className="font-semibold text-gray-800">{rowData.title}</p>
               </div>
             )}
-            style={{ minWidth: "200px" }}
+            style={{ minWidth: '200px' }}
           />
         </DataTable>
       </div>
@@ -200,7 +184,7 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
       <Dialog
         header="Thêm ngày nghỉ lễ mới"
         visible={visible}
-        style={{ width: "500px", maxWidth: "90vw" }}
+        style={{ width: '500px', maxWidth: '90vw' }}
         onHide={() => {
           if (!visible) return;
           setVisible(false);
@@ -239,7 +223,7 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
                   {...field}
                   value={field.value}
                   dateFormat="dd/mm/yy"
-                  className={`w-full ${fieldState.error ? "p-invalid" : ""}`}
+                  className={`w-full ${fieldState.error ? 'p-invalid' : ''}`}
                   showIcon
                   placeholder="Chọn ngày nghỉ lễ"
                   inputClassName="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -259,12 +243,7 @@ export function HolidaysClient({ initialHolidays }: HolidaysClientProps) {
                 reset();
               }}
             />
-            <Button
-              type="submit"
-              label="Thêm mới"
-              icon="pi pi-plus"
-              className="btn-primary"
-            />
+            <Button type="submit" label="Thêm mới" icon="pi pi-plus" className="btn-primary" />
           </div>
         </form>
       </Dialog>
