@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useResponsiveRows } from "@/hooks/useResponsiveRows";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useResponsiveRows } from '@/hooks/useResponsiveRows';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
-import { InputIcon } from "primereact/inputicon";
-import { InputText } from "primereact/inputtext";
-import { IconField } from "primereact/iconfield";
-import { Toast } from "primereact/toast";
-import { ConfirmDialog } from "primereact/confirmdialog";
-import { Avatar } from "primereact/avatar";
-import { Skeleton } from "primereact/skeleton";
-import { getEmployees } from "../../employees/actions";
-import { employeesTableMapping } from "../../employees/helpers";
-import { DataTableEmployee } from "../../employees/types";
-import { updatePayrollStatus } from "../actions";
-import PayrollStatusDialog from "../PayrollStatusDialog";
+import { InputIcon } from 'primereact/inputicon';
+import { InputText } from 'primereact/inputtext';
+import { IconField } from 'primereact/iconfield';
+import { Toast } from 'primereact/toast';
+import { ConfirmDialog } from 'primereact/confirmdialog';
+import { Avatar } from 'primereact/avatar';
+import { Skeleton } from 'primereact/skeleton';
+import { getEmployees } from '../../employees/actions';
+import { employeesTableMapping } from '../../employees/helpers';
+import { DataTableEmployee } from '../../employees/types';
+import { updatePayrollStatus } from '../actions';
+import PayrollStatusDialog from '../PayrollStatusDialog';
 
 interface PayrollClientProps {
   initialEmployees: DataTableEmployee[];
@@ -32,16 +32,13 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
   const [updating, setUpdating] = useState<boolean>(false);
   const toast = useRef<Toast>(null);
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 400);
   const [isFirstRender, setIsFirstRender] = useState(true);
 
-  const handleSearchChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(e.target.value.toLowerCase());
-    },
-    []
-  );
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  }, []);
 
   const handleRowClick = (employee: DataTableEmployee) => {
     setSelectedEmployee(employee);
@@ -56,37 +53,33 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
   const handleUpdatePayrollStatus = async (employeeId: string) => {
     setUpdating(true);
     try {
-      const result = await updatePayrollStatus(employeeId, "Đã hoàn thành");
+      const result = await updatePayrollStatus(employeeId, 'Đã hoàn thành');
 
       if (result.success) {
-        setEmployees((prev) =>
-          prev.map((emp) =>
-            emp.id === employeeId ? { ...emp, status: "Đã hoàn thành" } : emp
-          )
-        );
+        setEmployees((prev) => prev.map((emp) => (emp.id === employeeId ? { ...emp, status: 'Đã hoàn thành' } : emp)));
 
         toast.current?.show({
-          severity: "success",
-          summary: "Thành công",
-          detail: "Đã cập nhật trạng thái lương thành công",
+          severity: 'success',
+          summary: 'Thành công',
+          detail: 'Đã cập nhật trạng thái lương thành công',
           life: 3000,
         });
 
         handleCloseDialog();
       } else {
         toast.current?.show({
-          severity: "error",
-          summary: "Lỗi",
-          detail: result.error || "Không thể cập nhật trạng thái lương",
+          severity: 'error',
+          summary: 'Lỗi',
+          detail: result.error || 'Không thể cập nhật trạng thái lương',
           life: 3000,
         });
       }
     } catch (error) {
-      console.error("Error updating payroll status:", error);
+      console.error('Error updating payroll status:', error);
       toast.current?.show({
-        severity: "error",
-        summary: "Lỗi",
-        detail: "Đã xảy ra lỗi khi cập nhật trạng thái lương",
+        severity: 'error',
+        summary: 'Lỗi',
+        detail: 'Đã xảy ra lỗi khi cập nhật trạng thái lương',
         life: 3000,
       });
     } finally {
@@ -106,7 +99,7 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
         const data = await getEmployees(debouncedSearchTerm);
         setEmployees(employeesTableMapping(data));
       } catch (error) {
-        console.error("Error fetching employees:", error);
+        console.error('Error fetching employees:', error);
       } finally {
         setLoading(false);
       }
@@ -127,9 +120,7 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
 
   const skeletonTextTemplate = () => <Skeleton width="100%" height="1rem" />;
 
-  const skeletonStatusTemplate = () => (
-    <Skeleton width="4rem" height="1.5rem" borderRadius="1rem" />
-  );
+  const skeletonStatusTemplate = () => <Skeleton width="4rem" height="1.5rem" borderRadius="1rem" />;
 
   return (
     <div className="space-y-6">
@@ -156,12 +147,8 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
               <i className="pi pi-table text-blue-600"></i>
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-gray-800">
-                Bảng lương chi tiết
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">
-                Nhấp vào nhân viên để cập nhật trạng thái lương
-              </p>
+              <h3 className="text-xl font-semibold text-gray-800">Bảng lương chi tiết</h3>
+              <p className="text-sm text-gray-500 mt-1">Nhấp vào nhân viên để cập nhật trạng thái lương</p>
             </div>
           </div>
         </div>
@@ -175,15 +162,11 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
           loading={false}
           paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
           currentPageReportTemplate="Hiển thị {first} đến {last} trong tổng số {totalRecords} nhân viên"
-          onRowClick={(e) =>
-            !loading && handleRowClick(e.data as DataTableEmployee)
-          }
+          onRowClick={(e) => !loading && handleRowClick(e.data as DataTableEmployee)}
           rowClassName={(rowData) => {
-            if (loading) return "";
+            if (loading) return '';
             const employee = rowData as unknown as DataTableEmployee;
-            return employee.status === "Đang chờ"
-              ? "cursor-pointer hover:bg-gray-50"
-              : "cursor-pointer";
+            return employee.status === 'Đang chờ' ? 'cursor-pointer hover:bg-gray-50' : 'cursor-pointer';
           }}
         >
           <Column
@@ -205,12 +188,12 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
                       </div>
                       <div>
                         <p className="font-semibold text-gray-800">{rowData.fullName}</p>
-                        <p className="text-sm text-gray-500">{rowData.job?.job || "Nhân viên"}</p>
+                        <p className="text-sm text-gray-500">{rowData.job?.job || 'Nhân viên'}</p>
                       </div>
                     </div>
                   )
             }
-            style={{ minWidth: "250px" }}
+            style={{ minWidth: '250px' }}
           />
           <Column
             header="Lương năm (CTC)"
@@ -220,13 +203,13 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
                 : (rowData) => (
                     <div className="space-y-1">
                       <p className="font-bold text-lg text-blue-600">
-                        {((rowData.job?.salary || 0) * 12).toLocaleString("vi-VN")} VNĐ
+                        {((rowData.job?.salary || 0) * 12).toLocaleString('vi-VN')} VNĐ
                       </p>
                       <p className="text-sm text-gray-500">Lương thô/năm</p>
                     </div>
                   )
             }
-            style={{ minWidth: "180px" }}
+            style={{ minWidth: '180px' }}
           />
           <Column
             header="Lương cơ bản"
@@ -236,13 +219,13 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
                 : (rowData) => (
                     <div className="space-y-1">
                       <p className="font-semibold text-gray-800">
-                        {(rowData.job?.salary || 0).toLocaleString("vi-VN")} VNĐ
+                        {(rowData.job?.salary || 0).toLocaleString('vi-VN')} VNĐ
                       </p>
                       <p className="text-sm text-gray-500">Mỗi tháng</p>
                     </div>
                   )
             }
-            style={{ minWidth: "150px" }}
+            style={{ minWidth: '150px' }}
           />
           <Column
             header="Khấu trừ"
@@ -252,13 +235,13 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
                 : (rowData) => (
                     <div className="space-y-1">
                       <p className="font-semibold text-orange-600">
-                        -{((rowData.job?.salary || 0) * 0.08).toLocaleString("vi-VN")} VNĐ
+                        -{((rowData.job?.salary || 0) * 0.08).toLocaleString('vi-VN')} VNĐ
                       </p>
                       <p className="text-sm text-gray-500">Thuế + BHXH (8%)</p>
                     </div>
                   )
             }
-            style={{ minWidth: "150px" }}
+            style={{ minWidth: '150px' }}
           />
           <Column
             header="Lương thực nhận"
@@ -268,13 +251,13 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
                 : (rowData) => (
                     <div className="space-y-1">
                       <p className="font-bold text-lg text-green-600">
-                        {((rowData.job?.salary || 0) * 0.92).toLocaleString("vi-VN")} VNĐ
+                        {((rowData.job?.salary || 0) * 0.92).toLocaleString('vi-VN')} VNĐ
                       </p>
                       <p className="text-sm text-gray-500">Sau khấu trừ</p>
                     </div>
                   )
             }
-            style={{ minWidth: "180px" }}
+            style={{ minWidth: '180px' }}
           />
           <Column
             header="Trạng thái"
@@ -284,27 +267,27 @@ export function PayrollClient({ initialEmployees }: PayrollClientProps) {
                 : (rowData) => (
                     <span
                       className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                        rowData.status === "Đã hoàn thành"
-                          ? "bg-green-100 text-green-800"
-                          : rowData.status === "Đang chờ"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
+                        rowData.status === 'Đã hoàn thành'
+                          ? 'bg-green-100 text-green-800'
+                          : rowData.status === 'Đang chờ'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-gray-100 text-gray-800'
                       }`}
                     >
                       <div
                         className={`w-2 h-2 rounded-full mr-2 ${
-                          rowData.status === "Đã hoàn thành"
-                            ? "bg-green-400"
-                            : rowData.status === "Đang chờ"
-                            ? "bg-yellow-400"
-                            : "bg-gray-400"
+                          rowData.status === 'Đã hoàn thành'
+                            ? 'bg-green-400'
+                            : rowData.status === 'Đang chờ'
+                              ? 'bg-yellow-400'
+                              : 'bg-gray-400'
                         }`}
                       ></div>
-                      {rowData.status || "Chưa xử lý"}
+                      {rowData.status || 'Chưa xử lý'}
                     </span>
                   )
             }
-            style={{ minWidth: "140px" }}
+            style={{ minWidth: '140px' }}
           />
         </DataTable>
       </div>

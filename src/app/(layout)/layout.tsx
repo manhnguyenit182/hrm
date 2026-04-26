@@ -1,15 +1,11 @@
-import Topbar from "@/components/Topbar";
-import Sidebar from "@/components/Sidebar";
-import { PrimeReactProvider } from "primereact/api";
-import { AppContextProvider } from "./AppContext";
+import Topbar from '@/components/Topbar';
+import Sidebar from '@/components/Sidebar';
+import { PrimeReactProvider } from 'primereact/api';
+import { AppContextProvider } from './AppContext';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-export default function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <PrimeReactProvider>
       <AppContextProvider>

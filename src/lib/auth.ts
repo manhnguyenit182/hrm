@@ -1,17 +1,15 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth-config";
-import { Employees } from "@/db/prisma";
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth-config';
+import { Employees } from '@/db/prisma';
 
-const DYNAMIC_SERVER_USAGE_DIGEST = "DYNAMIC_SERVER_USAGE";
+const DYNAMIC_SERVER_USAGE_DIGEST = 'DYNAMIC_SERVER_USAGE';
 
 function isDynamicServerUsageError(error: unknown): boolean {
-  if (typeof error !== "object" || error === null || !("digest" in error)) {
+  if (typeof error !== 'object' || error === null || !('digest' in error)) {
     return false;
   }
 
-  return (
-    (error as { digest?: unknown }).digest === DYNAMIC_SERVER_USAGE_DIGEST
-  );
+  return (error as { digest?: unknown }).digest === DYNAMIC_SERVER_USAGE_DIGEST;
 }
 
 export interface AuthUser {
@@ -38,7 +36,7 @@ export async function verifyAuth(): Promise<{
     if (!session || !session.user) {
       return {
         isValid: false,
-        error: "No session found",
+        error: 'No session found',
       };
     }
 
@@ -60,10 +58,10 @@ export async function verifyAuth(): Promise<{
       throw error;
     }
 
-    console.error("Session verification error:", error);
+    console.error('Session verification error:', error);
     return {
       isValid: false,
-      error: "Invalid session",
+      error: 'Invalid session',
     };
   }
 }
@@ -76,7 +74,7 @@ export async function requireAuth(): Promise<AuthUser> {
   const { isValid, user } = await verifyAuth();
 
   if (!isValid || !user) {
-    throw new Error("Authentication required");
+    throw new Error('Authentication required');
   }
 
   return user;
@@ -88,16 +86,16 @@ export async function requireAuth(): Promise<AuthUser> {
  * return a safe error response instead of throwing.
  */
 export async function requirePermission(
-  permission: string
+  permission: string,
 ): Promise<{ authorized: true; user: AuthUser } | { authorized: false; error: string }> {
   const { isValid, user } = await verifyAuth();
 
   if (!isValid || !user) {
-    return { authorized: false, error: "Authentication required" };
+    return { authorized: false, error: 'Authentication required' };
   }
 
   if (!user.permissions.includes(permission)) {
-    return { authorized: false, error: "Insufficient permissions" };
+    return { authorized: false, error: 'Insufficient permissions' };
   }
 
   return { authorized: true, user };
