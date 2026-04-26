@@ -23,7 +23,7 @@ interface PayrollClientProps {
   initialEmployees: DataTableEmployee[];
 }
 
-export function PayrollClient({ initialEmployees }: PayrollClientProps): React.FC {
+export function PayrollClient({ initialEmployees }: PayrollClientProps) {
   const [employees, setEmployees] = useState<DataTableEmployee[]>(initialEmployees);
   const [loading, setLoading] = useState<boolean>(false);
   const rowsPerPage = useResponsiveRows();
