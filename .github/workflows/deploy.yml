@@ -47,11 +47,6 @@ jobs:
         
         echo "Đã đẩy thành công image lên ECR: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         
-    # --- PHẦN UPDATE ECS SẼ ĐƯỢC MỞ RA VÀ CẤU HÌNH Ở BƯỚC SAU ---
-    # - name: Fill in the new image ID in the Amazon ECS task definition
-    #   id: task-def
-    #   uses: aws-actions/amazon-ecs-render-task-definition@v1
-    #   ...
-    # - name: Deploy Amazon ECS task definition
-    #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-    #   ...
+    - name: Deploy to Amazon ECS Service
+      run: |
+        aws ecs update-service --cluster hrm-cluster --service hrm-service --force-new-deployment
