@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      # Thay bằng chuỗi kết nối local database nếu cần
+      - DATABASE_URL=${DATABASE_URL:-"postgres://user:password@localhost:5432/hrm"}
+      - NODE_ENV=production
+    restart: unless-stopped
