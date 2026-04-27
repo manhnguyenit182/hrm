@@ -1,69 +1,65 @@
-# syntax=docker/dockerfile:1
-
-# ==========================================
-# 1. Base Image - Setup Node
-# ==========================================
 FROM node:18-alpine AS base
-# Install libc6-compat for Prisma and Alpine compatibility
-RUN apk add --no-cache libc6-compat openssl
+
+# Install dependencies only when needed
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# ==========================================
-# 2. Dependencies Stage
-# ==========================================
-FROM base AS deps
+# Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-# Install all dependencies (including devDependencies needed for build)
+COPY prisma ./prisma/
 RUN npm ci
 
-# ==========================================
-# 3. Builder Stage
-# ==========================================
+# Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client (Important before build)
+# Generate Prisma client
 RUN npx prisma generate
 
-# Build Next.js application
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+ENV NEXT_TELEMETRY_DISABLED=1
+
 RUN npm run build
 
-# ==========================================
-# 4. Production Runner Stage
-# ==========================================
+# Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-# Next.js telemetry disable (optional but recommended)
+# Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Security: Create a non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Copy the public folder
 COPY --from=builder /app/public ./public
+
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Switch to non-root user
+# Copy Prisma schema and engine if needed in production (optional, typically client is bundled)
+# But it's safe to have the schema for migrations if run in container
+# COPY --from=builder /app/prisma ./prisma
+
 USER nextjs
 
 EXPOSE 3000
 
 ENV PORT=3000
-# Ensure Next.js binds to all interfaces in Docker
 ENV HOSTNAME="0.0.0.0"
 
-# Healthcheck to ensure container is running properly
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
-
-# Start the standalone server
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/next-config-js/output
 CMD ["node", "server.js"]
